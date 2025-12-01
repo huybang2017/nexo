@@ -35,8 +35,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID:946215954235-cspmnap1n9fdqj9071okbo72ekb9uhro.apps.googleusercontent.com}
-            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
             scope:
               - email
               - profile
@@ -52,8 +52,8 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:ndhbang2017@gmail.com}
-    password: ${MAIL_PASSWORD:vnwqubutzkfyanoe}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -116,11 +116,12 @@ momo:
 
 # Stripe Configuration - Using TEST MODE (sandbox)
 # Stripe Test keys are free and don't require real payment
+# Set environment variables: STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET
 stripe:
   mock-mode: ${STRIPE_MOCK_MODE:false}  # false = use real Stripe test API
-  secret-key: ${STRIPE_SECRET_KEY:sk_test_51QRvhnDlHYftbVUUEaJ0Nti4ak7wia4OI1YgEInL4WZgWfoD2bnzxTi73I5MVn8B9UmtmwPuHqDcGzA9EWs5d6sf00C4dB3pft}
-  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_51QRvhnDlHYftbVUUt0NNzEptMW7ffuQaRVmojQASmLoFUbjLvtL19Vu3zpOXr2EiUiPx47DQaW0m5m6Ve8OTIRmQ00rwRcDJHE}
-  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_sRC5aHYGlGdDawd0bgnNjGl3hBQKiN2U}
+  secret-key: ${STRIPE_SECRET_KEY:}
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
   return-url: ${STRIPE_RETURN_URL:http://localhost:3000/wallet/deposit/result}
 
 # Logging
