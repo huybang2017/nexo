@@ -1,0 +1,21 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+pillow==10.1.0
+opencv-python==4.8.1.78
+numpy==1.24.3
+pytesseract==0.3.10
+face-recognition==1.3.0
+dlib==19.24.2
+scikit-image==0.22.0
+pydantic==2.5.0
+httpx==0.25.1
+python-dotenv==1.0.0
+
+# For document tampering detection
+imagehash==4.3.1
+scipy==1.11.4
+
+# For better OCR
+easyocr==1.7.0
+
