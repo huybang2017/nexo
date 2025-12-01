@@ -1,0 +1,150 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: nexo-server
+
+  # Database
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/nexo}
+    username: ${SPRING_DATASOURCE_USERNAME:nexo}
+    password: ${SPRING_DATASOURCE_PASSWORD:nexo123}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # JPA
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+
+  # OAuth2
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:946215954235-cspmnap1n9fdqj9071okbo72ekb9uhro.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+  # Mail - Gmail SMTP
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:ndhbang2017@gmail.com}
+    password: ${MAIL_PASSWORD:vnwqubutzkfyanoe}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    default-encoding: UTF-8
+
+  # File Upload
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
+  refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+# App Configuration
+app:
+  name: Nexo P2P Lending
+  version: 1.0.0
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  oauth2:
+    redirect-uri: ${APP_OAUTH2_REDIRECT_URI:http://localhost:3000/oauth2/redirect}
+  file:
+    upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+    max-size: ${FILE_MAX_SIZE:52428800}  # 50MB in bytes
+
+# VNPay Configuration
+vnpay:
+  tmn-code: ${VNPAY_TMN_CODE:DEMO}
+  hash-secret: ${VNPAY_HASH_SECRET:DEMOSECRET}
+  url: ${VNPAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+  return-url: ${VNPAY_RETURN_URL:http://localhost:3000/wallet/deposit/callback}
+  api-url: ${VNPAY_API_URL:https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
+
+# MoMo Configuration
+# Để lấy sandbox credentials, xem hướng dẫn tại: docs/MOMO_SETUP.md
+# Hoặc truy cập: https://business.momo.vn/trang-doanh-nghiep
+# 
+# DEVELOPMENT MODE: Nếu không có hồ sơ doanh nghiệp, set mock-mode=true để test
+# Mock mode sẽ tạo payment URL giả để test flow mà không cần real MoMo API
+momo:
+  mock-mode: ${MOMO_MOCK_MODE:true}  # Set false khi có real credentials
+  partner-code: ${MOMO_PARTNER_CODE:MOMOXXXX}  # Lấy từ MoMo Business Portal
+  access-key: ${MOMO_ACCESS_KEY:your-access-key}  # Lấy từ MoMo Business Portal
+  secret-key: ${MOMO_SECRET_KEY:your-secret-key}  # Lấy từ MoMo Business Portal
+  api-url: ${MOMO_API_URL:https://test-payment.momo.vn/v2/gateway/api/create}  # Sandbox URL
+  return-url: ${MOMO_RETURN_URL:http://localhost:3000/wallet/deposit/callback}
+  notify-url: ${MOMO_NOTIFY_URL:http://localhost:8080/api/payment/webhook/momo}  # Cần public URL cho production
+
+# Stripe Configuration - Using TEST MODE (sandbox)
+# Stripe Test keys are free and don't require real payment
+stripe:
+  mock-mode: ${STRIPE_MOCK_MODE:false}  # false = use real Stripe test API
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_51QRvhnDlHYftbVUUEaJ0Nti4ak7wia4OI1YgEInL4WZgWfoD2bnzxTi73I5MVn8B9UmtmwPuHqDcGzA9EWs5d6sf00C4dB3pft}
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_51QRvhnDlHYftbVUUt0NNzEptMW7ffuQaRVmojQASmLoFUbjLvtL19Vu3zpOXr2EiUiPx47DQaW0m5m6Ve8OTIRmQ00rwRcDJHE}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_sRC5aHYGlGdDawd0bgnNjGl3hBQKiN2U}
+  return-url: ${STRIPE_RETURN_URL:http://localhost:3000/wallet/deposit/result}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.nexo: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+# AI Service Configuration
+ai:
+  service:
+    url: ${AI_SERVICE_URL:http://localhost:8001}
+    enabled: ${AI_SERVICE_ENABLED:true}
+    timeout: ${AI_SERVICE_TIMEOUT:60000}  # 60 seconds
+
