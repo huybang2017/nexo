@@ -24,3 +24,5 @@ tmp/
 temp/
 *.tmp
 
+# Documentation (not needed in repo)
+COMMIT-GUIDE.md
