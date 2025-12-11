@@ -24,26 +24,87 @@ export interface PageResponse<T> {
 // Enums
 // ==========================================
 
-export type UserRole = 'ADMIN' | 'BORROWER' | 'LENDER';
-export type UserStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'BANNED';
-export type KycStatus = 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED';
-export type KycDocumentType = 'ID_CARD_FRONT' | 'ID_CARD_BACK' | 'SELFIE' | 'BANK_STATEMENT' | 'INCOME_PROOF' | 'BUSINESS_LICENSE';
+export type UserRole = "ADMIN" | "BORROWER" | "LENDER";
+export type UserStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "BANNED";
+export type KycStatus = "NOT_SUBMITTED" | "PENDING" | "APPROVED" | "REJECTED";
+export type KycDocumentType =
+  | "ID_CARD_FRONT"
+  | "ID_CARD_BACK"
+  | "SELFIE"
+  | "BANK_STATEMENT"
+  | "INCOME_PROOF"
+  | "BUSINESS_LICENSE";
 
-export type TransactionType = 'DEPOSIT' | 'WITHDRAW' | 'TRANSFER_IN' | 'TRANSFER_OUT' | 'INVESTMENT' | 'INVESTMENT_RETURN' | 'REPAYMENT_RECEIVED' | 'REPAYMENT_PAID' | 'LOAN_DISBURSEMENT' | 'FEE' | 'REFUND';
-export type TransactionStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+export type TransactionType =
+  | "DEPOSIT"
+  | "WITHDRAW"
+  | "TRANSFER_IN"
+  | "TRANSFER_OUT"
+  | "INVESTMENT"
+  | "INVESTMENT_RETURN"
+  | "REPAYMENT_RECEIVED"
+  | "REPAYMENT_PAID"
+  | "LOAN_DISBURSEMENT"
+  | "FEE"
+  | "REFUND";
+export type TransactionStatus =
+  | "PENDING"
+  | "COMPLETED"
+  | "FAILED"
+  | "CANCELLED";
 
-export type LoanStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'FUNDING' | 'FUNDED' | 'ACTIVE' | 'REPAYING' | 'COMPLETED' | 'DEFAULTED' | 'CANCELLED';
-export type LoanPurpose = 'PERSONAL' | 'BUSINESS' | 'EDUCATION' | 'MEDICAL' | 'HOME_IMPROVEMENT' | 'DEBT_CONSOLIDATION' | 'STARTUP' | 'OTHER';
+export type LoanStatus =
+  | "DRAFT"
+  | "PENDING_REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "FUNDING"
+  | "FUNDED"
+  | "ACTIVE"
+  | "REPAYING"
+  | "COMPLETED"
+  | "DEFAULTED"
+  | "CANCELLED";
+export type LoanPurpose =
+  | "PERSONAL"
+  | "BUSINESS"
+  | "EDUCATION"
+  | "MEDICAL"
+  | "HOME_IMPROVEMENT"
+  | "DEBT_CONSOLIDATION"
+  | "STARTUP"
+  | "OTHER";
 
-export type InvestmentStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
-export type RepaymentStatus = 'PENDING' | 'PAID' | 'PARTIAL' | 'OVERDUE' | 'DEFAULTED';
+export type InvestmentStatus = "ACTIVE" | "COMPLETED" | "CANCELLED";
+export type RepaymentStatus =
+  | "PENDING"
+  | "PAID"
+  | "PARTIAL"
+  | "OVERDUE"
+  | "DEFAULTED";
 
-export type PaymentProvider = 'VNPAY' | 'MOMO' | 'STRIPE' | 'BANK_TRANSFER' | 'INTERNAL';
-export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
+export type PaymentProvider =
+  | "VNPAY"
+  | "MOMO"
+  | "STRIPE"
+  | "BANK_TRANSFER"
+  | "INTERNAL";
+export type PaymentStatus =
+  | "PENDING"
+  | "SUCCESS"
+  | "FAILED"
+  | "CANCELLED"
+  | "REFUNDED";
 
-export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
-export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-export type NotificationType = 'SYSTEM' | 'LOAN' | 'INVESTMENT' | 'PAYMENT' | 'KYC' | 'SECURITY';
+export type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING_SUPPORT" | "WAITING_CUSTOMER" | "RESOLVED" | "CLOSED";
+export type TicketPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+export type NotificationType =
+  | "SYSTEM"
+  | "LOAN"
+  | "INVESTMENT"
+  | "PAYMENT"
+  | "KYC"
+  | "SECURITY";
 
 // ==========================================
 // User Types
@@ -218,10 +279,11 @@ export interface CreateLoanRequest {
   purpose: LoanPurpose;
   amount: number;
   termMonths: number;
+  interestRate: number;
 }
 
 export interface LoanReviewRequest {
-  action: 'APPROVE' | 'REJECT';
+  action: "APPROVE" | "REJECT";
   rejectionReason?: string;
   adjustedInterestRate?: number;
   note?: string;
@@ -269,32 +331,6 @@ export interface Portfolio {
   statusDistribution: Record<string, number>;
 }
 
-export interface AuditLog {
-  id: number;
-  userId?: number;
-  userEmail?: string;
-  action: string;
-  entityType: string;
-  entityId?: number;
-  oldValues?: string;
-  newValues?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  description?: string;
-  createdAt: string;
-}
-
-export interface SystemSetting {
-  id: number;
-  settingKey: string;
-  settingValue: string;
-  settingType: string;
-  description?: string;
-  category?: string;
-  isEditable: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 // ==========================================
 // KYC Types
@@ -487,29 +523,29 @@ export interface DashboardStats {
 // Credit Score Types
 // ==========================================
 
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH' | 'CRITICAL';
-export type CreditScoreEventType = 
-  | 'INITIAL_SCORE'
-  | 'KYC_VERIFIED'
-  | 'REPAYMENT_ON_TIME'
-  | 'REPAYMENT_EARLY'
-  | 'LOAN_COMPLETED'
-  | 'INCOME_VERIFIED'
-  | 'EMPLOYMENT_VERIFIED'
-  | 'BANK_ACCOUNT_LINKED'
-  | 'PROFILE_COMPLETED'
-  | 'LONG_TERM_MEMBER'
-  | 'REPAYMENT_LATE_1_7_DAYS'
-  | 'REPAYMENT_LATE_8_14_DAYS'
-  | 'REPAYMENT_LATE_15_30_DAYS'
-  | 'REPAYMENT_LATE_OVER_30_DAYS'
-  | 'LOAN_DEFAULTED'
-  | 'FRAUD_DETECTED'
-  | 'KYC_REJECTED'
-  | 'LOAN_REJECTED'
-  | 'ACCOUNT_WARNING'
-  | 'SCORE_RECALCULATED'
-  | 'MANUAL_ADJUSTMENT';
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "VERY_HIGH" | "CRITICAL";
+export type CreditScoreEventType =
+  | "INITIAL_SCORE"
+  | "KYC_VERIFIED"
+  | "REPAYMENT_ON_TIME"
+  | "REPAYMENT_EARLY"
+  | "LOAN_COMPLETED"
+  | "INCOME_VERIFIED"
+  | "EMPLOYMENT_VERIFIED"
+  | "BANK_ACCOUNT_LINKED"
+  | "PROFILE_COMPLETED"
+  | "LONG_TERM_MEMBER"
+  | "REPAYMENT_LATE_1_7_DAYS"
+  | "REPAYMENT_LATE_8_14_DAYS"
+  | "REPAYMENT_LATE_15_30_DAYS"
+  | "REPAYMENT_LATE_OVER_30_DAYS"
+  | "LOAN_DEFAULTED"
+  | "FRAUD_DETECTED"
+  | "KYC_REJECTED"
+  | "LOAN_REJECTED"
+  | "ACCOUNT_WARNING"
+  | "SCORE_RECALCULATED"
+  | "MANUAL_ADJUSTMENT";
 
 export interface CreditScoreComponents {
   paymentHistoryScore: number;
@@ -568,7 +604,7 @@ export interface CreditScoreSummary {
   maxLoanAmount: number;
   scoreChange30Days: number;
   recentEventsCount: number;
-  trend: 'UP' | 'DOWN' | 'STABLE';
+  trend: "UP" | "DOWN" | "STABLE";
 }
 
 export interface CreditScoreHistory {
@@ -593,33 +629,33 @@ export interface AdminAdjustScoreRequest {
 
 // ============== KYC SCORING TYPES ==============
 
-export type KycRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'FRAUD';
+export type KycRiskLevel = "LOW" | "MEDIUM" | "HIGH" | "FRAUD";
 
 export type KycFraudType =
-  | 'DOCUMENT_DUPLICATE'
-  | 'DOCUMENT_TAMPERING'
-  | 'DOCUMENT_EXPIRED'
-  | 'DOCUMENT_LOW_QUALITY'
-  | 'DOCUMENT_BLURRY'
-  | 'DOCUMENT_OCR_MISMATCH'
-  | 'ID_CARD_DUPLICATE'
-  | 'ID_CARD_INVALID_FORMAT'
-  | 'ID_CARD_EXPIRED'
-  | 'FACE_MISMATCH'
-  | 'FACE_LOW_CONFIDENCE'
-  | 'FACE_MULTIPLE_DETECTED'
-  | 'PROFILE_UNDERAGE'
-  | 'PROFILE_SUSPICIOUS_EMAIL'
-  | 'PROFILE_SUSPICIOUS_PHONE'
-  | 'PROFILE_KNOWN_FRAUD_DB'
-  | 'PROFILE_IP_BLACKLISTED'
-  | 'PROFILE_VPN_DETECTED'
-  | 'PROFILE_DEVICE_FRAUD'
-  | 'BEHAVIOR_RAPID_SUBMISSION'
-  | 'BEHAVIOR_COPY_PASTE_DETECTED'
-  | 'BEHAVIOR_MULTIPLE_ATTEMPTS'
-  | 'CROSS_CHECK_BANK_MISMATCH'
-  | 'CROSS_CHECK_ADDRESS_MISMATCH';
+  | "DOCUMENT_DUPLICATE"
+  | "DOCUMENT_TAMPERING"
+  | "DOCUMENT_EXPIRED"
+  | "DOCUMENT_LOW_QUALITY"
+  | "DOCUMENT_BLURRY"
+  | "DOCUMENT_OCR_MISMATCH"
+  | "ID_CARD_DUPLICATE"
+  | "ID_CARD_INVALID_FORMAT"
+  | "ID_CARD_EXPIRED"
+  | "FACE_MISMATCH"
+  | "FACE_LOW_CONFIDENCE"
+  | "FACE_MULTIPLE_DETECTED"
+  | "PROFILE_UNDERAGE"
+  | "PROFILE_SUSPICIOUS_EMAIL"
+  | "PROFILE_SUSPICIOUS_PHONE"
+  | "PROFILE_KNOWN_FRAUD_DB"
+  | "PROFILE_IP_BLACKLISTED"
+  | "PROFILE_VPN_DETECTED"
+  | "PROFILE_DEVICE_FRAUD"
+  | "BEHAVIOR_RAPID_SUBMISSION"
+  | "BEHAVIOR_COPY_PASTE_DETECTED"
+  | "BEHAVIOR_MULTIPLE_ATTEMPTS"
+  | "CROSS_CHECK_BANK_MISMATCH"
+  | "CROSS_CHECK_ADDRESS_MISMATCH";
 
 export interface KycFraudFlag {
   id: number;
@@ -724,4 +760,3 @@ export interface DuplicateCheckResult {
   matches: DuplicateMatch[];
   recommendation: string;
 }
-

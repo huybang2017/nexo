@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Wallet,
   Plus,
@@ -12,18 +12,23 @@ import {
   Building,
   Loader2,
   Eye,
-  X,
-} from 'lucide-react';
-import { useWallet, useTransactions, useDeposit, useWithdraw, useTransaction } from '@/hooks/useWallet';
-import { useMyInvestments } from '@/hooks/useInvestment';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
+} from "lucide-react";
+import {
+  useWallet,
+  useTransactions,
+  useDeposit,
+  useWithdraw,
+  useTransaction,
+} from "@/hooks/useWallet";
+import { useMyInvestments } from "@/hooks/useInvestment";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -32,17 +37,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn, formatCurrency, formatDate } from '@/lib/utils';
-import type { Transaction, PaymentProvider, TransactionType, TransactionStatus } from '@/types';
-import { Filter } from 'lucide-react';
+} from "@/components/ui/select";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import type {
+  Transaction,
+  PaymentProvider,
+  TransactionType,
+  TransactionStatus,
+} from "@/types";
+import { Filter } from "lucide-react";
 
 const container = {
   hidden: { opacity: 0 },
@@ -58,12 +68,20 @@ const item = {
 };
 
 export const WalletPage = () => {
-  const { data: wallet, isLoading: walletLoading, refetch: refetchWallet } = useWallet();
+  const {
+    data: wallet,
+    isLoading: walletLoading,
+    refetch: refetchWallet,
+  } = useWallet();
   const [transactionFilters, setTransactionFilters] = useState<{
     type?: TransactionType;
     status?: TransactionStatus;
   }>({});
-  const { data: transactions, isLoading: txLoading, refetch: refetchTransactions } = useTransactions({
+  const {
+    data: transactions,
+    isLoading: txLoading,
+    refetch: refetchTransactions,
+  } = useTransactions({
     type: transactionFilters.type,
     status: transactionFilters.status,
     size: 20,
@@ -71,27 +89,35 @@ export const WalletPage = () => {
   const { data: investmentsData } = useMyInvestments();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [selectedTransactionId, setSelectedTransactionId] = useState<number | null>(null);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<
+    number | null
+  >(null);
 
   // Calculate locked balance from active investments
   const investments = investmentsData?.content || [];
-  const activeInvestments = investments.filter((i: any) => i.status === 'ACTIVE');
-  const lockedInInvestments = activeInvestments.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0);
-  
+  const activeInvestments = investments.filter(
+    (i: any) => i.status === "ACTIVE"
+  );
+  const lockedInInvestments = activeInvestments.reduce(
+    (sum: number, inv: any) => sum + (inv.amount || 0),
+    0
+  );
+
   // Calculate total balance = available + locked (in investments)
   const totalBalance = (wallet?.availableBalance || 0) + lockedInInvestments;
-  
+
   // Refetch when page becomes visible (user returns from payment)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         refetchWallet();
         refetchTransactions();
       }
     };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [refetchWallet, refetchTransactions]);
 
   return (
@@ -102,15 +128,18 @@ export const WalletPage = () => {
       className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={item} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <motion.div
+        variants={item}
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white">Wallet</h1>
           <p className="text-slate-400 mt-1">Manage your funds</p>
         </div>
         <div className="flex gap-3">
           <DepositDialog open={depositOpen} onOpenChange={setDepositOpen} />
-          <WithdrawDialog 
-            open={withdrawOpen} 
+          <WithdrawDialog
+            open={withdrawOpen}
             onOpenChange={setWithdrawOpen}
             availableBalance={wallet?.availableBalance || 0}
           />
@@ -118,7 +147,10 @@ export const WalletPage = () => {
       </motion.div>
 
       {/* Balance Cards */}
-      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
         <Card className="bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border-emerald-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -151,7 +183,9 @@ export const WalletPage = () => {
                     {formatCurrency(lockedInInvestments)}
                   </p>
                 )}
-                <p className="text-slate-500 text-xs mt-1">In active investments/loans</p>
+                <p className="text-slate-500 text-xs mt-1">
+                  In active investments/loans
+                </p>
               </div>
               <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center">
                 <CreditCard className="w-7 h-7 text-amber-400" />
@@ -192,11 +226,14 @@ export const WalletPage = () => {
               </CardTitle>
               <div className="flex items-center gap-3">
                 <Select
-                  value={transactionFilters.type || 'ALL'}
+                  value={transactionFilters.type || "ALL"}
                   onValueChange={(value) =>
                     setTransactionFilters((prev) => ({
                       ...prev,
-                      type: value === 'ALL' ? undefined : (value as TransactionType),
+                      type:
+                        value === "ALL"
+                          ? undefined
+                          : (value as TransactionType),
                     }))
                   }
                 >
@@ -209,20 +246,31 @@ export const WalletPage = () => {
                     <SelectItem value="DEPOSIT">Deposit</SelectItem>
                     <SelectItem value="WITHDRAW">Withdraw</SelectItem>
                     <SelectItem value="INVESTMENT">Investment</SelectItem>
-                    <SelectItem value="INVESTMENT_RETURN">Investment Return</SelectItem>
-                    <SelectItem value="REPAYMENT_PAID">Repayment Paid</SelectItem>
-                    <SelectItem value="REPAYMENT_RECEIVED">Repayment Received</SelectItem>
-                    <SelectItem value="LOAN_DISBURSEMENT">Loan Disbursement</SelectItem>
+                    <SelectItem value="INVESTMENT_RETURN">
+                      Investment Return
+                    </SelectItem>
+                    <SelectItem value="REPAYMENT_PAID">
+                      Repayment Paid
+                    </SelectItem>
+                    <SelectItem value="REPAYMENT_RECEIVED">
+                      Repayment Received
+                    </SelectItem>
+                    <SelectItem value="LOAN_DISBURSEMENT">
+                      Loan Disbursement
+                    </SelectItem>
                     <SelectItem value="FEE">Fee</SelectItem>
                     <SelectItem value="REFUND">Refund</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select
-                  value={transactionFilters.status || 'ALL'}
+                  value={transactionFilters.status || "ALL"}
                   onValueChange={(value) =>
                     setTransactionFilters((prev) => ({
                       ...prev,
-                      status: value === 'ALL' ? undefined : (value as TransactionStatus),
+                      status:
+                        value === "ALL"
+                          ? undefined
+                          : (value as TransactionStatus),
                     }))
                   }
                 >
@@ -255,9 +303,9 @@ export const WalletPage = () => {
             ) : (
               <div className="space-y-3">
                 {transactions?.content.map((tx) => (
-                  <TransactionItem 
-                    key={tx.id} 
-                    transaction={tx} 
+                  <TransactionItem
+                    key={tx.id}
+                    transaction={tx}
                     onViewDetail={setSelectedTransactionId}
                   />
                 ))}
@@ -279,24 +327,37 @@ export const WalletPage = () => {
   );
 };
 
-const TransactionItem: React.FC<{ transaction: Transaction; onViewDetail: (id: number) => void }> = ({ transaction, onViewDetail }) => {
-  const isIncoming = ['DEPOSIT', 'INVESTMENT_RETURN', 'REPAYMENT_RECEIVED', 'LOAN_DISBURSEMENT', 'REFUND'].includes(transaction.type);
+const TransactionItem: React.FC<{
+  transaction: Transaction;
+  onViewDetail: (id: number) => void;
+}> = ({ transaction, onViewDetail }) => {
+  const isIncoming = [
+    "DEPOSIT",
+    "INVESTMENT_RETURN",
+    "REPAYMENT_RECEIVED",
+    "LOAN_DISBURSEMENT",
+    "REFUND",
+  ].includes(transaction.type);
 
   const statusColors: Record<string, string> = {
-    COMPLETED: 'text-emerald-400 bg-emerald-400/10',
-    PENDING: 'text-amber-400 bg-amber-400/10',
-    FAILED: 'text-red-400 bg-red-400/10',
-    CANCELLED: 'text-slate-400 bg-slate-400/10',
+    COMPLETED: "text-emerald-400 bg-emerald-400/10",
+    PENDING: "text-amber-400 bg-amber-400/10",
+    FAILED: "text-red-400 bg-red-400/10",
+    CANCELLED: "text-slate-400 bg-slate-400/10",
   };
 
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer group"
-         onClick={() => onViewDetail(transaction.id)}>
+    <div
+      className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer group"
+      onClick={() => onViewDetail(transaction.id)}
+    >
       <div className="flex items-center gap-4 flex-1">
-        <div className={cn(
-          'w-10 h-10 rounded-xl flex items-center justify-center',
-          isIncoming ? 'bg-emerald-500/20' : 'bg-red-500/20'
-        )}>
+        <div
+          className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            isIncoming ? "bg-emerald-500/20" : "bg-red-500/20"
+          )}
+        >
           {isIncoming ? (
             <ArrowDownRight className="w-5 h-5 text-emerald-400" />
           ) : (
@@ -304,26 +365,39 @@ const TransactionItem: React.FC<{ transaction: Transaction; onViewDetail: (id: n
           )}
         </div>
         <div className="flex-1">
-          <p className="text-white font-medium">{transaction.type.replace(/_/g, ' ')}</p>
+          <p className="text-white font-medium">
+            {transaction.type.replace(/_/g, " ")}
+          </p>
           <p className="text-slate-500 text-sm">{transaction.referenceCode}</p>
           {transaction.description && (
-            <p className="text-slate-400 text-xs mt-0.5 line-clamp-1">{transaction.description}</p>
+            <p className="text-slate-400 text-xs mt-0.5 line-clamp-1">
+              {transaction.description}
+            </p>
           )}
         </div>
       </div>
       <div className="text-right flex items-center gap-3">
         <div>
-          <p className={cn(
-            'font-semibold',
-            isIncoming ? 'text-emerald-400' : 'text-red-400'
-          )}>
-            {isIncoming ? '+' : '-'}{formatCurrency(transaction.amount)}
+          <p
+            className={cn(
+              "font-semibold",
+              isIncoming ? "text-emerald-400" : "text-red-400"
+            )}
+          >
+            {isIncoming ? "+" : "-"}
+            {formatCurrency(transaction.amount)}
           </p>
           <div className="flex items-center gap-2 justify-end mt-1">
-            <Badge className={statusColors[transaction.status] || statusColors.PENDING}>
+            <Badge
+              className={
+                statusColors[transaction.status] || statusColors.PENDING
+              }
+            >
               {transaction.status}
             </Badge>
-            <span className="text-slate-500 text-xs">{formatDate(transaction.createdAt)}</span>
+            <span className="text-slate-500 text-xs">
+              {formatDate(transaction.createdAt)}
+            </span>
           </div>
         </div>
         <Button
@@ -347,9 +421,12 @@ interface DepositDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const DepositDialog: React.FC<DepositDialogProps> = ({ open, onOpenChange }) => {
-  const [amount, setAmount] = useState('');
-  const [provider, setProvider] = useState<PaymentProvider>('VNPAY');
+const DepositDialog: React.FC<DepositDialogProps> = ({
+  open,
+  onOpenChange,
+}) => {
+  const [amount, setAmount] = useState("");
+  const [provider, setProvider] = useState<PaymentProvider>("VNPAY");
   const deposit = useDeposit();
   const queryClient = useQueryClient();
 
@@ -360,13 +437,13 @@ const DepositDialog: React.FC<DepositDialogProps> = ({ open, onOpenChange }) => 
       { amount: parseFloat(amount), provider },
       {
         onSuccess: () => {
-          setAmount('');
+          setAmount("");
           onOpenChange(false);
           // Invalidate and refetch wallet after deposit
-          queryClient.invalidateQueries({ queryKey: ['wallet'] });
-          queryClient.invalidateQueries({ queryKey: ['transactions'] });
-          queryClient.refetchQueries({ queryKey: ['wallet'] });
-          queryClient.refetchQueries({ queryKey: ['transactions'] });
+          queryClient.invalidateQueries({ queryKey: ["wallet"] });
+          queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          queryClient.refetchQueries({ queryKey: ["wallet"] });
+          queryClient.refetchQueries({ queryKey: ["transactions"] });
         },
       }
     );
@@ -416,7 +493,10 @@ const DepositDialog: React.FC<DepositDialogProps> = ({ open, onOpenChange }) => 
 
           <div className="space-y-2">
             <Label className="text-slate-300">Payment Method</Label>
-            <Select value={provider} onValueChange={(v) => setProvider(v as PaymentProvider)}>
+            <Select
+              value={provider}
+              onValueChange={(v) => setProvider(v as PaymentProvider)}
+            >
               <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                 <SelectValue />
               </SelectTrigger>
@@ -431,7 +511,11 @@ const DepositDialog: React.FC<DepositDialogProps> = ({ open, onOpenChange }) => 
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="border-slate-700">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-slate-700"
+          >
             Cancel
           </Button>
           <Button
@@ -445,7 +529,7 @@ const DepositDialog: React.FC<DepositDialogProps> = ({ open, onOpenChange }) => 
                 Processing...
               </>
             ) : (
-              'Proceed to Payment'
+              "Proceed to Payment"
             )}
           </Button>
         </DialogFooter>
@@ -460,11 +544,15 @@ interface WithdrawDialogProps {
   availableBalance: number;
 }
 
-const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, availableBalance }) => {
-  const [amount, setAmount] = useState('');
-  const [bankName, setBankName] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [accountHolder, setAccountHolder] = useState('');
+const WithdrawDialog: React.FC<WithdrawDialogProps> = ({
+  open,
+  onOpenChange,
+  availableBalance,
+}) => {
+  const [amount, setAmount] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
   const withdraw = useWithdraw();
 
   const handleWithdraw = async () => {
@@ -479,10 +567,10 @@ const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, ava
       },
       {
         onSuccess: () => {
-          setAmount('');
-          setBankName('');
-          setAccountNumber('');
-          setAccountHolder('');
+          setAmount("");
+          setBankName("");
+          setAccountNumber("");
+          setAccountHolder("");
           onOpenChange(false);
         },
       }
@@ -492,7 +580,10 @@ const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, ava
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="border-slate-700 hover:bg-slate-800">
+        <Button
+          variant="outline"
+          className="border-slate-700 hover:bg-slate-800"
+        >
           <Minus className="w-4 h-4 mr-2" />
           Withdraw
         </Button>
@@ -501,7 +592,8 @@ const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, ava
         <DialogHeader>
           <DialogTitle className="text-white">Withdraw Funds</DialogTitle>
           <DialogDescription className="text-slate-400">
-            Transfer money to your bank account. Available: {formatCurrency(availableBalance)}
+            Transfer money to your bank account. Available:{" "}
+            {formatCurrency(availableBalance)}
           </DialogDescription>
         </DialogHeader>
 
@@ -558,12 +650,22 @@ const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, ava
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="border-slate-700">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-slate-700"
+          >
             Cancel
           </Button>
           <Button
             onClick={handleWithdraw}
-            disabled={!amount || !bankName || !accountNumber || !accountHolder || withdraw.isPending}
+            disabled={
+              !amount ||
+              !bankName ||
+              !accountNumber ||
+              !accountHolder ||
+              withdraw.isPending
+            }
             className="bg-emerald-500 hover:bg-emerald-600"
           >
             {withdraw.isPending ? (
@@ -572,7 +674,7 @@ const WithdrawDialog: React.FC<WithdrawDialogProps> = ({ open, onOpenChange, ava
                 Processing...
               </>
             ) : (
-              'Submit Request'
+              "Submit Request"
             )}
           </Button>
         </DialogFooter>
@@ -587,20 +689,28 @@ interface TransactionDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({ 
-  transactionId, 
-  open, 
-  onOpenChange 
+const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
+  transactionId,
+  open,
+  onOpenChange,
 }) => {
   const { data: transaction, isLoading } = useTransaction(transactionId);
 
-  const isIncoming = transaction && ['DEPOSIT', 'INVESTMENT_RETURN', 'REPAYMENT_RECEIVED', 'LOAN_DISBURSEMENT', 'REFUND'].includes(transaction.type);
+  const isIncoming =
+    transaction &&
+    [
+      "DEPOSIT",
+      "INVESTMENT_RETURN",
+      "REPAYMENT_RECEIVED",
+      "LOAN_DISBURSEMENT",
+      "REFUND",
+    ].includes(transaction.type);
 
   const statusColors: Record<string, string> = {
-    COMPLETED: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-    PENDING: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    FAILED: 'text-red-400 bg-red-400/10 border-red-400/20',
-    CANCELLED: 'text-slate-400 bg-slate-400/10 border-slate-400/20',
+    COMPLETED: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+    PENDING: "text-amber-400 bg-amber-400/10 border-amber-400/20",
+    FAILED: "text-red-400 bg-red-400/10 border-red-400/20",
+    CANCELLED: "text-slate-400 bg-slate-400/10 border-slate-400/20",
   };
 
   return (
@@ -624,10 +734,12 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
             {/* Transaction Type & Status */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  'w-12 h-12 rounded-xl flex items-center justify-center',
-                  isIncoming ? 'bg-emerald-500/20' : 'bg-red-500/20'
-                )}>
+                <div
+                  className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center",
+                    isIncoming ? "bg-emerald-500/20" : "bg-red-500/20"
+                  )}
+                >
                   {isIncoming ? (
                     <ArrowDownRight className="w-6 h-6 text-emerald-400" />
                   ) : (
@@ -636,15 +748,19 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
                 </div>
                 <div>
                   <p className="text-white font-semibold text-lg">
-                    {transaction.type.replace(/_/g, ' ')}
+                    {transaction.type.replace(/_/g, " ")}
                   </p>
-                  <p className="text-slate-400 text-sm">{transaction.referenceCode}</p>
+                  <p className="text-slate-400 text-sm">
+                    {transaction.referenceCode}
+                  </p>
                 </div>
               </div>
-              <Badge className={cn(
-                'px-3 py-1 border',
-                statusColors[transaction.status] || statusColors.PENDING
-              )}>
+              <Badge
+                className={cn(
+                  "px-3 py-1 border",
+                  statusColors[transaction.status] || statusColors.PENDING
+                )}
+              >
                 {transaction.status}
               </Badge>
             </div>
@@ -655,11 +771,14 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
             <div className="bg-slate-800/50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="text-slate-400">Amount</span>
-                <span className={cn(
-                  'text-2xl font-bold',
-                  isIncoming ? 'text-emerald-400' : 'text-red-400'
-                )}>
-                  {isIncoming ? '+' : '-'}{formatCurrency(transaction.amount)}
+                <span
+                  className={cn(
+                    "text-2xl font-bold",
+                    isIncoming ? "text-emerald-400" : "text-red-400"
+                  )}
+                >
+                  {isIncoming ? "+" : "-"}
+                  {formatCurrency(transaction.amount)}
                 </span>
               </div>
               {transaction.fee && transaction.fee > 0 && (
@@ -667,16 +786,23 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
                   <Separator className="bg-slate-700 my-3" />
                   <div className="flex items-center justify-between">
                     <span className="text-slate-400">Fee</span>
-                    <span className="text-slate-300">-{formatCurrency(transaction.fee)}</span>
+                    <span className="text-slate-300">
+                      -{formatCurrency(transaction.fee)}
+                    </span>
                   </div>
                   <Separator className="bg-slate-700 my-3" />
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400 font-medium">Net Amount</span>
-                    <span className={cn(
-                      'text-xl font-semibold',
-                      isIncoming ? 'text-emerald-400' : 'text-red-400'
-                    )}>
-                      {isIncoming ? '+' : '-'}{formatCurrency(transaction.netAmount)}
+                    <span className="text-slate-400 font-medium">
+                      Net Amount
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xl font-semibold",
+                        isIncoming ? "text-emerald-400" : "text-red-400"
+                      )}
+                    >
+                      {isIncoming ? "+" : "-"}
+                      {formatCurrency(transaction.netAmount)}
                     </span>
                   </div>
                 </>
@@ -687,11 +813,13 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-slate-400 text-sm">Date</p>
-                <p className="text-white">{formatDate(transaction.createdAt)}</p>
+                <p className="text-white">
+                  {formatDate(transaction.createdAt)}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-slate-400 text-sm">Currency</p>
-                <p className="text-white">{transaction.currency || 'VND'}</p>
+                <p className="text-white">{transaction.currency || "VND"}</p>
               </div>
               {transaction.loanCode && (
                 <div className="space-y-1">
@@ -713,11 +841,15 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <p className="text-slate-400 text-xs">Before</p>
-                  <p className="text-white font-medium">{formatCurrency(transaction.balanceBefore)}</p>
+                  <p className="text-white font-medium">
+                    {formatCurrency(transaction.balanceBefore)}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-slate-400 text-xs">After</p>
-                  <p className="text-white font-medium">{formatCurrency(transaction.balanceAfter)}</p>
+                  <p className="text-white font-medium">
+                    {formatCurrency(transaction.balanceAfter)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -739,7 +871,11 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="border-slate-700">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-slate-700"
+          >
             Close
           </Button>
         </DialogFooter>
@@ -749,4 +885,3 @@ const TransactionDetailDialog: React.FC<TransactionDetailDialogProps> = ({
 };
 
 export default WalletPage;
-

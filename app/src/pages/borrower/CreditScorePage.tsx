@@ -1,13 +1,16 @@
-import { motion } from 'framer-motion';
-import { Shield, TrendingUp, HelpCircle } from 'lucide-react';
-import { CreditScoreCard, CreditScoreHistoryTable } from '@/components/credit-score';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from '@/components/ui/accordion';
+import { motion } from "framer-motion";
+import { Shield, TrendingUp, HelpCircle } from "lucide-react";
+import {
+  CreditScoreCard,
+  CreditScoreHistoryTable,
+} from "@/components/credit-score";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,28 +27,34 @@ const item = {
 
 const creditScoreFaqs = [
   {
-    question: 'How is my credit score calculated?',
-    answer: 'Your credit score is calculated based on several factors: Payment History (35%), Credit Utilization (20%), Credit History Length (15%), Identity Verification (15%), Income Stability (10%), and Behavior Score (5%). Each factor contributes to your overall score out of 1000 points.',
+    question: "How is my credit score calculated?",
+    answer:
+      "Your credit score is calculated based on several factors: Payment History (35%), Credit Utilization (20%), Credit History Length (15%), Identity Verification (15%), Income Stability (10%), and Behavior Score (5%). Each factor contributes to your overall score out of 1000 points.",
   },
   {
-    question: 'How can I improve my credit score?',
-    answer: 'You can improve your credit score by: 1) Making all repayments on time or early, 2) Completing your KYC verification, 3) Maintaining a longer account history, 4) Keeping your credit utilization low, 5) Providing accurate income and employment information, and 6) Using the platform responsibly.',
+    question: "How can I improve my credit score?",
+    answer:
+      "You can improve your credit score by: 1) Making all repayments on time or early, 2) Completing your KYC verification, 3) Maintaining a longer account history, 4) Keeping your credit utilization low, 5) Providing accurate income and employment information, and 6) Using the platform responsibly.",
   },
   {
-    question: 'What happens if I miss a payment?',
-    answer: 'Missing a payment will negatively impact your credit score. Late payments (1-7 days) result in a -20 point impact, 8-14 days late results in -40 points, 15-30 days late results in -70 points, and over 30 days late results in -100 points. Avoiding late payments is crucial for maintaining a good score.',
+    question: "What happens if I miss a payment?",
+    answer:
+      "Missing a payment will negatively impact your credit score. Late payments (1-7 days) result in a -20 point impact, 8-14 days late results in -40 points, 15-30 days late results in -70 points, and over 30 days late results in -100 points. Avoiding late payments is crucial for maintaining a good score.",
   },
   {
-    question: 'How often is my credit score updated?',
-    answer: 'Your credit score is updated in real-time whenever a relevant event occurs (e.g., payment made, KYC verified). Additionally, a comprehensive recalculation is performed every 30 days to ensure accuracy.',
+    question: "How often is my credit score updated?",
+    answer:
+      "Your credit score is updated in real-time whenever a relevant event occurs (e.g., payment made, KYC verified). Additionally, a comprehensive recalculation is performed every 30 days to ensure accuracy.",
   },
   {
-    question: 'What is the minimum score required for a loan?',
-    answer: 'A minimum credit score of 300 is required to be eligible for a loan. However, higher scores unlock better benefits: larger loan amounts, lower interest rates, and faster approval times.',
+    question: "What is the minimum score required for a loan?",
+    answer:
+      "A minimum credit score of 300 is required to be eligible for a loan. However, higher scores unlock better benefits: larger loan amounts, lower interest rates, and faster approval times.",
   },
   {
-    question: 'How does my credit score affect loan terms?',
-    answer: 'Your credit score directly affects the maximum loan amount you can borrow and the interest rate you\'ll receive. Higher scores (800+) qualify for up to 500M VND at 8-14% interest, while lower scores have more limited options.',
+    question: "How does my credit score affect loan terms?",
+    answer:
+      "Your credit score directly affects the maximum loan amount you can borrow and the interest rate you'll receive. Higher scores (800+) qualify for up to 500M VND at 8-14% interest, while lower scores have more limited options.",
   },
 ];
 
@@ -64,8 +73,12 @@ export const CreditScorePage = () => {
             <Shield className="w-5 h-5 text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Credit Score</h1>
-            <p className="text-slate-400">Track and improve your credit score</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
+              Credit Score
+            </h1>
+            <p className="text-slate-400">
+              Track and improve your credit score
+            </p>
           </div>
         </div>
       </motion.div>
@@ -176,13 +189,40 @@ function TipCard({
   impact: string;
   color: string;
 }) {
-  const colorClasses: Record<string, { bg: string; border: string; text: string }> = {
-    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400' },
-    blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' },
-    cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-400' },
-    purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' },
-    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400' },
-    pink: { bg: 'bg-pink-500/10', border: 'border-pink-500/30', text: 'text-pink-400' },
+  const colorClasses: Record<
+    string,
+    { bg: string; border: string; text: string }
+  > = {
+    emerald: {
+      bg: "bg-emerald-500/10",
+      border: "border-emerald-500/30",
+      text: "text-emerald-400",
+    },
+    blue: {
+      bg: "bg-blue-500/10",
+      border: "border-blue-500/30",
+      text: "text-blue-400",
+    },
+    cyan: {
+      bg: "bg-cyan-500/10",
+      border: "border-cyan-500/30",
+      text: "text-cyan-400",
+    },
+    purple: {
+      bg: "bg-purple-500/10",
+      border: "border-purple-500/30",
+      text: "text-purple-400",
+    },
+    amber: {
+      bg: "bg-amber-500/10",
+      border: "border-amber-500/30",
+      text: "text-amber-400",
+    },
+    pink: {
+      bg: "bg-pink-500/10",
+      border: "border-pink-500/30",
+      text: "text-pink-400",
+    },
   };
 
   const classes = colorClasses[color] || colorClasses.emerald;
@@ -197,4 +237,3 @@ function TipCard({
 }
 
 export default CreditScorePage;
-

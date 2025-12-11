@@ -1,6 +1,7 @@
 package com.nexo.server.services;
 
 import com.nexo.server.dto.common.PageResponse;
+import com.nexo.server.dto.creditscore.CreditScoreResponse;
 import com.nexo.server.dto.loan.*;
 import com.nexo.server.entities.*;
 import com.nexo.server.enums.*;
@@ -52,11 +53,11 @@ public class LoanService {
         }
 
         // Check credit score eligibility
-        com.nexo.server.dto.creditscore.CreditScoreResponse creditScore = creditScoreService.getOrCreateCreditScore(borrowerId);
+        CreditScoreResponse creditScore = creditScoreService.getOrCreateCreditScore(borrowerId);
         if (!creditScore.getIsEligibleForLoan()) {
             throw new BusinessException("Not eligible for loan: " + creditScore.getEligibilityReason());
         }
-        
+
         // Check if requested amount exceeds max allowed
         if (request.getAmount().compareTo(creditScore.getMaxLoanAmount()) > 0) {
             throw new BusinessException(String.format(
@@ -64,8 +65,16 @@ public class LoanService {
                     creditScore.getMaxLoanAmount().toPlainString()));
         }
 
-        // Calculate interest rate based on credit score
-        BigDecimal interestRate = calculateInterestRate(borrower.getCreditScore());
+        // Validate interest rate is within allowed range based on credit score
+        if (request.getInterestRate().compareTo(creditScore.getMinInterestRate()) < 0 ||
+                request.getInterestRate().compareTo(creditScore.getMaxInterestRate()) > 0) {
+            throw new BusinessException(String.format(
+                    "Interest rate must be between %s%% and %s%% based on your credit score",
+                    creditScore.getMinInterestRate().toPlainString(),
+                    creditScore.getMaxInterestRate().toPlainString()));
+        }
+
+        BigDecimal interestRate = request.getInterestRate();
         String riskGrade = calculateRiskGrade(borrower.getCreditScore());
 
         Loan loan = Loan.builder()
@@ -85,9 +94,9 @@ public class LoanService {
                 .build();
 
         loan = loanRepository.save(loan);
-        
+
         log.info("Loan created: {} by user: {}", loan.getLoanCode(), borrower.getEmail());
-        
+
         // Notify admins
         notificationService.notifyAdminsNewLoan(loan);
 
@@ -95,7 +104,7 @@ public class LoanService {
     }
 
     public PageResponse<LoanResponse> getMyLoans(Long borrowerId, LoanStatus status, Pageable pageable) {
-        Page<Loan> loans = status != null 
+        Page<Loan> loans = status != null
                 ? loanRepository.findByBorrowerIdAndStatus(borrowerId, status, pageable)
                 : loanRepository.findByBorrowerId(borrowerId, pageable);
 
@@ -117,12 +126,12 @@ public class LoanService {
     // Marketplace - for lenders
     public PageResponse<LoanResponse> getMarketplaceLoans(
             String search,
-            LoanPurpose purpose, List<String> riskGrades, 
+            LoanPurpose purpose, List<String> riskGrades,
             BigDecimal minRate, BigDecimal maxRate,
             BigDecimal minAmount, BigDecimal maxAmount,
             Integer minTerm, Integer maxTerm,
             Pageable pageable) {
-        
+
         Page<Loan> loans = loanRepository.findMarketplaceLoans(
                 search, purpose, riskGrades, minRate, maxRate, minAmount, maxAmount, minTerm, maxTerm, pageable);
 
@@ -151,13 +160,13 @@ public class LoanService {
             }
             loan.setStatus(LoanStatus.FUNDING);
             loan.setFundingDeadline(LocalDateTime.now().plusDays(FUNDING_DAYS));
-            
+
             log.info("Loan approved: {} by admin: {}", loan.getLoanCode(), admin.getEmail());
             notificationService.notifyLoanApproved(loan);
         } else {
             loan.setStatus(LoanStatus.REJECTED);
             loan.setRejectionReason(request.getRejectionReason());
-            
+
             log.info("Loan rejected: {} by admin: {}", loan.getLoanCode(), admin.getEmail());
             notificationService.notifyLoanRejected(loan);
         }
@@ -181,7 +190,7 @@ public class LoanService {
 
         loan.setStatus(LoanStatus.CANCELLED);
         loanRepository.save(loan);
-        
+
         log.info("Loan cancelled: {}", loan.getLoanCode());
     }
 
@@ -208,8 +217,7 @@ public class LoanService {
                 TransactionType.LOAN_DISBURSEMENT,
                 disbursementAmount,
                 platformFee,
-                "Loan disbursement: " + loan.getLoanCode()
-        );
+                "Loan disbursement: " + loan.getLoanCode());
 
         loan.setStatus(LoanStatus.ACTIVE);
         loan.setDisbursedAt(LocalDateTime.now());
@@ -233,7 +241,7 @@ public class LoanService {
         for (int i = 1; i <= months; i++) {
             BigDecimal interestAmount = remainingPrincipal.multiply(monthlyRate).setScale(2, RoundingMode.HALF_UP);
             BigDecimal principalAmount = emi.subtract(interestAmount).setScale(2, RoundingMode.HALF_UP);
-            
+
             // Adjust last payment
             if (i == months) {
                 principalAmount = remainingPrincipal;
@@ -264,32 +272,43 @@ public class LoanService {
 
         BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
         BigDecimal onePlusRPowN = onePlusR.pow(months);
-        
+
         return principal.multiply(monthlyRate).multiply(onePlusRPowN)
                 .divide(onePlusRPowN.subtract(BigDecimal.ONE), 2, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateInterestRate(Integer creditScore) {
-        if (creditScore == null || creditScore < 300) return new BigDecimal("24.00");
-        if (creditScore < 500) return new BigDecimal("22.00");
-        if (creditScore < 600) return new BigDecimal("20.00");
-        if (creditScore < 700) return new BigDecimal("18.00");
-        if (creditScore < 800) return new BigDecimal("15.00");
-        return new BigDecimal("12.00");
+        // Fallback method - now interest rate comes from request
+        // Adjusted to comply with Vietnamese law (max 20%/year)
+        if (creditScore == null || creditScore < 300)
+            return new BigDecimal("19.00");
+        if (creditScore < 500)
+            return new BigDecimal("18.00");
+        if (creditScore < 600)
+            return new BigDecimal("16.00");
+        if (creditScore < 700)
+            return new BigDecimal("14.00");
+        if (creditScore < 800)
+            return new BigDecimal("12.00");
+        return new BigDecimal("10.00");
     }
 
     private String calculateRiskGrade(Integer creditScore) {
-        if (creditScore == null || creditScore < 300) return "E";
-        if (creditScore < 500) return "D";
-        if (creditScore < 600) return "C";
-        if (creditScore < 700) return "B";
+        if (creditScore == null || creditScore < 300)
+            return "E";
+        if (creditScore < 500)
+            return "D";
+        if (creditScore < 600)
+            return "C";
+        if (creditScore < 700)
+            return "B";
         return "A";
     }
 
     // Public method for mapping loans (used by AdminController)
     public LoanResponse toLoanResponse(Loan loan) {
         int investorCount = investmentRepository.findByLoanId(loan.getId()).size();
-        
+
         RepaymentSchedule nextSchedule = scheduleRepository.findNextUnpaidByLoanId(loan.getId()).orElse(null);
 
         return LoanResponse.builder()
@@ -326,7 +345,8 @@ public class LoanService {
     }
 
     private String maskName(String name) {
-        if (name == null || name.length() < 2) return "***";
+        if (name == null || name.length() < 2)
+            return "***";
         return name.charAt(0) + "***" + name.charAt(name.length() - 1);
     }
 
@@ -395,7 +415,7 @@ public class LoanService {
 
         // Use findByLoanIdWithDetails to eager load loan and borrower
         List<Investment> investments = investmentRepository.findByLoanIdWithDetails(loanId);
-        
+
         return investments.stream()
                 .map(this::toInvestmentResponseForBorrower)
                 .toList();
@@ -450,4 +470,3 @@ public class LoanService {
                 .build();
     }
 }
-

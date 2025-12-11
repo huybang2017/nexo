@@ -1,9 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notificationService, NotificationFilters } from '@/services/notification.service';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  notificationService,
+  NotificationFilters,
+} from "@/services/notification.service";
 
 export const useNotifications = (filters?: NotificationFilters) => {
   return useQuery({
-    queryKey: ['notifications', filters],
+    queryKey: ["notifications", filters],
     queryFn: () => notificationService.getNotifications(filters),
     refetchInterval: 60000, // Refresh every minute
   });
@@ -11,7 +14,7 @@ export const useNotifications = (filters?: NotificationFilters) => {
 
 export const useUnreadCount = () => {
   return useQuery({
-    queryKey: ['unreadNotificationCount'],
+    queryKey: ["unreadNotificationCount"],
     queryFn: notificationService.getUnreadCount,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -23,8 +26,8 @@ export const useMarkAsRead = () => {
   return useMutation({
     mutationFn: (id: number) => notificationService.markAsRead(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['unreadNotificationCount'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["unreadNotificationCount"] });
     },
   });
 };
@@ -35,8 +38,8 @@ export const useMarkAllAsRead = () => {
   return useMutation({
     mutationFn: notificationService.markAllAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['unreadNotificationCount'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["unreadNotificationCount"] });
     },
   });
 };
@@ -47,9 +50,8 @@ export const useDeleteNotification = () => {
   return useMutation({
     mutationFn: (id: number) => notificationService.deleteNotification(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['unreadNotificationCount'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["unreadNotificationCount"] });
     },
   });
 };
-

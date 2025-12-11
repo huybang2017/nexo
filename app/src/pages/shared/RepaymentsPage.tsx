@@ -1,14 +1,27 @@
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { Calendar, AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import { Link } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { Calendar, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface RepaymentSchedule {
   id: number;
@@ -28,44 +41,52 @@ interface RepaymentSchedule {
 }
 
 const fetchUpcomingRepayments = async () => {
-  const response = await api.get('/repayments/upcoming');
+  const response = await api.get("/repayments/upcoming");
   return response.data.data;
 };
 
 const fetchOverdueRepayments = async () => {
-  const response = await api.get('/repayments/overdue');
+  const response = await api.get("/repayments/overdue");
   return response.data.data;
 };
 
 const fetchPaidRepayments = async () => {
-  const response = await api.get('/repayments/paid');
+  const response = await api.get("/repayments/paid");
   return response.data.data;
 };
 
 export default function RepaymentsPage() {
-  const { data: upcomingData, isLoading: isLoadingUpcoming } = useQuery<RepaymentSchedule[]>({
-    queryKey: ['upcomingRepayments'],
+  const { data: upcomingData, isLoading: isLoadingUpcoming } = useQuery<
+    RepaymentSchedule[]
+  >({
+    queryKey: ["upcomingRepayments"],
     queryFn: fetchUpcomingRepayments,
   });
 
-  const { data: overdueData, isLoading: isLoadingOverdue } = useQuery<RepaymentSchedule[]>({
-    queryKey: ['overdueRepayments'],
+  const { data: overdueData, isLoading: isLoadingOverdue } = useQuery<
+    RepaymentSchedule[]
+  >({
+    queryKey: ["overdueRepayments"],
     queryFn: fetchOverdueRepayments,
   });
 
-  const { data: paidData, isLoading: isLoadingPaid } = useQuery<RepaymentSchedule[]>({
-    queryKey: ['paidRepayments'],
+  const { data: paidData, isLoading: isLoadingPaid } = useQuery<
+    RepaymentSchedule[]
+  >({
+    queryKey: ["paidRepayments"],
     queryFn: fetchPaidRepayments,
   });
 
   const handlePay = async (scheduleId: number) => {
     try {
       await api.post(`/repayments/schedule/${scheduleId}/pay`);
-      toast.success('Repayment processed successfully!');
+      toast.success("Repayment processed successfully!");
       // Refetch all data
       window.location.reload();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to process repayment');
+      toast.error(
+        error.response?.data?.message || "Failed to process repayment"
+      );
     }
   };
 
@@ -74,8 +95,14 @@ export default function RepaymentsPage() {
   const paid = paidData || [];
   const isLoading = isLoadingUpcoming || isLoadingOverdue || isLoadingPaid;
 
-  const totalUpcoming = upcoming.reduce((sum, s) => sum + s.totalAmount + (s.lateFee || 0), 0);
-  const totalOverdue = overdue.reduce((sum, s) => sum + s.totalAmount + (s.lateFee || 0), 0);
+  const totalUpcoming = upcoming.reduce(
+    (sum, s) => sum + s.totalAmount + (s.lateFee || 0),
+    0
+  );
+  const totalOverdue = overdue.reduce(
+    (sum, s) => sum + s.totalAmount + (s.lateFee || 0),
+    0
+  );
   const totalPaid = paid.reduce((sum, s) => sum + (s.paidAmount || 0), 0);
 
   return (
@@ -94,8 +121,12 @@ export default function RepaymentsPage() {
               <Clock className="h-4 w-4" />
               <span className="text-sm">Upcoming</span>
             </div>
-            <div className="text-2xl font-bold">{formatCurrency(totalUpcoming)}</div>
-            <div className="text-xs text-muted-foreground mt-1">{upcoming.length} installments</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(totalUpcoming)}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {upcoming.length} installments
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -104,8 +135,12 @@ export default function RepaymentsPage() {
               <AlertCircle className="h-4 w-4 text-destructive" />
               <span className="text-sm">Overdue</span>
             </div>
-            <div className="text-2xl font-bold text-destructive">{formatCurrency(totalOverdue)}</div>
-            <div className="text-xs text-muted-foreground mt-1">{overdue.length} installments</div>
+            <div className="text-2xl font-bold text-destructive">
+              {formatCurrency(totalOverdue)}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {overdue.length} installments
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -114,8 +149,12 @@ export default function RepaymentsPage() {
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span className="text-sm">Paid</span>
             </div>
-            <div className="text-2xl font-bold text-green-500">{formatCurrency(totalPaid)}</div>
-            <div className="text-xs text-muted-foreground mt-1">{paid.length} installments</div>
+            <div className="text-2xl font-bold text-green-500">
+              {formatCurrency(totalPaid)}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {paid.length} installments
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -126,23 +165,23 @@ export default function RepaymentsPage() {
           <TabsTrigger value="upcoming">
             Upcoming ({upcoming.length})
           </TabsTrigger>
-          <TabsTrigger value="overdue">
-            Overdue ({overdue.length})
-          </TabsTrigger>
-          <TabsTrigger value="paid">
-            Paid ({paid.length})
-          </TabsTrigger>
+          <TabsTrigger value="overdue">Overdue ({overdue.length})</TabsTrigger>
+          <TabsTrigger value="paid">Paid ({paid.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="upcoming">
           <Card>
             <CardHeader>
               <CardTitle>Upcoming Repayments</CardTitle>
-              <CardDescription>Repayments due in the next 30 days</CardDescription>
+              <CardDescription>
+                Repayments due in the next 30 days
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8 text-muted-foreground">Loading...</div>
+                <div className="text-center py-8 text-muted-foreground">
+                  Loading...
+                </div>
               ) : upcoming.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No upcoming repayments
@@ -172,9 +211,11 @@ export default function RepaymentsPage() {
                                   to={`/dashboard/loans/${schedule.loanId}`}
                                   className="font-medium hover:underline"
                                 >
-                                  {schedule.loanCode || 'N/A'}
+                                  {schedule.loanCode || "N/A"}
                                 </Link>
-                                <div className="text-xs text-muted-foreground">{schedule.loanTitle || ''}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {schedule.loanTitle || ""}
+                                </div>
                               </>
                             ) : (
                               <span className="text-muted-foreground">N/A</span>
@@ -188,20 +229,31 @@ export default function RepaymentsPage() {
                             {formatDate(schedule.dueDate)}
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.principalAmount)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.interestAmount)}</TableCell>
                         <TableCell className="text-right">
-                          <div className="font-medium">{formatCurrency(schedule.totalAmount)}</div>
+                          {formatCurrency(schedule.principalAmount)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(schedule.interestAmount)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="font-medium">
+                            {formatCurrency(schedule.totalAmount)}
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           {schedule.lateFee && schedule.lateFee > 0 ? (
-                            <span className="text-destructive font-medium">{formatCurrency(schedule.lateFee)}</span>
+                            <span className="text-destructive font-medium">
+                              {formatCurrency(schedule.lateFee)}
+                            </span>
                           ) : (
                             <span className="text-muted-foreground">-</span>
                           )}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Button size="sm" onClick={() => handlePay(schedule.id)}>
+                          <Button
+                            size="sm"
+                            onClick={() => handlePay(schedule.id)}
+                          >
                             Pay Now
                           </Button>
                         </TableCell>
@@ -222,7 +274,9 @@ export default function RepaymentsPage() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8 text-muted-foreground">Loading...</div>
+                <div className="text-center py-8 text-muted-foreground">
+                  Loading...
+                </div>
               ) : overdue.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No overdue repayments
@@ -252,9 +306,11 @@ export default function RepaymentsPage() {
                                   to={`/dashboard/loans/${schedule.loanId}`}
                                   className="font-medium hover:underline"
                                 >
-                                  {schedule.loanCode || 'N/A'}
+                                  {schedule.loanCode || "N/A"}
                                 </Link>
-                                <div className="text-xs text-muted-foreground">{schedule.loanTitle || ''}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {schedule.loanTitle || ""}
+                                </div>
                               </>
                             ) : (
                               <span className="text-muted-foreground">N/A</span>
@@ -265,19 +321,31 @@ export default function RepaymentsPage() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-destructive" />
-                            <span className="text-destructive">{formatDate(schedule.dueDate)}</span>
+                            <span className="text-destructive">
+                              {formatDate(schedule.dueDate)}
+                            </span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.principalAmount)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.interestAmount)}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(schedule.principalAmount)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(schedule.interestAmount)}
+                        </TableCell>
                         <TableCell className="text-right font-medium text-destructive">
                           {formatCurrency(schedule.totalAmount)}
                         </TableCell>
                         <TableCell className="text-right text-destructive">
-                          {schedule.lateFee && schedule.lateFee > 0 ? formatCurrency(schedule.lateFee) : '-'}
+                          {schedule.lateFee && schedule.lateFee > 0
+                            ? formatCurrency(schedule.lateFee)
+                            : "-"}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Button size="sm" variant="destructive" onClick={() => handlePay(schedule.id)}>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handlePay(schedule.id)}
+                          >
                             Pay Now
                           </Button>
                         </TableCell>
@@ -298,7 +366,9 @@ export default function RepaymentsPage() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8 text-muted-foreground">Loading...</div>
+                <div className="text-center py-8 text-muted-foreground">
+                  Loading...
+                </div>
               ) : paid.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   No repayment history
@@ -326,9 +396,11 @@ export default function RepaymentsPage() {
                                   to={`/dashboard/loans/${schedule.loanId}`}
                                   className="font-medium hover:underline"
                                 >
-                                  {schedule.loanCode || 'N/A'}
+                                  {schedule.loanCode || "N/A"}
                                 </Link>
-                                <div className="text-xs text-muted-foreground">{schedule.loanTitle || ''}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {schedule.loanTitle || ""}
+                                </div>
                               </>
                             ) : (
                               <span className="text-muted-foreground">N/A</span>
@@ -336,13 +408,19 @@ export default function RepaymentsPage() {
                           </div>
                         </TableCell>
                         <TableCell>#{schedule.installmentNumber}</TableCell>
-                        <TableCell>{schedule.paidAt ? formatDate(schedule.paidAt) : '-'}</TableCell>
+                        <TableCell>
+                          {schedule.paidAt ? formatDate(schedule.paidAt) : "-"}
+                        </TableCell>
                         <TableCell className="text-right">
-                          <div className="font-medium">{formatCurrency(schedule.paidAmount || 0)}</div>
+                          <div className="font-medium">
+                            {formatCurrency(schedule.paidAmount || 0)}
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           {schedule.lateFee && schedule.lateFee > 0 ? (
-                            <span className="text-muted-foreground">{formatCurrency(schedule.lateFee)}</span>
+                            <span className="text-muted-foreground">
+                              {formatCurrency(schedule.lateFee)}
+                            </span>
                           ) : (
                             <span className="text-muted-foreground">-</span>
                           )}
@@ -365,4 +443,3 @@ export default function RepaymentsPage() {
     </div>
   );
 }
-

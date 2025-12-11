@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { authService } from '@/services/auth.service';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { authService } from "@/services/auth.service";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -17,12 +16,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { toast } from 'sonner';
+} from "@/components/ui/card";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -45,18 +44,18 @@ export const LoginPage = () => {
     setIsLoading(true);
     try {
       const response = await login(data);
-      toast.success('Login successful!');
+      toast.success("Login successful!");
 
       // Navigate based on role
-      if (response.user.role === 'ADMIN') {
-        navigate('/admin');
+      if (response.user.role === "ADMIN") {
+        navigate("/admin");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error: any) {
       // Extract error message from different error formats
-      let errorMessage = 'Login failed. Please check your credentials.';
-      
+      let errorMessage = "Login failed. Please check your credentials.";
+
       // Try to get message from ApiResponse structure
       if (error?.response?.data?.message) {
         errorMessage = error.response.data.message;
@@ -64,12 +63,12 @@ export const LoginPage = () => {
         errorMessage = error.response.data.data.message;
       } else if (error?.message) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
       }
-      
+
       toast.error(errorMessage);
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +81,9 @@ export const LoginPage = () => {
   return (
     <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-white">Welcome back</CardTitle>
+        <CardTitle className="text-2xl font-bold text-white">
+          Welcome back
+        </CardTitle>
         <CardDescription className="text-slate-400">
           Sign in to your account to continue
         </CardDescription>
@@ -93,7 +94,7 @@ export const LoginPage = () => {
         <Button
           type="button"
           variant="outline"
-          className="w-full bg-white hover:bg-gray-100 text-slate-900 border-0 h-12"
+          className="w-full bg-white hover:bg-gray-100 text-white border-0 h-12"
           onClick={handleGoogleLogin}
         >
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -122,15 +123,17 @@ export const LoginPage = () => {
             <span className="w-full border-t border-slate-700" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-slate-900 px-2 text-slate-400">Or continue with</span>
+            <span className="bg-slate-900 px-2 text-slate-400">
+              Or continue with
+            </span>
           </div>
         </div>
 
-        <form 
+        <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(onSubmit)(e);
-          }} 
+          }}
           className="space-y-4"
         >
           <div className="space-y-2">
@@ -143,7 +146,7 @@ export const LoginPage = () => {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                {...register('email')}
+                {...register("email")}
                 className="pl-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 h-12"
               />
             </div>
@@ -168,9 +171,9 @@ export const LoginPage = () => {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                {...register('password')}
+                {...register("password")}
                 className="pl-10 pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 h-12"
               />
               <button
@@ -178,7 +181,11 @@ export const LoginPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.password && (
@@ -197,7 +204,7 @@ export const LoginPage = () => {
                 Signing in...
               </>
             ) : (
-              'Sign In'
+              "Sign In"
             )}
           </Button>
         </form>
@@ -205,8 +212,11 @@ export const LoginPage = () => {
 
       <CardFooter>
         <p className="text-center w-full text-slate-400">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-emerald-400 hover:text-emerald-300 font-medium">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-emerald-400 hover:text-emerald-300 font-medium"
+          >
             Sign up
           </Link>
         </p>
@@ -216,4 +226,3 @@ export const LoginPage = () => {
 };
 
 export default LoginPage;
-

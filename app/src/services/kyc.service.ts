@@ -1,4 +1,4 @@
-import api from '@/lib/api';
+import api from "@/lib/api";
 
 export interface KycSubmitRequest {
   idCardNumber: string;
@@ -25,7 +25,7 @@ export interface KycSubmitRequest {
 export interface KycProfileResponse {
   id: number;
   userId: number;
-  status: 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: "NOT_SUBMITTED" | "PENDING" | "APPROVED" | "REJECTED";
   personalInfo: any;
   idCardInfo: any;
   addressInfo: any;
@@ -54,26 +54,28 @@ export interface KycDocumentResponse {
 
 export const kycService = {
   async getMyKyc(): Promise<KycProfileResponse> {
-    const response = await api.get('/kyc/me');
+    const response = await api.get("/kyc/me");
     return response.data.data;
   },
 
   async submitKyc(data: KycSubmitRequest): Promise<KycProfileResponse> {
-    const response = await api.post('/kyc/submit', data);
+    const response = await api.post("/kyc/submit", data);
     return response.data.data;
   },
 
-  async uploadDocument(file: File, documentType: 'ID_CARD_FRONT' | 'ID_CARD_BACK' | 'SELFIE'): Promise<KycDocumentResponse> {
+  async uploadDocument(
+    file: File,
+    documentType: "ID_CARD_FRONT" | "ID_CARD_BACK" | "SELFIE"
+  ): Promise<KycDocumentResponse> {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('documentType', documentType);
+    formData.append("file", file);
+    formData.append("documentType", documentType);
 
-    const response = await api.post('/kyc/documents', formData, {
+    const response = await api.post("/kyc/documents", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data.data;
   },
 };
-

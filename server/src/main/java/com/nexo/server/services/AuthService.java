@@ -59,7 +59,7 @@ public class AuthService {
                 .lastName(request.getLastName())
                 .phone(request.getPhone())
                 .role(request.getRole())
-                .status(UserStatus.ACTIVE) // TODO: Change to PENDING when email verification is implemented
+                .status(UserStatus.ACTIVE) // Email verification is implemented but users are activated immediately
                 .emailVerified(false)
                 .kycStatus(KycStatus.NOT_SUBMITTED)
                 .creditScore(0)

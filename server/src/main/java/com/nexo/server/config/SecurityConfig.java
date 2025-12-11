@@ -1,5 +1,7 @@
 package com.nexo.server.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nexo.server.dto.common.ApiResponse;
 import com.nexo.server.security.JwtAuthenticationEntryPoint;
 import com.nexo.server.security.JwtAuthenticationFilter;
 import com.nexo.server.security.oauth2.CustomOAuth2UserService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,6 +31,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,6 +47,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2FailureHandler;
+    private final ObjectMapper objectMapper;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
@@ -53,9 +58,27 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> 
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)  // Allow session for OAuth2 flow
+                    .sessionFixation().migrateSession())
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    // Skip JSON error for OAuth2 and error pages
+                    String requestPath = request.getRequestURI();
+                    if (requestPath != null && (
+                        requestPath.startsWith("/oauth2/") || 
+                        requestPath.startsWith("/api/oauth2/") ||
+                        requestPath.startsWith("/error")
+                    )) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        return;
+                    }
+                    
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    ApiResponse<Void> apiResponse = ApiResponse.error("Access Denied: " + accessDeniedException.getMessage());
+                    objectMapper.writeValue(response.getOutputStream(), apiResponse);
+                }))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
@@ -66,6 +89,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/payment/mock/**").permitAll()
                 .requestMatchers("/api/files/**").permitAll()  // Allow file access (files are protected by UUID paths)
                 .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/api/oauth2/**").permitAll()  // Allow OAuth2 with /api prefix
+                .requestMatchers("/error", "/error/**").permitAll()  // Allow error pages
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 
@@ -86,9 +111,9 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(auth -> auth
-                    .baseUri("/oauth2/authorization"))
+                    .baseUri("/api/oauth2/authorization"))
                 .redirectionEndpoint(redirect -> redirect
-                    .baseUri("/oauth2/callback/*"))
+                    .baseUri("/oauth2/callback/*"))  // Keep original callback URL to match application.yml
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService))
                 .successHandler(oAuth2SuccessHandler)

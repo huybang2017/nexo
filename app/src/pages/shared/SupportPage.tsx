@@ -1,15 +1,21 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { formatDate } from '@/lib/utils';
-import { Plus, Search, MessageSquare } from 'lucide-react';
-import { PageResponse } from '@/types';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { formatDate } from "@/lib/utils";
+import { Plus, Search, MessageSquare } from "lucide-react";
+import { PageResponse } from "@/types";
 
 interface Ticket {
   id: number;
@@ -24,39 +30,52 @@ interface Ticket {
 }
 
 const fetchMyTickets = async (status?: string) => {
-  const params = status && status !== 'all' ? `?status=${status}` : '';
+  const params = status && status !== "all" ? `?status=${status}` : "";
   const response = await api.get(`/tickets/my${params}`);
   return response.data.data;
 };
 
 export default function SupportPage() {
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data, isLoading } = useQuery<PageResponse<Ticket>>({
-    queryKey: ['myTickets', statusFilter],
+    queryKey: ["myTickets", statusFilter],
     queryFn: () => fetchMyTickets(statusFilter),
   });
 
   const tickets = data?.content || [];
 
-  const filteredTickets = tickets.filter((ticket: Ticket) =>
-    ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.ticketCode.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTickets = tickets.filter(
+    (ticket: Ticket) =>
+      ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.ticketCode.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-    OPEN: { label: 'Open', variant: 'default' },
-    IN_PROGRESS: { label: 'In Progress', variant: 'secondary' },
-    RESOLVED: { label: 'Resolved', variant: 'outline' },
-    CLOSED: { label: 'Closed', variant: 'outline' },
+  const statusConfig: Record<
+    string,
+    {
+      label: string;
+      variant: "default" | "secondary" | "destructive" | "outline";
+    }
+  > = {
+    OPEN: { label: "Open", variant: "default" },
+    IN_PROGRESS: { label: "In Progress", variant: "secondary" },
+    RESOLVED: { label: "Resolved", variant: "outline" },
+    CLOSED: { label: "Closed", variant: "outline" },
   };
 
-  const priorityConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-    LOW: { label: 'Low', variant: 'outline' },
-    MEDIUM: { label: 'Medium', variant: 'secondary' },
-    HIGH: { label: 'High', variant: 'destructive' },
-    URGENT: { label: 'Urgent', variant: 'destructive' },
+  const priorityConfig: Record<
+    string,
+    {
+      label: string;
+      variant: "default" | "secondary" | "destructive" | "outline";
+    }
+  > = {
+    LOW: { label: "Low", variant: "outline" },
+    MEDIUM: { label: "Medium", variant: "secondary" },
+    HIGH: { label: "High", variant: "destructive" },
+    URGENT: { label: "Urgent", variant: "destructive" },
   };
 
   return (
@@ -115,11 +134,11 @@ export default function SupportPage() {
             <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">No tickets found</h3>
             <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== 'all'
-                ? 'Try adjusting your filters'
-                : 'Create your first support ticket to get started'}
+              {searchTerm || statusFilter !== "all"
+                ? "Try adjusting your filters"
+                : "Create your first support ticket to get started"}
             </p>
-            {!searchTerm && statusFilter === 'all' && (
+            {!searchTerm && statusFilter === "all" && (
               <Button asChild>
                 <Link to="/dashboard/support/new">Create Ticket</Link>
               </Button>
@@ -130,7 +149,8 @@ export default function SupportPage() {
         <div className="grid gap-4">
           {filteredTickets.map((ticket: Ticket) => {
             const status = statusConfig[ticket.status] || statusConfig.OPEN;
-            const priority = priorityConfig[ticket.priority] || priorityConfig.MEDIUM;
+            const priority =
+              priorityConfig[ticket.priority] || priorityConfig.MEDIUM;
 
             return (
               <Card key={ticket.id} className="card-hover">
@@ -139,10 +159,16 @@ export default function SupportPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
                         <Badge variant={status.variant}>{status.label}</Badge>
-                        <Badge variant={priority.variant}>{priority.label}</Badge>
-                        <span className="text-sm text-muted-foreground">{ticket.ticketCode}</span>
+                        <Badge variant={priority.variant}>
+                          {priority.label}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {ticket.ticketCode}
+                        </span>
                       </div>
-                      <h3 className="font-semibold truncate mb-1">{ticket.subject}</h3>
+                      <h3 className="font-semibold truncate mb-1">
+                        {ticket.subject}
+                      </h3>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         <span>Category: {ticket.category}</span>
                         <span>Created: {formatDate(ticket.createdAt)}</span>
@@ -152,7 +178,9 @@ export default function SupportPage() {
                       </div>
                     </div>
                     <Button variant="outline" asChild>
-                      <Link to={`/dashboard/support/${ticket.id}`}>View Details</Link>
+                      <Link to={`/dashboard/support/${ticket.id}`}>
+                        View Details
+                      </Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -164,4 +192,3 @@ export default function SupportPage() {
     </div>
   );
 }
-

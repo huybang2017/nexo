@@ -1,47 +1,59 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
 
 const contactInfo = [
   {
     icon: Mail,
-    title: 'Email',
-    content: 'support@nexo.vn',
-    description: 'We respond within 24 hours',
+    title: "Email",
+    content: "support@nexo.vn",
+    description: "We respond within 24 hours",
   },
   {
     icon: Phone,
-    title: 'Phone',
-    content: '1900 xxxx xxx',
-    description: 'Mon-Fri 8am-6pm',
+    title: "Phone",
+    content: "1900 xxxx xxx",
+    description: "Mon-Fri 8am-6pm",
   },
   {
     icon: MapPin,
-    title: 'Address',
-    content: '123 Nguyen Hue, District 1',
-    description: 'Ho Chi Minh City, Vietnam',
+    title: "Address",
+    content: "123 Nguyen Hue, District 1",
+    description: "Ho Chi Minh City, Vietnam",
   },
   {
     icon: Clock,
-    title: 'Working Hours',
-    content: 'Mon - Fri: 8:00 - 18:00',
-    description: 'Sat: 8:00 - 12:00',
+    title: "Working Hours",
+    content: "Mon - Fri: 8:00 - 18:00",
+    description: "Sat: 8:00 - 12:00",
   },
 ];
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    category: '',
-    message: '',
+    name: "",
+    email: "",
+    subject: "",
+    category: "",
+    message: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,9 +75,12 @@ export default function ContactPage() {
               </div>
               <h2 className="text-2xl font-bold mb-2">Message Sent!</h2>
               <p className="text-muted-foreground mb-6">
-                Thank you for contacting us. We'll get back to you within 24 hours.
+                Thank you for contacting us. We'll get back to you within 24
+                hours.
               </p>
-              <Button onClick={() => setSubmitted(false)}>Send Another Message</Button>
+              <Button onClick={() => setSubmitted(false)}>
+                Send Another Message
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -94,7 +109,9 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-semibold mb-1">{info.title}</h3>
                 <p className="text-primary">{info.content}</p>
-                <p className="text-sm text-muted-foreground">{info.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {info.description}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -106,7 +123,8 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
               <CardDescription>
-                Fill out the form below and we'll get back to you as soon as possible.
+                Fill out the form below and we'll get back to you as soon as
+                possible.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -118,7 +136,9 @@ export default function ContactPage() {
                       id="name"
                       placeholder="John Doe"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -129,7 +149,9 @@ export default function ContactPage() {
                       type="email"
                       placeholder="john@example.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -140,16 +162,22 @@ export default function ContactPage() {
                     <Label htmlFor="category">Category</Label>
                     <Select
                       value={formData.category}
-                      onValueChange={(value) => setFormData({ ...formData, category: value })}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, category: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="general">General Inquiry</SelectItem>
-                        <SelectItem value="borrower">Borrower Support</SelectItem>
+                        <SelectItem value="borrower">
+                          Borrower Support
+                        </SelectItem>
                         <SelectItem value="lender">Lender Support</SelectItem>
-                        <SelectItem value="technical">Technical Issue</SelectItem>
+                        <SelectItem value="technical">
+                          Technical Issue
+                        </SelectItem>
                         <SelectItem value="partnership">Partnership</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
@@ -161,7 +189,9 @@ export default function ContactPage() {
                       id="subject"
                       placeholder="How can we help?"
                       value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, subject: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -174,7 +204,9 @@ export default function ContactPage() {
                     placeholder="Tell us more about your inquiry..."
                     rows={6}
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -211,8 +243,8 @@ export default function ContactPage() {
               <CardContent className="py-6">
                 <h3 className="font-semibold mb-2">Need Urgent Help?</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  For urgent matters, please call our hotline directly. 
-                  Our team is available during business hours.
+                  For urgent matters, please call our hotline directly. Our team
+                  is available during business hours.
                 </p>
                 <Button variant="outline" asChild>
                   <a href="tel:1900xxxxxx">
@@ -228,5 +260,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-

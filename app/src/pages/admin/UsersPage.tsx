@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Search,
   Filter,
@@ -11,28 +11,34 @@ import {
   Ban,
   CheckCircle,
   Mail,
-} from 'lucide-react';
-import { useAdminUsers, UserFilters, useBanUser, useUnbanUser, useUpdateUserStatus } from '@/hooks/useAdmin';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from "lucide-react";
+import {
+  useAdminUsers,
+  UserFilters,
+  useBanUser,
+  useUnbanUser,
+  useUpdateUserStatus,
+} from "@/hooks/useAdmin";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -40,9 +46,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { cn, formatDate, getInitials } from '@/lib/utils';
-import type { User, UserRole, UserStatus } from '@/types';
+} from "@/components/ui/table";
+import { cn, formatDate, getInitials } from "@/lib/utils";
+import type { User, UserRole, UserStatus } from "@/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -58,16 +64,16 @@ const item = {
 };
 
 const statusColors: Record<UserStatus, string> = {
-  PENDING: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-  ACTIVE: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-  SUSPENDED: 'bg-red-500/10 text-red-400 border-red-500/30',
-  BANNED: 'bg-red-500/10 text-red-400 border-red-500/30',
+  PENDING: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  ACTIVE: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  SUSPENDED: "bg-red-500/10 text-red-400 border-red-500/30",
+  BANNED: "bg-red-500/10 text-red-400 border-red-500/30",
 };
 
 const roleColors: Record<UserRole, string> = {
-  ADMIN: 'bg-violet-500/10 text-violet-400',
-  BORROWER: 'bg-blue-500/10 text-blue-400',
-  LENDER: 'bg-emerald-500/10 text-emerald-400',
+  ADMIN: "bg-violet-500/10 text-violet-400",
+  BORROWER: "bg-blue-500/10 text-blue-400",
+  LENDER: "bg-emerald-500/10 text-emerald-400",
 };
 
 export const UsersPage = () => {
@@ -75,20 +81,28 @@ export const UsersPage = () => {
     page: 0,
     size: 20,
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: users, isLoading } = useAdminUsers(filters);
 
   // Auto-search with debounce
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setFilters((prev) => ({ ...prev, search: searchQuery || undefined, page: 0 }));
+      setFilters((prev) => ({
+        ...prev,
+        search: searchQuery || undefined,
+        page: 0,
+      }));
     }, 500);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const handleSearch = () => {
-    setFilters((prev) => ({ ...prev, search: searchQuery || undefined, page: 0 }));
+    setFilters((prev) => ({
+      ...prev,
+      search: searchQuery || undefined,
+      page: 0,
+    }));
   };
 
   return (
@@ -99,9 +113,14 @@ export const UsersPage = () => {
       className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={item} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <motion.div
+        variants={item}
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Users Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            Users Management
+          </h1>
           <p className="text-slate-400 mt-1">Manage all platform users</p>
         </div>
       </motion.div>
@@ -117,13 +136,19 @@ export const UsersPage = () => {
                   placeholder="Search by name or email..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   className="pl-9 bg-slate-800 border-slate-700 text-white"
                 />
               </div>
               <Select
-                value={filters.role || 'ALL'}
-                onValueChange={(v) => setFilters((prev) => ({ ...prev, role: v === 'ALL' ? undefined : v as UserRole, page: 0 }))}
+                value={filters.role || "ALL"}
+                onValueChange={(v) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    role: v === "ALL" ? undefined : (v as UserRole),
+                    page: 0,
+                  }))
+                }
               >
                 <SelectTrigger className="w-40 bg-slate-800 border-slate-700">
                   <SelectValue placeholder="Role" />
@@ -136,8 +161,14 @@ export const UsersPage = () => {
                 </SelectContent>
               </Select>
               <Select
-                value={filters.status || 'ALL'}
-                onValueChange={(v) => setFilters((prev) => ({ ...prev, status: v === 'ALL' ? undefined : v as UserStatus, page: 0 }))}
+                value={filters.status || "ALL"}
+                onValueChange={(v) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    status: v === "ALL" ? undefined : (v as UserStatus),
+                    page: 0,
+                  }))
+                }
               >
                 <SelectTrigger className="w-40 bg-slate-800 border-slate-700">
                   <SelectValue placeholder="Status" />
@@ -150,7 +181,10 @@ export const UsersPage = () => {
                   <SelectItem value="BANNED">Banned</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleSearch} className="bg-violet-500 hover:bg-violet-600">
+              <Button
+                onClick={handleSearch}
+                className="bg-violet-500 hover:bg-violet-600"
+              >
                 <Filter className="w-4 h-4 mr-2" />
                 Apply
               </Button>
@@ -189,7 +223,9 @@ export const UsersPage = () => {
                     <TableHead className="text-slate-400">Status</TableHead>
                     <TableHead className="text-slate-400">KYC</TableHead>
                     <TableHead className="text-slate-400">Joined</TableHead>
-                    <TableHead className="text-slate-400 text-right">Actions</TableHead>
+                    <TableHead className="text-slate-400 text-right">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -207,7 +243,12 @@ export const UsersPage = () => {
                   variant="outline"
                   size="sm"
                   disabled={users.first}
-                  onClick={() => setFilters((prev) => ({ ...prev, page: (prev.page || 0) - 1 }))}
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      page: (prev.page || 0) - 1,
+                    }))
+                  }
                   className="border-slate-700"
                 >
                   Previous
@@ -219,7 +260,12 @@ export const UsersPage = () => {
                   variant="outline"
                   size="sm"
                   disabled={users.last}
-                  onClick={() => setFilters((prev) => ({ ...prev, page: (prev.page || 0) + 1 }))}
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      page: (prev.page || 0) + 1,
+                    }))
+                  }
                   className="border-slate-700"
                 >
                   Next
@@ -255,22 +301,24 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
         </div>
       </TableCell>
       <TableCell>
-        <Badge className={roleColors[user.role]}>
-          {user.role}
-        </Badge>
+        <Badge className={roleColors[user.role]}>{user.role}</Badge>
       </TableCell>
       <TableCell>
-        <Badge className={cn('border', statusColors[user.status])}>
+        <Badge className={cn("border", statusColors[user.status])}>
           {user.status}
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge className={cn(
-          'border',
-          user.kycStatus === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
-          user.kycStatus === 'PENDING' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
-          'bg-slate-500/10 text-slate-400 border-slate-500/30'
-        )}>
+        <Badge
+          className={cn(
+            "border",
+            user.kycStatus === "APPROVED"
+              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+              : user.kycStatus === "PENDING"
+              ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+              : "bg-slate-500/10 text-slate-400 border-slate-500/30"
+          )}
+        >
           {user.kycStatus}
         </Badge>
       </TableCell>
@@ -284,7 +332,10 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
               <MoreVertical className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+          <DropdownMenuContent
+            align="end"
+            className="bg-slate-800 border-slate-700"
+          >
             <DropdownMenuItem asChild className="cursor-pointer">
               <Link to={`/admin/users/${user.id}`}>
                 <Eye className="w-4 h-4 mr-2" />
@@ -296,24 +347,28 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
               Send Email
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-slate-700" />
-            {user.status === 'ACTIVE' ? (
+            {user.status === "ACTIVE" ? (
               <DropdownMenuItem
                 className="cursor-pointer text-amber-400 focus:text-amber-400"
-                onClick={() => updateStatus.mutate({ id: user.id, status: 'SUSPENDED' })}
+                onClick={() =>
+                  updateStatus.mutate({ id: user.id, status: "SUSPENDED" })
+                }
               >
                 <Ban className="w-4 h-4 mr-2" />
                 Suspend User
               </DropdownMenuItem>
-            ) : user.status === 'SUSPENDED' ? (
+            ) : user.status === "SUSPENDED" ? (
               <DropdownMenuItem
                 className="cursor-pointer text-emerald-400 focus:text-emerald-400"
-                onClick={() => updateStatus.mutate({ id: user.id, status: 'ACTIVE' })}
+                onClick={() =>
+                  updateStatus.mutate({ id: user.id, status: "ACTIVE" })
+                }
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
                 Activate User
               </DropdownMenuItem>
             ) : null}
-            {user.status === 'BANNED' && (
+            {user.status === "BANNED" && (
               <DropdownMenuItem
                 className="cursor-pointer text-emerald-400 focus:text-emerald-400"
                 onClick={() => unbanUser.mutate(user.id)}
@@ -322,10 +377,12 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
                 Unban User
               </DropdownMenuItem>
             )}
-            {user.status !== 'BANNED' && user.role !== 'ADMIN' && (
+            {user.status !== "BANNED" && user.role !== "ADMIN" && (
               <DropdownMenuItem
                 className="cursor-pointer text-red-400 focus:text-red-400"
-                onClick={() => banUser.mutate({ id: user.id, reason: 'Violation of terms' })}
+                onClick={() =>
+                  banUser.mutate({ id: user.id, reason: "Violation of terms" })
+                }
               >
                 <Ban className="w-4 h-4 mr-2" />
                 Ban User
@@ -339,4 +396,3 @@ const UserRow: React.FC<{ user: User }> = ({ user }) => {
 };
 
 export default UsersPage;
-

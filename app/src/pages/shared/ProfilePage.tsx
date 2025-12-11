@@ -1,42 +1,48 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AuthContext';
-import { useChangePassword } from '@/hooks/useAuth';
-import { formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
-import { 
-  User, 
-  Mail, 
-  Calendar, 
-  Shield, 
-  Bell, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { useChangePassword } from "@/hooks/useAuth";
+import { formatDate } from "@/lib/utils";
+import { toast } from "sonner";
+import {
+  User,
+  Mail,
+  Calendar,
+  Shield,
+  Bell,
   Lock,
   CheckCircle,
   AlertCircle,
-  Camera
-} from 'lucide-react';
+  Camera,
+} from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const changePassword = useChangePassword();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    phone: user?.phone || '',
-    dateOfBirth: user?.dateOfBirth || '',
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    phone: user?.phone || "",
+    dateOfBirth: user?.dateOfBirth || "",
   });
 
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const handleSaveProfile = () => {
@@ -46,10 +52,10 @@ export default function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error('New password and confirm password do not match');
+      toast.error("New password and confirm password do not match");
       return;
     }
-    
+
     try {
       await changePassword.mutateAsync({
         currentPassword: passwordData.currentPassword,
@@ -57,9 +63,9 @@ export default function ProfilePage() {
         confirmPassword: passwordData.confirmPassword,
       });
       setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     } catch (error: any) {
       // Error handled by mutation
@@ -89,7 +95,8 @@ export default function ProfilePage() {
                   <Avatar className="h-24 w-24">
                     <AvatarImage src={user?.avatarUrl} />
                     <AvatarFallback className="text-2xl">
-                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                      {user?.firstName?.[0]}
+                      {user?.lastName?.[0]}
                     </AvatarFallback>
                   </Avatar>
                   <Button
@@ -110,14 +117,21 @@ export default function ProfilePage() {
                         <CheckCircle className="h-3 w-3" /> Verified
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="gap-1 text-yellow-500">
+                      <Badge
+                        variant="outline"
+                        className="gap-1 text-yellow-500"
+                      >
                         <AlertCircle className="h-3 w-3" /> Unverified
                       </Badge>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge>{user?.role}</Badge>
-                    <Badge variant={user?.kycStatus === 'APPROVED' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        user?.kycStatus === "APPROVED" ? "default" : "secondary"
+                      }
+                    >
                       KYC: {user?.kycStatus}
                     </Badge>
                   </div>
@@ -132,7 +146,9 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Update your personal details</CardDescription>
+                  <CardDescription>
+                    Update your personal details
+                  </CardDescription>
                 </div>
                 {!isEditing && (
                   <Button variant="outline" onClick={() => setIsEditing(true)}>
@@ -147,7 +163,9 @@ export default function ProfilePage() {
                   <Label>First Name</Label>
                   <Input
                     value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, firstName: e.target.value })
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -155,7 +173,9 @@ export default function ProfilePage() {
                   <Label>Last Name</Label>
                   <Input
                     value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, lastName: e.target.value })
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -166,7 +186,9 @@ export default function ProfilePage() {
                   <Label>Phone Number</Label>
                   <Input
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                     disabled={!isEditing}
                     placeholder="+84 xxx xxx xxx"
                   />
@@ -176,7 +198,9 @@ export default function ProfilePage() {
                   <Input
                     type="date"
                     value={formData.dateOfBirth}
-                    onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, dateOfBirth: e.target.value })
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -187,9 +211,7 @@ export default function ProfilePage() {
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={handleSaveProfile}>
-                    Save Changes
-                  </Button>
+                  <Button onClick={handleSaveProfile}>Save Changes</Button>
                 </div>
               )}
             </CardContent>
@@ -206,28 +228,44 @@ export default function ProfilePage() {
                   <User className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm text-muted-foreground">User ID</div>
-                    <div className="font-mono text-sm">{user?.uuid?.slice(0, 8)}...</div>
+                    <div className="font-mono text-sm">
+                      {user?.uuid?.slice(0, 8)}...
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   <Shield className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <div className="text-sm text-muted-foreground">Credit Score</div>
-                    <div className="font-semibold">{user?.creditScore || 'N/A'}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Credit Score
+                    </div>
+                    <div className="font-semibold">
+                      {user?.creditScore || "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <div className="text-sm text-muted-foreground">Member Since</div>
-                    <div>{user?.createdAt ? formatDate(user.createdAt) : 'N/A'}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Member Since
+                    </div>
+                    <div>
+                      {user?.createdAt ? formatDate(user.createdAt) : "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <div className="text-sm text-muted-foreground">Last Login</div>
-                    <div>{user?.lastLoginAt ? formatDate(user.lastLoginAt) : 'Never'}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Last Login
+                    </div>
+                    <div>
+                      {user?.lastLoginAt
+                        ? formatDate(user.lastLoginAt)
+                        : "Never"}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -238,75 +276,95 @@ export default function ProfilePage() {
         <TabsContent value="security" className="space-y-6 mt-6">
           {/* Only show change password if user doesn't have OAuth provider */}
           {!user?.oauthProvider && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lock className="h-5 w-5" />
-                Change Password
-              </CardTitle>
-              <CardDescription>
-                Update your password to keep your account secure
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Current Password</Label>
-                <Input
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>New Password</Label>
-                <Input
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Confirm New Password</Label>
-                <Input
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                />
-              </div>
-              <Button 
-                onClick={handleChangePassword}
-                disabled={changePassword.isPending || !passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword}
-              >
-                {changePassword.isPending ? 'Updating...' : 'Update Password'}
-              </Button>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="h-5 w-5" />
+                  Change Password
+                </CardTitle>
+                <CardDescription>
+                  Update your password to keep your account secure
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Current Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>New Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        newPassword: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Confirm New Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={
+                    changePassword.isPending ||
+                    !passwordData.currentPassword ||
+                    !passwordData.newPassword ||
+                    !passwordData.confirmPassword
+                  }
+                >
+                  {changePassword.isPending ? "Updating..." : "Update Password"}
+                </Button>
+              </CardContent>
+            </Card>
           )}
-          
+
           {/* Show message for OAuth users */}
           {user?.oauthProvider && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lock className="h-5 w-5" />
-                Password Management
-              </CardTitle>
-              <CardDescription>
-                Account security information
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">OAuth Account</p>
-                  <p className="text-sm text-muted-foreground">
-                    Your account is linked with {user.oauthProvider}. To change your password, please use your {user.oauthProvider} account settings.
-                  </p>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="h-5 w-5" />
+                  Password Management
+                </CardTitle>
+                <CardDescription>Account security information</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium">OAuth Account</p>
+                    <p className="text-sm text-muted-foreground">
+                      Your account is linked with {user.oauthProvider}. To
+                      change your password, please use your {user.oauthProvider}{" "}
+                      account settings.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           )}
 
           <Card>
@@ -348,19 +406,39 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { title: 'Email Notifications', desc: 'Receive updates via email' },
-                { title: 'Loan Updates', desc: 'Get notified about loan status changes' },
-                { title: 'Repayment Reminders', desc: 'Receive reminders before due dates' },
-                { title: 'Investment Returns', desc: 'Get notified when you receive returns' },
-                { title: 'Marketing', desc: 'Receive promotional offers and news' },
+                {
+                  title: "Email Notifications",
+                  desc: "Receive updates via email",
+                },
+                {
+                  title: "Loan Updates",
+                  desc: "Get notified about loan status changes",
+                },
+                {
+                  title: "Repayment Reminders",
+                  desc: "Receive reminders before due dates",
+                },
+                {
+                  title: "Investment Returns",
+                  desc: "Get notified when you receive returns",
+                },
+                {
+                  title: "Marketing",
+                  desc: "Receive promotional offers and news",
+                },
               ].map((item, index) => (
-                <div key={index} className="flex items-center justify-between py-2">
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-2"
+                >
                   <div>
                     <div className="font-medium">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">{item.desc}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {item.desc}
+                    </div>
                   </div>
                   <Button variant="outline" size="sm">
-                    {index < 4 ? 'Enabled' : 'Disabled'}
+                    {index < 4 ? "Enabled" : "Disabled"}
                   </Button>
                 </div>
               ))}
@@ -371,5 +449,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-

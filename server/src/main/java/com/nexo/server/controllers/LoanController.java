@@ -3,7 +3,7 @@ package com.nexo.server.controllers;
 import com.nexo.server.dto.common.ApiResponse;
 import com.nexo.server.dto.common.PageResponse;
 import com.nexo.server.dto.loan.*;
-import com.nexo.server.enums.LoanPurpose;
+
 import com.nexo.server.enums.LoanStatus;
 import com.nexo.server.security.CurrentUser;
 import com.nexo.server.security.UserPrincipal;
@@ -19,10 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -111,8 +110,8 @@ public class LoanController {
     public ResponseEntity<ApiResponse<List<com.nexo.server.dto.investment.InvestmentResponse>>> getLoanInvestments(
             @PathVariable Long id,
             @CurrentUser UserPrincipal user) {
-        List<com.nexo.server.dto.investment.InvestmentResponse> investments = loanService.getLoanInvestments(id, user.getId());
+        List<com.nexo.server.dto.investment.InvestmentResponse> investments = loanService.getLoanInvestments(id,
+                user.getId());
         return ResponseEntity.ok(ApiResponse.success(investments));
     }
 }
-

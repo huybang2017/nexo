@@ -1,5 +1,5 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   User,
@@ -7,21 +7,28 @@ import {
   Phone,
   Calendar,
   Shield,
-  CreditCard,
-  FileCheck,
   Ban,
   CheckCircle,
   AlertTriangle,
-  DollarSign,
-  TrendingUp,
   Activity,
-} from 'lucide-react';
-import { useAdminUser, useUpdateUserStatus, useBanUser, useUnbanUser } from '@/hooks/useAdmin';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from "lucide-react";
+import {
+  useAdminUser,
+  useUpdateUserStatus,
+  useBanUser,
+  useUnbanUser,
+} from "@/hooks/useAdmin";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -30,27 +37,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn, formatDate, formatCurrency, getInitials } from '@/lib/utils';
-import { useState } from 'react';
-import type { UserStatus } from '@/types';
+} from "@/components/ui/dialog";
+
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn, formatDate, getInitials } from "@/lib/utils";
+import { useState } from "react";
+import type { UserStatus } from "@/types";
 
 const statusColors: Record<string, string> = {
-  PENDING: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-  ACTIVE: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-  SUSPENDED: 'bg-red-500/10 text-red-400 border-red-500/30',
-  BANNED: 'bg-red-500/10 text-red-400 border-red-500/30',
+  PENDING: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  ACTIVE: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  SUSPENDED: "bg-red-500/10 text-red-400 border-red-500/30",
+  BANNED: "bg-red-500/10 text-red-400 border-red-500/30",
 };
 
 const roleColors: Record<string, string> = {
-  ADMIN: 'bg-violet-500/10 text-violet-400',
-  BORROWER: 'bg-blue-500/10 text-blue-400',
-  LENDER: 'bg-emerald-500/10 text-emerald-400',
+  ADMIN: "bg-violet-500/10 text-violet-400",
+  BORROWER: "bg-blue-500/10 text-blue-400",
+  LENDER: "bg-emerald-500/10 text-emerald-400",
 };
 
 export const UserDetailPage = () => {
@@ -62,7 +68,7 @@ export const UserDetailPage = () => {
   const unbanUser = useUnbanUser();
 
   const [showBanDialog, setShowBanDialog] = useState(false);
-  const [banReason, setBanReason] = useState('');
+  const [banReason, setBanReason] = useState("");
 
   const handleBan = () => {
     if (!banReason.trim()) {
@@ -73,7 +79,7 @@ export const UserDetailPage = () => {
       {
         onSuccess: () => {
           setShowBanDialog(false);
-          setBanReason('');
+          setBanReason("");
         },
       }
     );
@@ -117,16 +123,24 @@ export const UserDetailPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/admin/users')}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/admin/users")}
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white">User Details</h1>
-            <p className="text-slate-400 mt-1">View and manage user information</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">
+              User Details
+            </h1>
+            <p className="text-slate-400 mt-1">
+              View and manage user information
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {user.status === 'BANNED' ? (
+          {user.status === "BANNED" ? (
             <Button
               variant="outline"
               onClick={handleUnban}
@@ -134,14 +148,14 @@ export const UserDetailPage = () => {
               className="border-emerald-500 text-emerald-400 hover:bg-emerald-500/10"
             >
               <CheckCircle className="w-4 h-4 mr-2" />
-              {unbanUser.isPending ? 'Unbanning...' : 'Unban User'}
+              {unbanUser.isPending ? "Unbanning..." : "Unban User"}
             </Button>
           ) : (
             <>
-              {user.status === 'ACTIVE' && (
+              {user.status === "ACTIVE" && (
                 <Button
                   variant="outline"
-                  onClick={() => handleStatusChange('SUSPENDED')}
+                  onClick={() => handleStatusChange("SUSPENDED")}
                   disabled={updateStatus.isPending}
                   className="border-amber-500 text-amber-400 hover:bg-amber-500/10"
                 >
@@ -149,10 +163,10 @@ export const UserDetailPage = () => {
                   Suspend
                 </Button>
               )}
-              {user.status === 'SUSPENDED' && (
+              {user.status === "SUSPENDED" && (
                 <Button
                   variant="outline"
-                  onClick={() => handleStatusChange('ACTIVE')}
+                  onClick={() => handleStatusChange("ACTIVE")}
                   disabled={updateStatus.isPending}
                   className="border-emerald-500 text-emerald-400 hover:bg-emerald-500/10"
                 >
@@ -160,13 +174,10 @@ export const UserDetailPage = () => {
                   Activate
                 </Button>
               )}
-              {user.role !== 'ADMIN' && (
+              {user.role !== "ADMIN" && (
                 <Dialog open={showBanDialog} onOpenChange={setShowBanDialog}>
                   <DialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      disabled={banUser.isPending}
-                    >
+                    <Button variant="destructive" disabled={banUser.isPending}>
                       <Ban className="w-4 h-4 mr-2" />
                       Ban User
                     </Button>
@@ -175,7 +186,8 @@ export const UserDetailPage = () => {
                     <DialogHeader>
                       <DialogTitle className="text-white">Ban User</DialogTitle>
                       <DialogDescription className="text-slate-400">
-                        Are you sure you want to ban this user? This action cannot be undone.
+                        Are you sure you want to ban this user? This action
+                        cannot be undone.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
@@ -198,7 +210,7 @@ export const UserDetailPage = () => {
                         variant="outline"
                         onClick={() => {
                           setShowBanDialog(false);
-                          setBanReason('');
+                          setBanReason("");
                         }}
                         className="border-slate-700"
                       >
@@ -209,7 +221,7 @@ export const UserDetailPage = () => {
                         onClick={handleBan}
                         disabled={banUser.isPending}
                       >
-                        {banUser.isPending ? 'Banning...' : 'Ban User'}
+                        {banUser.isPending ? "Banning..." : "Ban User"}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -231,24 +243,28 @@ export const UserDetailPage = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <CardTitle className="text-white text-2xl">{user.fullName}</CardTitle>
-              <CardDescription className="text-slate-400 mt-1">{user.email}</CardDescription>
+              <CardTitle className="text-white text-2xl">
+                {user.fullName}
+              </CardTitle>
+              <CardDescription className="text-slate-400 mt-1">
+                {user.email}
+              </CardDescription>
               <div className="flex items-center gap-2 mt-2">
-                <Badge className={cn('border', roleColors[user.role])}>
+                <Badge className={cn("border", roleColors[user.role])}>
                   {user.role}
                 </Badge>
-                <Badge className={cn('border', statusColors[user.status])}>
+                <Badge className={cn("border", statusColors[user.status])}>
                   {user.status}
                 </Badge>
                 {user.kycStatus && (
                   <Badge
                     className={cn(
-                      'border',
-                      user.kycStatus === 'APPROVED'
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                        : user.kycStatus === 'PENDING'
-                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                        : 'bg-slate-500/10 text-slate-400 border-slate-500/30'
+                      "border",
+                      user.kycStatus === "APPROVED"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                        : user.kycStatus === "PENDING"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        : "bg-slate-500/10 text-slate-400 border-slate-500/30"
                     )}
                   >
                     KYC: {user.kycStatus}
@@ -261,10 +277,16 @@ export const UserDetailPage = () => {
         <CardContent>
           <Tabs defaultValue="info" className="w-full">
             <TabsList className="bg-slate-800 border-slate-700">
-              <TabsTrigger value="info" className="data-[state=active]:bg-slate-700">
+              <TabsTrigger
+                value="info"
+                className="data-[state=active]:bg-slate-700"
+              >
                 Information
               </TabsTrigger>
-              <TabsTrigger value="activity" className="data-[state=active]:bg-slate-700">
+              <TabsTrigger
+                value="activity"
+                className="data-[state=active]:bg-slate-700"
+              >
                 Activity
               </TabsTrigger>
             </TabsList>
@@ -284,7 +306,9 @@ export const UserDetailPage = () => {
                       <Phone className="w-5 h-5 text-slate-400" />
                       <div>
                         <p className="text-slate-400 text-sm">Phone</p>
-                        <p className="text-white font-medium">{user.phoneNumber}</p>
+                        <p className="text-white font-medium">
+                          {user.phoneNumber}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -292,7 +316,9 @@ export const UserDetailPage = () => {
                     <Calendar className="w-5 h-5 text-slate-400" />
                     <div>
                       <p className="text-slate-400 text-sm">Joined</p>
-                      <p className="text-white font-medium">{formatDate(user.createdAt)}</p>
+                      <p className="text-white font-medium">
+                        {formatDate(user.createdAt)}
+                      </p>
                     </div>
                   </div>
                   {user.lastLoginAt && (
@@ -300,7 +326,9 @@ export const UserDetailPage = () => {
                       <Calendar className="w-5 h-5 text-slate-400" />
                       <div>
                         <p className="text-slate-400 text-sm">Last Login</p>
-                        <p className="text-white font-medium">{formatDate(user.lastLoginAt)}</p>
+                        <p className="text-white font-medium">
+                          {formatDate(user.lastLoginAt)}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -310,7 +338,9 @@ export const UserDetailPage = () => {
                     <Shield className="w-5 h-5 text-slate-400" />
                     <div>
                       <p className="text-slate-400 text-sm">Status</p>
-                      <Badge className={cn('border mt-1', statusColors[user.status])}>
+                      <Badge
+                        className={cn("border mt-1", statusColors[user.status])}
+                      >
                         {user.status}
                       </Badge>
                     </div>
@@ -319,7 +349,7 @@ export const UserDetailPage = () => {
                     <User className="w-5 h-5 text-slate-400" />
                     <div>
                       <p className="text-slate-400 text-sm">Role</p>
-                      <Badge className={cn('mt-1', roleColors[user.role])}>
+                      <Badge className={cn("mt-1", roleColors[user.role])}>
                         {user.role}
                       </Badge>
                     </div>
@@ -329,7 +359,9 @@ export const UserDetailPage = () => {
                       <Shield className="w-5 h-5 text-slate-400" />
                       <div>
                         <p className="text-slate-400 text-sm">OAuth Provider</p>
-                        <p className="text-white font-medium">{user.oauthProvider}</p>
+                        <p className="text-white font-medium">
+                          {user.oauthProvider}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -352,4 +384,3 @@ export const UserDetailPage = () => {
 };
 
 export default UserDetailPage;
-

@@ -1,37 +1,38 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
-  Search,
-  Filter,
   ArrowDownUp,
   MoreVertical,
-  Eye,
   CheckCircle,
   XCircle,
   Clock,
   DollarSign,
-} from 'lucide-react';
-import { useAdminWithdrawals, useApproveWithdrawal, useRejectWithdrawal } from '@/hooks/useAdmin';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from "lucide-react";
+import {
+  useAdminWithdrawals,
+  useApproveWithdrawal,
+  useRejectWithdrawal,
+} from "@/hooks/useAdmin";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -47,11 +48,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { cn, formatCurrency, formatDate, getInitials } from '@/lib/utils';
-import type { Transaction, TransactionStatus } from '@/types';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/table";
+import { formatCurrency, formatDate, getInitials } from "@/lib/utils";
+import type { Transaction, TransactionStatus } from "@/types";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const container = {
   hidden: { opacity: 0 },
@@ -67,14 +68,17 @@ const item = {
 };
 
 export default function WithdrawalsPage() {
-  const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'ALL'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<TransactionStatus | "ALL">(
+    "ALL"
+  );
   const [page, setPage] = useState(0);
-  const [selectedWithdrawal, setSelectedWithdrawal] = useState<Transaction | null>(null);
+  const [selectedWithdrawal, setSelectedWithdrawal] =
+    useState<Transaction | null>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
+  const [rejectReason, setRejectReason] = useState("");
 
   const filters = {
-    status: statusFilter !== 'ALL' ? statusFilter : undefined,
+    status: statusFilter !== "ALL" ? statusFilter : undefined,
     page,
     size: 20,
   };
@@ -87,7 +91,9 @@ export default function WithdrawalsPage() {
   const totalPages = data?.totalPages || 0;
 
   const handleApprove = (withdrawal: Transaction) => {
-    if (confirm(`Approve withdrawal of ${formatCurrency(withdrawal.amount)}?`)) {
+    if (
+      confirm(`Approve withdrawal of ${formatCurrency(withdrawal.amount)}?`)
+    ) {
       approveWithdrawal.mutate(withdrawal.id);
     }
   };
@@ -106,7 +112,7 @@ export default function WithdrawalsPage() {
       {
         onSuccess: () => {
           setRejectDialogOpen(false);
-          setRejectReason('');
+          setRejectReason("");
           setSelectedWithdrawal(null);
         },
       }
@@ -114,11 +120,26 @@ export default function WithdrawalsPage() {
   };
 
   const getStatusBadge = (status: TransactionStatus) => {
-    const variants: Record<TransactionStatus, { label: string; className: string }> = {
-      PENDING: { label: 'Pending', className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-      COMPLETED: { label: 'Completed', className: 'bg-green-500/20 text-green-400 border-green-500/30' },
-      FAILED: { label: 'Failed', className: 'bg-red-500/20 text-red-400 border-red-500/30' },
-      CANCELLED: { label: 'Cancelled', className: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
+    const variants: Record<
+      TransactionStatus,
+      { label: string; className: string }
+    > = {
+      PENDING: {
+        label: "Pending",
+        className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      },
+      COMPLETED: {
+        label: "Completed",
+        className: "bg-green-500/20 text-green-400 border-green-500/30",
+      },
+      FAILED: {
+        label: "Failed",
+        className: "bg-red-500/20 text-red-400 border-red-500/30",
+      },
+      CANCELLED: {
+        label: "Cancelled",
+        className: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+      },
     };
     const variant = variants[status];
     return (
@@ -138,7 +159,9 @@ export default function WithdrawalsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Withdrawal Requests</h1>
-          <p className="text-slate-400 mt-1">Manage and process withdrawal requests</p>
+          <p className="text-slate-400 mt-1">
+            Manage and process withdrawal requests
+          </p>
         </div>
       </div>
 
@@ -147,10 +170,13 @@ export default function WithdrawalsPage() {
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <Select value={statusFilter} onValueChange={(v) => {
-                setStatusFilter(v as TransactionStatus | 'ALL');
-                setPage(0);
-              }}>
+              <Select
+                value={statusFilter}
+                onValueChange={(v) => {
+                  setStatusFilter(v as TransactionStatus | "ALL");
+                  setPage(0);
+                }}
+              >
                 <SelectTrigger className="bg-slate-800 border-slate-700">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -191,7 +217,7 @@ export default function WithdrawalsPage() {
               <div>
                 <p className="text-sm text-slate-400">Pending</p>
                 <p className="text-2xl font-bold text-yellow-400 mt-1">
-                  {withdrawals.filter((w) => w.status === 'PENDING').length}
+                  {withdrawals.filter((w) => w.status === "PENDING").length}
                 </p>
               </div>
               <div className="h-12 w-12 rounded-lg bg-yellow-500/20 flex items-center justify-center">
@@ -207,7 +233,7 @@ export default function WithdrawalsPage() {
               <div>
                 <p className="text-sm text-slate-400">Completed</p>
                 <p className="text-2xl font-bold text-green-400 mt-1">
-                  {withdrawals.filter((w) => w.status === 'COMPLETED').length}
+                  {withdrawals.filter((w) => w.status === "COMPLETED").length}
                 </p>
               </div>
               <div className="h-12 w-12 rounded-lg bg-green-500/20 flex items-center justify-center">
@@ -263,7 +289,9 @@ export default function WithdrawalsPage() {
                     <TableHead className="text-slate-400">Fee</TableHead>
                     <TableHead className="text-slate-400">Net Amount</TableHead>
                     <TableHead className="text-slate-400">Status</TableHead>
-                    <TableHead className="text-slate-400">Description</TableHead>
+                    <TableHead className="text-slate-400">
+                      Description
+                    </TableHead>
                     <TableHead className="text-slate-400">Date</TableHead>
                     <TableHead className="text-slate-400">Actions</TableHead>
                   </TableRow>
@@ -278,12 +306,16 @@ export default function WithdrawalsPage() {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8 border border-slate-700">
                             <AvatarFallback className="bg-slate-800 text-slate-400 text-xs">
-                              {getInitials(withdrawal.userName || withdrawal.userEmail || 'U')}
+                              {getInitials(
+                                withdrawal.userName ||
+                                  withdrawal.userEmail ||
+                                  "U"
+                              )}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="text-sm font-medium text-white">
-                              {withdrawal.userName || 'Unknown'}
+                              {withdrawal.userName || "Unknown"}
                             </p>
                             <p className="text-xs text-slate-400">
                               {withdrawal.userEmail}
@@ -302,13 +334,13 @@ export default function WithdrawalsPage() {
                       </TableCell>
                       <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
                       <TableCell className="text-slate-400 text-sm max-w-xs truncate">
-                        {withdrawal.description || '-'}
+                        {withdrawal.description || "-"}
                       </TableCell>
                       <TableCell className="text-slate-400 text-sm">
                         {formatDate(withdrawal.createdAt)}
                       </TableCell>
                       <TableCell>
-                        {withdrawal.status === 'PENDING' && (
+                        {withdrawal.status === "PENDING" && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
@@ -319,7 +351,10 @@ export default function WithdrawalsPage() {
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800">
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-slate-900 border-slate-800"
+                            >
                               <DropdownMenuItem
                                 onClick={() => handleApprove(withdrawal)}
                                 className="text-green-400 focus:text-green-400 cursor-pointer"
@@ -365,7 +400,9 @@ export default function WithdrawalsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
                   disabled={page >= totalPages - 1}
                   className="bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
                 >
@@ -418,7 +455,7 @@ export default function WithdrawalsPage() {
               variant="outline"
               onClick={() => {
                 setRejectDialogOpen(false);
-                setRejectReason('');
+                setRejectReason("");
               }}
               className="bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
             >
@@ -429,7 +466,9 @@ export default function WithdrawalsPage() {
               disabled={!rejectReason.trim() || rejectWithdrawal.isPending}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
-              {rejectWithdrawal.isPending ? 'Rejecting...' : 'Reject Withdrawal'}
+              {rejectWithdrawal.isPending
+                ? "Rejecting..."
+                : "Reject Withdrawal"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -437,5 +476,3 @@ export default function WithdrawalsPage() {
     </motion.div>
   );
 }
-
-

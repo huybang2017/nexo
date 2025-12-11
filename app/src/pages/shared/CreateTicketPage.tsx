@@ -1,35 +1,41 @@
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMutation } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useMutation } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ticketSchema = z.object({
-  subject: z.string().min(5, 'Subject must be at least 5 characters'),
-  category: z.string().min(1, 'Category is required'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  subject: z.string().min(5, "Subject must be at least 5 characters"),
+  category: z.string().min(1, "Category is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
   relatedLoanId: z.string().optional(),
 });
 
 type TicketFormData = z.infer<typeof ticketSchema>;
 
-const categories = [
-  'ACCOUNT',
-  'LOAN',
-  'PAYMENT',
-  'TECHNICAL',
-  'OTHER',
-];
+const categories = ["ACCOUNT", "LOAN", "PAYMENT", "TECHNICAL", "OTHER"];
 
 export default function CreateTicketPage() {
   const navigate = useNavigate();
@@ -45,18 +51,18 @@ export default function CreateTicketPage() {
 
   const createTicket = useMutation({
     mutationFn: async (data: TicketFormData) => {
-      const response = await api.post('/tickets', {
+      const response = await api.post("/tickets", {
         ...data,
         relatedLoanId: data.relatedLoanId ? Number(data.relatedLoanId) : null,
       });
       return response.data.data;
     },
     onSuccess: (ticket) => {
-      toast.success('Ticket created successfully!');
+      toast.success("Ticket created successfully!");
       navigate(`/dashboard/support/${ticket.id}`);
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to create ticket');
+      toast.error(error.response?.data?.message || "Failed to create ticket");
     },
   });
 
@@ -89,16 +95,18 @@ export default function CreateTicketPage() {
               <Label>Subject *</Label>
               <Input
                 placeholder="Brief description of your issue"
-                {...register('subject')}
+                {...register("subject")}
               />
               {errors.subject && (
-                <p className="text-sm text-destructive">{errors.subject.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.subject.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Category *</Label>
-              <Select onValueChange={(value) => setValue('category', value)}>
+              <Select onValueChange={(value) => setValue("category", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -111,7 +119,9 @@ export default function CreateTicketPage() {
                 </SelectContent>
               </Select>
               {errors.category && (
-                <p className="text-sm text-destructive">{errors.category.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.category.message}
+                </p>
               )}
             </div>
 
@@ -120,10 +130,12 @@ export default function CreateTicketPage() {
               <Textarea
                 placeholder="Provide detailed information about your issue"
                 rows={6}
-                {...register('description')}
+                {...register("description")}
               />
               {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.description.message}
+                </p>
               )}
             </div>
 
@@ -132,13 +144,13 @@ export default function CreateTicketPage() {
               <Input
                 type="number"
                 placeholder="Enter loan ID if this ticket is related to a loan"
-                {...register('relatedLoanId')}
+                {...register("relatedLoanId")}
               />
             </div>
 
             <div className="flex gap-4">
               <Button type="submit" disabled={createTicket.isPending}>
-                {createTicket.isPending ? 'Creating...' : 'Create Ticket'}
+                {createTicket.isPending ? "Creating..." : "Create Ticket"}
               </Button>
               <Button type="button" variant="outline" asChild>
                 <Link to="/dashboard/support">Cancel</Link>
@@ -150,4 +162,3 @@ export default function CreateTicketPage() {
     </div>
   );
 }
-

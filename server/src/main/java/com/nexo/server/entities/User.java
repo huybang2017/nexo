@@ -1,5 +1,7 @@
 package com.nexo.server.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nexo.server.enums.KycStatus;
 import com.nexo.server.enums.UserRole;
 import com.nexo.server.enums.UserStatus;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 36)
@@ -84,9 +87,11 @@ public class User extends BaseEntity {
 
     // Relations
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Wallet wallet;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private KycProfile kycProfile;
 
     @PrePersist

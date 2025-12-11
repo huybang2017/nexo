@@ -1,34 +1,46 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { useAuth } from '@/contexts/AuthContext';
-import { 
-  CheckCircle, 
-  Clock, 
-  XCircle, 
-  Upload, 
-  User, 
-  CreditCard, 
-  Building, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  CheckCircle,
+  Clock,
+  XCircle,
+  Upload,
+  User,
+  CreditCard,
+  Building,
   FileText,
   AlertCircle,
   Mail,
-  Loader2
-} from 'lucide-react';
-import { emailService } from '@/services/password.service';
-import { useSubmitKyc, useUploadKycDocument, useMyKyc } from '@/hooks/useKyc';
-import { toast } from 'sonner';
+  Loader2,
+} from "lucide-react";
+import { emailService } from "@/services/password.service";
+import { useSubmitKyc, useUploadKycDocument, useMyKyc } from "@/hooks/useKyc";
+import { toast } from "sonner";
 
 const kycSteps = [
-  { id: 'personal', title: 'Personal Info', icon: User },
-  { id: 'identity', title: 'Identity Card', icon: CreditCard },
-  { id: 'bank', title: 'Bank Account', icon: Building },
-  { id: 'documents', title: 'Documents', icon: FileText },
+  { id: "personal", title: "Personal Info", icon: User },
+  { id: "identity", title: "Identity Card", icon: CreditCard },
+  { id: "bank", title: "Bank Account", icon: Building },
+  { id: "documents", title: "Documents", icon: FileText },
 ];
 
 export default function KYCPage() {
@@ -37,32 +49,32 @@ export default function KYCPage() {
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const { data: kycProfile } = useMyKyc();
   const [formData, setFormData] = useState({
-    fullName: '',
-    dateOfBirth: '',
-    gender: '',
-    idCardNumber: '',
-    idCardIssuedDate: '',
-    idCardExpiryDate: '',
-    idCardIssuedPlace: '',
-    address: '',
-    city: '',
-    district: '',
-    occupation: '',
-    monthlyIncome: '',
-    bankName: '',
-    bankAccountNumber: '',
-    bankAccountHolder: '',
+    fullName: "",
+    dateOfBirth: "",
+    gender: "",
+    idCardNumber: "",
+    idCardIssuedDate: "",
+    idCardExpiryDate: "",
+    idCardIssuedPlace: "",
+    address: "",
+    city: "",
+    district: "",
+    occupation: "",
+    monthlyIncome: "",
+    bankName: "",
+    bankAccountNumber: "",
+    bankAccountHolder: "",
   });
 
-  const kycStatus = user?.kycStatus || 'NOT_SUBMITTED';
+  const kycStatus = user?.kycStatus || "NOT_SUBMITTED";
 
   const handleResendEmail = async () => {
     setIsResendingEmail(true);
     try {
       await emailService.resendVerificationEmail();
-      toast.success('Verification email sent! Check your inbox.');
+      toast.success("Verification email sent! Check your inbox.");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to send email');
+      toast.error(error.response?.data?.message || "Failed to send email");
     } finally {
       setIsResendingEmail(false);
     }
@@ -77,7 +89,9 @@ export default function KYCPage() {
             <div className="h-16 w-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
               <Mail className="h-8 w-8 text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold mb-2 text-amber-500">Email Verification Required</h2>
+            <h2 className="text-2xl font-bold mb-2 text-amber-500">
+              Email Verification Required
+            </h2>
             <p className="text-muted-foreground mb-6">
               You need to verify your email address before submitting KYC.
               <br />
@@ -101,10 +115,7 @@ export default function KYCPage() {
                   </>
                 )}
               </Button>
-              <Button
-                onClick={() => refreshUser()}
-                variant="outline"
-              >
+              <Button onClick={() => refreshUser()} variant="outline">
                 I've Verified
               </Button>
             </div>
@@ -114,7 +125,7 @@ export default function KYCPage() {
     );
   }
 
-  if (kycStatus === 'APPROVED') {
+  if (kycStatus === "APPROVED") {
     return (
       <div className="max-w-2xl mx-auto">
         <Card>
@@ -124,7 +135,8 @@ export default function KYCPage() {
             </div>
             <h2 className="text-2xl font-bold mb-2">KYC Verified</h2>
             <p className="text-muted-foreground mb-4">
-              Your identity has been verified. You have full access to all features.
+              Your identity has been verified. You have full access to all
+              features.
             </p>
             <Badge variant="outline" className="gap-2">
               <CheckCircle className="h-4 w-4" />
@@ -136,7 +148,7 @@ export default function KYCPage() {
     );
   }
 
-  if (kycStatus === 'PENDING') {
+  if (kycStatus === "PENDING") {
     return (
       <div className="max-w-2xl mx-auto">
         <Card>
@@ -158,7 +170,7 @@ export default function KYCPage() {
     );
   }
 
-  if (kycStatus === 'REJECTED') {
+  if (kycStatus === "REJECTED") {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <Card className="border-destructive">
@@ -170,7 +182,8 @@ export default function KYCPage() {
               <div>
                 <h3 className="font-semibold text-destructive">KYC Rejected</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Your KYC verification was rejected. Please review the feedback and resubmit.
+                  Your KYC verification was rejected. Please review the feedback
+                  and resubmit.
                 </p>
                 {kycProfile?.rejectionReason && (
                   <p className="text-sm mt-2 p-2 bg-destructive/5 rounded">
@@ -197,7 +210,9 @@ export default function KYCPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold">KYC Verification</h1>
-        <p className="text-muted-foreground">Complete your identity verification to access all features</p>
+        <p className="text-muted-foreground">
+          Complete your identity verification to access all features
+        </p>
       </div>
 
       <KYCForm
@@ -211,7 +226,13 @@ export default function KYCPage() {
   );
 }
 
-function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUser }: any) {
+function KYCForm({
+  currentStep,
+  setCurrentStep,
+  formData,
+  setFormData,
+  refreshUser,
+}: any) {
   const progress = ((currentStep + 1) / kycSteps.length) * 100;
   const [documents, setDocuments] = useState<{
     idCardFront?: File;
@@ -227,28 +248,33 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
   const submitKyc = useSubmitKyc();
   const uploadDocument = useUploadKycDocument();
 
-  const handleFileSelect = (type: 'idCardFront' | 'idCardBack' | 'selfie') => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*,.pdf';
+  const handleFileSelect = (type: "idCardFront" | "idCardBack" | "selfie") => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*,.pdf";
     input.onchange = (e: any) => {
       const file = e.target.files?.[0];
       if (file) {
         // Validate file size (5MB)
         if (file.size > 5 * 1024 * 1024) {
-          toast.error('File size must be less than 5MB');
+          toast.error("File size must be less than 5MB");
           return;
         }
         // Validate file type
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        const validTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "application/pdf",
+        ];
         if (!validTypes.includes(file.type)) {
-          toast.error('Only JPG, PNG, and PDF files are allowed');
+          toast.error("Only JPG, PNG, and PDF files are allowed");
           return;
         }
         setDocuments({ ...documents, [type]: file });
-        
+
         // Create preview for images
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith("image/")) {
           const reader = new FileReader();
           reader.onload = (e) => {
             setPreviews({ ...previews, [type]: e.target?.result as string });
@@ -257,8 +283,16 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
         } else {
           setPreviews({ ...previews, [type]: undefined });
         }
-        
-        toast.success(`${type === 'idCardFront' ? 'ID Card Front' : type === 'idCardBack' ? 'ID Card Back' : 'Selfie'} uploaded successfully`);
+
+        toast.success(
+          `${
+            type === "idCardFront"
+              ? "ID Card Front"
+              : type === "idCardBack"
+              ? "ID Card Back"
+              : "Selfie"
+          } uploaded successfully`
+        );
       }
     };
     input.click();
@@ -267,30 +301,38 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
   const handleSubmitKyc = async () => {
     // Validate required fields
     if (!formData.fullName || !formData.dateOfBirth || !formData.gender) {
-      toast.error('Please complete all personal information');
+      toast.error("Please complete all personal information");
       return;
     }
-    if (!formData.idCardNumber || !formData.idCardIssuedDate || !formData.idCardIssuedPlace) {
-      toast.error('Please complete all ID card information');
+    if (
+      !formData.idCardNumber ||
+      !formData.idCardIssuedDate ||
+      !formData.idCardIssuedPlace
+    ) {
+      toast.error("Please complete all ID card information");
       return;
     }
     if (!formData.address || !formData.city) {
-      toast.error('Please complete address information');
+      toast.error("Please complete address information");
       return;
     }
-    if (!formData.bankName || !formData.bankAccountNumber || !formData.bankAccountHolder) {
-      toast.error('Please complete bank account information');
+    if (
+      !formData.bankName ||
+      !formData.bankAccountNumber ||
+      !formData.bankAccountHolder
+    ) {
+      toast.error("Please complete bank account information");
       return;
     }
     if (!documents.idCardFront || !documents.idCardBack || !documents.selfie) {
-      toast.error('Please upload all required documents');
+      toast.error("Please upload all required documents");
       return;
     }
 
     setIsSubmitting(true);
     try {
       // Submit KYC profile first (backend requires this before uploading documents)
-      toast.info('Submitting KYC information...');
+      toast.info("Submitting KYC information...");
       await submitKyc.mutateAsync({
         idCardNumber: formData.idCardNumber,
         idCardIssuedDate: formData.idCardIssuedDate,
@@ -303,21 +345,34 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
         city: formData.city,
         district: formData.district || undefined,
         occupation: formData.occupation || undefined,
-        monthlyIncome: formData.monthlyIncome ? parseFloat(formData.monthlyIncome) : undefined,
+        monthlyIncome: formData.monthlyIncome
+          ? parseFloat(formData.monthlyIncome)
+          : undefined,
         bankName: formData.bankName,
         bankAccountNumber: formData.bankAccountNumber,
         bankAccountHolder: formData.bankAccountHolder,
       });
 
       // Upload documents after KYC profile is submitted
-      toast.info('Uploading documents...');
+      toast.info("Uploading documents...");
       await Promise.all([
-        uploadDocument.mutateAsync({ file: documents.idCardFront!, documentType: 'ID_CARD_FRONT' }),
-        uploadDocument.mutateAsync({ file: documents.idCardBack!, documentType: 'ID_CARD_BACK' }),
-        uploadDocument.mutateAsync({ file: documents.selfie!, documentType: 'SELFIE' }),
+        uploadDocument.mutateAsync({
+          file: documents.idCardFront!,
+          documentType: "ID_CARD_FRONT",
+        }),
+        uploadDocument.mutateAsync({
+          file: documents.idCardBack!,
+          documentType: "ID_CARD_BACK",
+        }),
+        uploadDocument.mutateAsync({
+          file: documents.selfie!,
+          documentType: "SELFIE",
+        }),
       ]);
 
-      toast.success('KYC submitted successfully! Your documents are under review.');
+      toast.success(
+        "KYC submitted successfully! Your documents are under review."
+      );
       // Refresh user data to update KYC status
       if (refreshUser) {
         await refreshUser();
@@ -325,7 +380,7 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
       // Reload page to show "Under Review" status
       window.location.reload();
     } catch (error: any) {
-      console.error('KYC submission error:', error);
+      console.error("KYC submission error:", error);
       // Error is already handled by mutation onError
     } finally {
       setIsSubmitting(false);
@@ -337,7 +392,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
       <CardHeader>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <CardTitle>Step {currentStep + 1} of {kycSteps.length}</CardTitle>
+            <CardTitle>
+              Step {currentStep + 1} of {kycSteps.length}
+            </CardTitle>
             <CardDescription>{kycSteps[currentStep].title}</CardDescription>
           </div>
           <Badge variant="outline">{progress.toFixed(0)}% Complete</Badge>
@@ -352,16 +409,16 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
             <div
               key={step.id}
               className={`flex flex-col items-center gap-2 ${
-                index <= currentStep ? 'text-primary' : 'text-muted-foreground'
+                index <= currentStep ? "text-primary" : "text-muted-foreground"
               }`}
             >
               <div
                 className={`h-10 w-10 rounded-full flex items-center justify-center ${
                   index < currentStep
-                    ? 'bg-primary text-primary-foreground'
+                    ? "bg-primary text-primary-foreground"
                     : index === currentStep
-                    ? 'bg-primary/10 border-2 border-primary'
-                    : 'bg-muted'
+                    ? "bg-primary/10 border-2 border-primary"
+                    : "bg-muted"
                 }`}
               >
                 {index < currentStep ? (
@@ -383,7 +440,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>Full Name (as on ID)</Label>
                 <Input
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                   placeholder="Nguyen Van A"
                 />
               </div>
@@ -392,7 +451,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Input
                   type="date"
                   value={formData.dateOfBirth}
-                  onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dateOfBirth: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -401,7 +462,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>Gender</Label>
                 <Select
                   value={formData.gender}
-                  onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, gender: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
@@ -417,7 +480,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>Occupation</Label>
                 <Input
                   value={formData.occupation}
-                  onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, occupation: e.target.value })
+                  }
                   placeholder="Software Engineer"
                 />
               </div>
@@ -426,7 +491,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
               <Label>Address</Label>
               <Input
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 placeholder="123 Nguyen Hue, District 1"
               />
             </div>
@@ -435,7 +502,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>City</Label>
                 <Input
                   value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, city: e.target.value })
+                  }
                   placeholder="Ho Chi Minh City"
                 />
               </div>
@@ -444,7 +513,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Input
                   type="number"
                   value={formData.monthlyIncome}
-                  onChange={(e) => setFormData({ ...formData, monthlyIncome: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, monthlyIncome: e.target.value })
+                  }
                   placeholder="20000000"
                 />
               </div>
@@ -460,7 +531,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>ID Card Number (CCCD)</Label>
                 <Input
                   value={formData.idCardNumber}
-                  onChange={(e) => setFormData({ ...formData, idCardNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, idCardNumber: e.target.value })
+                  }
                   placeholder="012345678901"
                 />
               </div>
@@ -468,7 +541,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Label>Issued Place</Label>
                 <Input
                   value={formData.idCardIssuedPlace}
-                  onChange={(e) => setFormData({ ...formData, idCardIssuedPlace: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      idCardIssuedPlace: e.target.value,
+                    })
+                  }
                   placeholder="Cục Cảnh sát QLHC về TTXH"
                 />
               </div>
@@ -479,7 +557,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Input
                   type="date"
                   value={formData.idCardIssuedDate}
-                  onChange={(e) => setFormData({ ...formData, idCardIssuedDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      idCardIssuedDate: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -487,7 +570,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <Input
                   type="date"
                   value={formData.idCardExpiryDate}
-                  onChange={(e) => setFormData({ ...formData, idCardExpiryDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      idCardExpiryDate: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -501,7 +589,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
               <Label>Bank Name</Label>
               <Select
                 value={formData.bankName}
-                onValueChange={(value) => setFormData({ ...formData, bankName: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, bankName: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select bank" />
@@ -522,7 +612,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
               <Label>Account Number</Label>
               <Input
                 value={formData.bankAccountNumber}
-                onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    bankAccountNumber: e.target.value,
+                  })
+                }
                 placeholder="1234567890"
               />
             </div>
@@ -530,7 +625,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
               <Label>Account Holder Name</Label>
               <Input
                 value={formData.bankAccountHolder}
-                onChange={(e) => setFormData({ ...formData, bankAccountHolder: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    bankAccountHolder: e.target.value,
+                  })
+                }
                 placeholder="NGUYEN VAN A"
               />
             </div>
@@ -556,7 +656,7 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div
-                onClick={() => handleFileSelect('idCardFront')}
+                onClick={() => handleFileSelect("idCardFront")}
                 className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer relative"
               >
                 {documents.idCardFront ? (
@@ -570,7 +670,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                     ) : (
                       <CheckCircle className="h-8 w-8 mx-auto text-green-500" />
                     )}
-                    <p className="font-medium text-sm truncate">{documents.idCardFront.name}</p>
+                    <p className="font-medium text-sm truncate">
+                      {documents.idCardFront.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {(documents.idCardFront.size / 1024 / 1024).toFixed(2)} MB
                     </p>
@@ -591,12 +693,14 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                   <>
                     <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                     <p className="font-medium">ID Card Front</p>
-                    <p className="text-sm text-muted-foreground">Click to upload</p>
+                    <p className="text-sm text-muted-foreground">
+                      Click to upload
+                    </p>
                   </>
                 )}
               </div>
               <div
-                onClick={() => handleFileSelect('idCardBack')}
+                onClick={() => handleFileSelect("idCardBack")}
                 className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer relative"
               >
                 {documents.idCardBack ? (
@@ -610,7 +714,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                     ) : (
                       <CheckCircle className="h-8 w-8 mx-auto text-green-500" />
                     )}
-                    <p className="font-medium text-sm truncate">{documents.idCardBack.name}</p>
+                    <p className="font-medium text-sm truncate">
+                      {documents.idCardBack.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {(documents.idCardBack.size / 1024 / 1024).toFixed(2)} MB
                     </p>
@@ -631,14 +737,16 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                   <>
                     <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                     <p className="font-medium">ID Card Back</p>
-                    <p className="text-sm text-muted-foreground">Click to upload</p>
+                    <p className="text-sm text-muted-foreground">
+                      Click to upload
+                    </p>
                   </>
                 )}
               </div>
             </div>
 
             <div
-              onClick={() => handleFileSelect('selfie')}
+              onClick={() => handleFileSelect("selfie")}
               className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer relative"
             >
               {documents.selfie ? (
@@ -652,7 +760,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                   ) : (
                     <CheckCircle className="h-8 w-8 mx-auto text-green-500" />
                   )}
-                  <p className="font-medium text-sm truncate">{documents.selfie.name}</p>
+                  <p className="font-medium text-sm truncate">
+                    {documents.selfie.name}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {(documents.selfie.size / 1024 / 1024).toFixed(2)} MB
                   </p>
@@ -673,7 +783,9 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                 <>
                   <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                   <p className="font-medium">Selfie with ID Card</p>
-                  <p className="text-sm text-muted-foreground">Take a selfie holding your ID card</p>
+                  <p className="text-sm text-muted-foreground">
+                    Take a selfie holding your ID card
+                  </p>
                 </>
               )}
             </div>
@@ -696,7 +808,12 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
           ) : (
             <Button
               onClick={handleSubmitKyc}
-              disabled={isSubmitting || !documents.idCardFront || !documents.idCardBack || !documents.selfie}
+              disabled={
+                isSubmitting ||
+                !documents.idCardFront ||
+                !documents.idCardBack ||
+                !documents.selfie
+              }
             >
               {isSubmitting ? (
                 <>
@@ -704,7 +821,7 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
                   Submitting...
                 </>
               ) : (
-                'Submit KYC'
+                "Submit KYC"
               )}
             </Button>
           )}
@@ -713,5 +830,3 @@ function KYCForm({ currentStep, setCurrentStep, formData, setFormData, refreshUs
     </Card>
   );
 }
-
-

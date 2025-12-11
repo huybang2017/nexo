@@ -1,33 +1,66 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useMyLoans, useCancelLoan } from '@/hooks/useLoan';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { Plus, Search, FileText, Clock, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: React.ElementType }> = {
-  DRAFT: { label: 'Draft', variant: 'outline', icon: FileText },
-  PENDING_REVIEW: { label: 'Pending Review', variant: 'secondary', icon: Clock },
-  APPROVED: { label: 'Approved', variant: 'default', icon: CheckCircle },
-  REJECTED: { label: 'Rejected', variant: 'destructive', icon: XCircle },
-  FUNDING: { label: 'Funding', variant: 'default', icon: Clock },
-  FUNDED: { label: 'Funded', variant: 'default', icon: CheckCircle },
-  ACTIVE: { label: 'Active', variant: 'default', icon: CheckCircle },
-  COMPLETED: { label: 'Completed', variant: 'secondary', icon: CheckCircle },
-  DEFAULTED: { label: 'Defaulted', variant: 'destructive', icon: AlertCircle },
-  CANCELLED: { label: 'Cancelled', variant: 'outline', icon: XCircle },
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useMyLoans, useCancelLoan } from "@/hooks/useLoan";
+import { formatCurrency } from "@/lib/utils";
+import {
+  Plus,
+  Search,
+  FileText,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+  X,
+} from "lucide-react";
+
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    icon: React.ElementType;
+  }
+> = {
+  DRAFT: { label: "Draft", variant: "outline", icon: FileText },
+  PENDING_REVIEW: {
+    label: "Pending Review",
+    variant: "secondary",
+    icon: Clock,
+  },
+  APPROVED: { label: "Approved", variant: "default", icon: CheckCircle },
+  REJECTED: { label: "Rejected", variant: "destructive", icon: XCircle },
+  FUNDING: { label: "Funding", variant: "default", icon: Clock },
+  FUNDED: { label: "Funded", variant: "default", icon: CheckCircle },
+  ACTIVE: { label: "Active", variant: "default", icon: CheckCircle },
+  COMPLETED: { label: "Completed", variant: "secondary", icon: CheckCircle },
+  DEFAULTED: { label: "Defaulted", variant: "destructive", icon: AlertCircle },
+  CANCELLED: { label: "Cancelled", variant: "outline", icon: XCircle },
 };
 
 export default function MyLoansPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [cancelLoanId, setCancelLoanId] = useState<number | null>(null);
   const { data, isLoading } = useMyLoans();
   const cancelLoan = useCancelLoan();
@@ -51,15 +84,23 @@ export default function MyLoansPage() {
   const loanToCancel = loans.find((l: any) => l.id === cancelLoanId);
 
   const filteredLoans = loans.filter((loan: any) => {
-    const matchesSearch = loan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          loan.loanCode.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || loan.status === statusFilter;
+    const matchesSearch =
+      loan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.loanCode.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || loan.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const activeLoans = loans.filter((l: any) => ['FUNDING', 'ACTIVE'].includes(l.status));
-  const pendingLoans = loans.filter((l: any) => ['PENDING_REVIEW', 'APPROVED'].includes(l.status));
-  const completedLoans = loans.filter((l: any) => ['COMPLETED', 'REJECTED', 'CANCELLED'].includes(l.status));
+  const activeLoans = loans.filter((l: any) =>
+    ["FUNDING", "ACTIVE"].includes(l.status)
+  );
+  const pendingLoans = loans.filter((l: any) =>
+    ["PENDING_REVIEW", "APPROVED"].includes(l.status)
+  );
+  const completedLoans = loans.filter((l: any) =>
+    ["COMPLETED", "REJECTED", "CANCELLED"].includes(l.status)
+  );
 
   return (
     <div className="space-y-6">
@@ -140,11 +181,11 @@ export default function MyLoansPage() {
             <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">No loans found</h3>
             <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== 'all'
-                ? 'Try adjusting your filters'
-                : 'Create your first loan request to get started'}
+              {searchTerm || statusFilter !== "all"
+                ? "Try adjusting your filters"
+                : "Create your first loan request to get started"}
             </p>
-            {!searchTerm && statusFilter === 'all' && (
+            {!searchTerm && statusFilter === "all" && (
               <Button asChild>
                 <Link to="/dashboard/loans/new">Create Loan Request</Link>
               </Button>
@@ -155,9 +196,10 @@ export default function MyLoansPage() {
         <div className="grid gap-4">
           {filteredLoans.map((loan: any) => {
             const status = statusConfig[loan.status] || statusConfig.DRAFT;
-            const fundingProgress = loan.requestedAmount > 0
-              ? (loan.fundedAmount / loan.requestedAmount) * 100
-              : 0;
+            const fundingProgress =
+              loan.requestedAmount > 0
+                ? (loan.fundedAmount / loan.requestedAmount) * 100
+                : 0;
 
             return (
               <Card key={loan.id} className="card-hover">
@@ -169,17 +211,23 @@ export default function MyLoansPage() {
                           <status.icon className="h-3 w-3" />
                           {status.label}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">{loan.loanCode}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {loan.loanCode}
+                        </span>
                       </div>
-                      <h3 className="font-semibold truncate mb-1">{loan.title}</h3>
+                      <h3 className="font-semibold truncate mb-1">
+                        {loan.title}
+                      </h3>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <span>Amount: {formatCurrency(loan.requestedAmount)}</span>
+                        <span>
+                          Amount: {formatCurrency(loan.requestedAmount)}
+                        </span>
                         <span>Rate: {loan.interestRate}%/year</span>
                         <span>Term: {loan.termMonths} months</span>
                       </div>
                     </div>
 
-                    {loan.status === 'FUNDING' && (
+                    {loan.status === "FUNDING" && (
                       <div className="w-full lg:w-48">
                         <div className="flex justify-between text-sm mb-1">
                           <span>Funding Progress</span>
@@ -187,20 +235,26 @@ export default function MyLoansPage() {
                         </div>
                         <Progress value={fundingProgress} className="h-2" />
                         <div className="text-xs text-muted-foreground mt-1">
-                          {formatCurrency(loan.fundedAmount)} / {formatCurrency(loan.requestedAmount)}
+                          {formatCurrency(loan.fundedAmount)} /{" "}
+                          {formatCurrency(loan.requestedAmount)}
                         </div>
                       </div>
                     )}
 
-                    {loan.status === 'ACTIVE' && (
+                    {loan.status === "ACTIVE" && (
                       <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Total Repaid</div>
-                        <div className="font-semibold">{formatCurrency(loan.totalRepaid || 0)}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Total Repaid
+                        </div>
+                        <div className="font-semibold">
+                          {formatCurrency(loan.totalRepaid || 0)}
+                        </div>
                       </div>
                     )}
 
                     <div className="flex gap-2">
-                      {(loan.status === 'DRAFT' || loan.status === 'PENDING_REVIEW') && (
+                      {(loan.status === "DRAFT" ||
+                        loan.status === "PENDING_REVIEW") && (
                         <Button
                           variant="destructive"
                           size="sm"
@@ -212,7 +266,9 @@ export default function MyLoansPage() {
                         </Button>
                       )}
                       <Button variant="outline" asChild>
-                        <Link to={`/dashboard/loans/${loan.id}`}>View Details</Link>
+                        <Link to={`/dashboard/loans/${loan.id}`}>
+                          View Details
+                        </Link>
                       </Button>
                     </div>
                   </div>
@@ -224,25 +280,32 @@ export default function MyLoansPage() {
       )}
 
       {/* Cancel Loan Dialog */}
-      <Dialog open={cancelLoanId !== null} onOpenChange={(open) => !open && setCancelLoanId(null)}>
+      <Dialog
+        open={cancelLoanId !== null}
+        onOpenChange={(open) => !open && setCancelLoanId(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Loan Request</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel this loan request? This action cannot be undone.
+              Are you sure you want to cancel this loan request? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           {loanToCancel && (
             <div className="py-4">
               <div className="space-y-2">
                 <div className="text-sm">
-                  <span className="font-medium">Loan Code:</span> {loanToCancel.loanCode}
+                  <span className="font-medium">Loan Code:</span>{" "}
+                  {loanToCancel.loanCode}
                 </div>
                 <div className="text-sm">
-                  <span className="font-medium">Title:</span> {loanToCancel.title}
+                  <span className="font-medium">Title:</span>{" "}
+                  {loanToCancel.title}
                 </div>
                 <div className="text-sm">
-                  <span className="font-medium">Amount:</span> {formatCurrency(loanToCancel.requestedAmount)}
+                  <span className="font-medium">Amount:</span>{" "}
+                  {formatCurrency(loanToCancel.requestedAmount)}
                 </div>
               </div>
             </div>
@@ -260,7 +323,7 @@ export default function MyLoansPage() {
               onClick={handleConfirmCancel}
               disabled={cancelLoan.isPending}
             >
-              {cancelLoan.isPending ? 'Cancelling...' : 'Yes, Cancel Loan'}
+              {cancelLoan.isPending ? "Cancelling..." : "Yes, Cancel Loan"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -268,5 +331,3 @@ export default function MyLoansPage() {
     </div>
   );
 }
-
-

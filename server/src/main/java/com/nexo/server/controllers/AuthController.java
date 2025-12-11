@@ -3,6 +3,8 @@ package com.nexo.server.controllers;
 import com.nexo.server.dto.auth.*;
 import com.nexo.server.dto.common.ApiResponse;
 import com.nexo.server.dto.user.UserResponse;
+import com.nexo.server.exceptions.ResourceNotFoundException;
+import com.nexo.server.exceptions.UnauthorizedException;
 import com.nexo.server.security.CurrentUser;
 import com.nexo.server.security.UserPrincipal;
 import com.nexo.server.services.AuthService;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Authentication", description = "Authentication endpoints")
 public class AuthController {
 
@@ -61,8 +65,25 @@ public class AuthController {
     @GetMapping("/me")
     @Operation(summary = "Get current user info")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        UserResponse response = authService.getCurrentUser(userPrincipal.getId());
-        return ResponseEntity.ok(ApiResponse.success(response));
+        log.debug("GET /me called, UserPrincipal: {}", userPrincipal != null ? "present (id: " + userPrincipal.getId() + ")" : "null");
+        
+        if (userPrincipal == null) {
+            log.warn("UserPrincipal is null in /me endpoint - user not authenticated");
+            throw new UnauthorizedException("User not authenticated. Please login again.");
+        }
+        
+        try {
+            log.debug("Fetching user for ID: {}", userPrincipal.getId());
+            UserResponse response = authService.getCurrentUser(userPrincipal.getId());
+            log.debug("User fetched successfully: {}", response.getEmail());
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (ResourceNotFoundException e) {
+            log.error("User not found for ID: {}", userPrincipal.getId(), e);
+            throw new UnauthorizedException("User not found. Please login again.");
+        } catch (Exception e) {
+            log.error("Unexpected error getting current user for user ID: {}", userPrincipal.getId(), e);
+            throw e;
+        }
     }
 
     private String getClientIp(HttpServletRequest request) {

@@ -13,6 +13,7 @@ import com.nexo.server.repositories.TicketRepository;
 import com.nexo.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final LoanRepository loanRepository;
+    private final TicketMapper ticketMapper;
     private final NotificationService notificationService;
 
     /**
@@ -75,16 +77,86 @@ public class TicketService {
     /**
      * Get ticket by ID
      */
+    @Transactional(readOnly = true)
     public Ticket getTicket(Long ticketId, Long userId, boolean isAdmin) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+        // Fetch with relationships to avoid lazy loading issues
+        Ticket ticket = ticketRepository.findByIdWithUserAndAssignedTo(ticketId);
+        if (ticket == null) {
+            throw new ResourceNotFoundException("Ticket not found");
+        }
 
         // Non-admin users can only view their own tickets
         if (!isAdmin && !ticket.getUser().getId().equals(userId)) {
             throw new BadRequestException("Access denied");
         }
 
+        // Force initialize and reload entities from database to avoid proxy issues
+        if (ticket.getUser() != null) {
+            Long userEntityId = ticket.getUser().getId();
+            ticket.setUser(userRepository.findById(userEntityId).orElse(null));
+        }
+        if (ticket.getAssignedTo() != null) {
+            Long assignedToEntityId = ticket.getAssignedTo().getId();
+            ticket.setAssignedTo(userRepository.findById(assignedToEntityId).orElse(null));
+        }
+        if (ticket.getMessages() != null) {
+            Hibernate.initialize(ticket.getMessages());
+            ticket.getMessages().forEach(msg -> {
+                if (msg.getSender() != null) {
+                    Long senderEntityId = msg.getSender().getId();
+                    msg.setSender(userRepository.findById(senderEntityId).orElse(null));
+                }
+            });
+        }
+
         return ticket;
+    }
+
+    /**
+     * Get ticket by ID and convert to DTO
+     */
+    @Transactional(readOnly = true)
+    public com.nexo.server.dto.ticket.TicketResponse getTicketResponse(Long ticketId, Long userId, boolean isAdmin) {
+        // Fetch with relationships to avoid lazy loading issues
+        Ticket ticket = ticketRepository.findByIdWithUserAndAssignedTo(ticketId);
+        if (ticket == null) {
+            throw new ResourceNotFoundException("Ticket not found");
+        }
+
+        // Non-admin users can only view their own tickets
+        if (!isAdmin && !ticket.getUser().getId().equals(userId)) {
+            throw new BadRequestException("Access denied");
+        }
+
+        // Force initialize and reload entities from database to avoid proxy issues
+        if (ticket.getUser() != null) {
+            Long userEntityId = ticket.getUser().getId();
+            User userEntity = userRepository.findById(userEntityId).orElse(null);
+            if (userEntity != null) {
+                ticket.setUser(userEntity);
+            }
+        }
+        if (ticket.getAssignedTo() != null) {
+            Long assignedToEntityId = ticket.getAssignedTo().getId();
+            User assignedToEntity = userRepository.findById(assignedToEntityId).orElse(null);
+            if (assignedToEntity != null) {
+                ticket.setAssignedTo(assignedToEntity);
+            }
+        }
+        if (ticket.getMessages() != null) {
+            Hibernate.initialize(ticket.getMessages());
+            ticket.getMessages().forEach(msg -> {
+                if (msg.getSender() != null) {
+                    Long senderEntityId = msg.getSender().getId();
+                    User senderEntity = userRepository.findById(senderEntityId).orElse(null);
+                    if (senderEntity != null) {
+                        msg.setSender(senderEntity);
+                    }
+                }
+            });
+        }
+
+        return ticketMapper.toResponse(ticket);
     }
 
     /**
@@ -100,7 +172,10 @@ public class TicketService {
     /**
      * Get all tickets (Admin)
      */
-    public Page<Ticket> getAllTickets(TicketStatus status, TicketPriority priority, Pageable pageable) {
+    public Page<Ticket> getAllTickets(TicketStatus status, TicketPriority priority, String search, Pageable pageable) {
+        if (search != null && !search.trim().isEmpty()) {
+            return ticketRepository.searchTickets(search, status, priority, pageable);
+        }
         if (status != null && priority != null) {
             return ticketRepository.findByStatusAndPriority(status, priority, pageable);
         } else if (status != null) {
@@ -161,7 +236,7 @@ public class TicketService {
      * Update ticket status (Admin)
      */
     @Transactional
-    public Ticket updateStatus(Long ticketId, TicketStatus status, Long adminId) {
+    public void updateStatus(Long ticketId, TicketStatus status, Long adminId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
 
@@ -178,15 +253,13 @@ public class TicketService {
                 "Your ticket " + ticket.getTicketCode() + " status changed to " + status);
 
         log.info("Ticket {} status updated to {} by admin {}", ticketId, status, adminId);
-
-        return ticket;
     }
 
     /**
      * Update ticket priority (Admin)
      */
     @Transactional
-    public Ticket updatePriority(Long ticketId, TicketPriority priority) {
+    public void updatePriority(Long ticketId, TicketPriority priority) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
 
@@ -194,15 +267,13 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         log.info("Ticket {} priority updated to {}", ticketId, priority);
-
-        return ticket;
     }
 
     /**
      * Assign ticket to staff (Admin)
      */
     @Transactional
-    public Ticket assignTicket(Long ticketId, Long staffId) {
+    public void assignTicket(Long ticketId, Long staffId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
 
@@ -214,8 +285,6 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         log.info("Ticket {} assigned to staff {}", ticketId, staffId);
-
-        return ticket;
     }
 
     /**

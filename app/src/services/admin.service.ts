@@ -7,8 +7,6 @@ import type {
   KycProfile,
   Transaction,
   Ticket,
-  AuditLog,
-  SystemSetting,
   DashboardStats,
   UserRole,
   UserStatus,
@@ -17,6 +15,7 @@ import type {
   KycStatus,
   TicketStatus,
   TicketPriority,
+  TransactionStatus,
   LoanReviewRequest,
 } from '@/types';
 
@@ -56,29 +55,7 @@ export interface WithdrawalFilters {
   size?: number;
 }
 
-export interface AuditLogFilters {
-  userId?: number;
-  action?: string;
-  entityType?: string;
-  fromDate?: string;
-  toDate?: string;
-  page?: number;
-  size?: number;
-}
 
-export interface SystemSettingRequest {
-  settingKey: string;
-  settingValue: string;
-  settingType: string;
-  description?: string;
-  category?: string;
-  isEditable: boolean;
-}
-
-export interface UpdateSystemSettingRequest {
-  settingValue: string;
-  description?: string;
-}
 
 export interface KycReviewRequest {
   action: 'APPROVE' | 'REJECT';
@@ -190,6 +167,7 @@ export const adminService = {
     const params = new URLSearchParams();
     if (filters?.status) params.append('status', filters.status);
     if (filters?.priority) params.append('priority', filters.priority);
+    if (filters?.search) params.append('search', filters.search);
     if (filters?.page !== undefined) params.append('page', String(filters.page));
     if (filters?.size !== undefined) params.append('size', String(filters.size));
 
@@ -214,57 +192,6 @@ export const adminService = {
     await api.put(`/tickets/admin/${id}/assign?staffId=${staffId}`);
   },
 
-  // System Settings
-  async getSystemSettings(category?: string): Promise<SystemSetting[]> {
-    const params = new URLSearchParams();
-    if (category) params.append('category', category);
-    const response = await api.get<ApiResponse<SystemSetting[]>>(`/admin/settings?${params}`);
-    return response.data.data;
-  },
-
-  async getSystemSettingById(id: number): Promise<SystemSetting> {
-    const response = await api.get<ApiResponse<SystemSetting>>(`/admin/settings/${id}`);
-    return response.data.data;
-  },
-
-  async getSystemSettingByKey(key: string): Promise<SystemSetting> {
-    const response = await api.get<ApiResponse<SystemSetting>>(`/admin/settings/key/${key}`);
-    return response.data.data;
-  },
-
-  async createSystemSetting(data: SystemSettingRequest): Promise<SystemSetting> {
-    const response = await api.post<ApiResponse<SystemSetting>>('/admin/settings', data);
-    return response.data.data;
-  },
-
-  async updateSystemSetting(id: number, data: UpdateSystemSettingRequest): Promise<SystemSetting> {
-    const response = await api.put<ApiResponse<SystemSetting>>(`/admin/settings/${id}`, data);
-    return response.data.data;
-  },
-
-  async updateSystemSettingByKey(key: string, data: UpdateSystemSettingRequest): Promise<SystemSetting> {
-    const response = await api.put<ApiResponse<SystemSetting>>(`/admin/settings/key/${key}`, data);
-    return response.data.data;
-  },
-
-  async deleteSystemSetting(id: number): Promise<void> {
-    await api.delete(`/admin/settings/${id}`);
-  },
-
-  // Audit Logs
-  async getAuditLogs(filters?: AuditLogFilters): Promise<PageResponse<AuditLog>> {
-    const params = new URLSearchParams();
-    if (filters?.userId !== undefined) params.append('userId', String(filters.userId));
-    if (filters?.action) params.append('action', filters.action);
-    if (filters?.entityType) params.append('entityType', filters.entityType);
-    if (filters?.fromDate) params.append('fromDate', filters.fromDate);
-    if (filters?.toDate) params.append('toDate', filters.toDate);
-    if (filters?.page !== undefined) params.append('page', String(filters.page));
-    if (filters?.size !== undefined) params.append('size', String(filters.size));
-
-    const response = await api.get<ApiResponse<PageResponse<AuditLog>>>(`/admin/audit-logs?${params}`);
-    return response.data.data;
-  },
 };
 
 export default adminService;

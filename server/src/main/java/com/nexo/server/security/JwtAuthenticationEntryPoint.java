@@ -22,6 +22,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
+        // Skip JSON error for OAuth2 callbacks - let Spring Security handle them
+        String requestPath = request.getRequestURI();
+        if (requestPath != null && (requestPath.startsWith("/oauth2/") || requestPath.startsWith("/api/oauth2/"))) {
+            // Let Spring Security handle OAuth2 callbacks
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         log.error("Unauthorized error: {}", authException.getMessage());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

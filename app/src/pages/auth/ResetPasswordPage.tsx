@@ -1,13 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Lock, Loader2, ArrowLeft, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react';
-import { passwordService } from '@/services/password.service';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Lock,
+  Loader2,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { passwordService } from "@/services/password.service";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -15,28 +23,30 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { toast } from 'sonner';
+} from "@/components/ui/card";
+import { toast } from "sonner";
 
-const resetPasswordSchema = z.object({
-  newPassword: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const resetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 export const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const token = searchParams.get('token');
+
+  const token = searchParams.get("token");
 
   const [isLoading, setIsLoading] = useState(false);
   const [isValidating, setIsValidating] = useState(true);
@@ -81,9 +91,9 @@ export const ResetPasswordPage = () => {
     try {
       await passwordService.resetPassword(token, data.newPassword);
       setIsSuccess(true);
-      toast.success('Password reset successful!');
+      toast.success("Password reset successful!");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to reset password');
+      toast.error(error.response?.data?.message || "Failed to reset password");
     } finally {
       setIsLoading(false);
     }
@@ -109,9 +119,12 @@ export const ResetPasswordPage = () => {
           <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
             <XCircle className="w-8 h-8 text-red-500" />
           </div>
-          <CardTitle className="text-2xl font-bold text-white">Invalid or Expired Link</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">
+            Invalid or Expired Link
+          </CardTitle>
           <CardDescription className="text-slate-400">
-            This password reset link is invalid or has expired. Please request a new one.
+            This password reset link is invalid or has expired. Please request a
+            new one.
           </CardDescription>
         </CardHeader>
 
@@ -142,9 +155,12 @@ export const ResetPasswordPage = () => {
           <div className="mx-auto w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
             <CheckCircle className="w-8 h-8 text-emerald-500" />
           </div>
-          <CardTitle className="text-2xl font-bold text-white">Password Reset Successful</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">
+            Password Reset Successful
+          </CardTitle>
           <CardDescription className="text-slate-400">
-            Your password has been reset successfully. You can now log in with your new password.
+            Your password has been reset successfully. You can now log in with
+            your new password.
           </CardDescription>
         </CardHeader>
 
@@ -162,7 +178,9 @@ export const ResetPasswordPage = () => {
   return (
     <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-white">Reset your password</CardTitle>
+        <CardTitle className="text-2xl font-bold text-white">
+          Reset your password
+        </CardTitle>
         <CardDescription className="text-slate-400">
           Enter your new password below.
         </CardDescription>
@@ -178,9 +196,9 @@ export const ResetPasswordPage = () => {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <Input
                 id="newPassword"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter new password"
-                {...register('newPassword')}
+                {...register("newPassword")}
                 className="pl-10 pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 h-12"
               />
               <button
@@ -188,11 +206,17 @@ export const ResetPasswordPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.newPassword && (
-              <p className="text-sm text-red-400">{errors.newPassword.message}</p>
+              <p className="text-sm text-red-400">
+                {errors.newPassword.message}
+              </p>
             )}
           </div>
 
@@ -204,9 +228,9 @@ export const ResetPasswordPage = () => {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <Input
                 id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm new password"
-                {...register('confirmPassword')}
+                {...register("confirmPassword")}
                 className="pl-10 pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 h-12"
               />
               <button
@@ -214,11 +238,17 @@ export const ResetPasswordPage = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
               >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="text-sm text-red-400">{errors.confirmPassword.message}</p>
+              <p className="text-sm text-red-400">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
@@ -243,7 +273,7 @@ export const ResetPasswordPage = () => {
                 Resetting...
               </>
             ) : (
-              'Reset Password'
+              "Reset Password"
             )}
           </Button>
         </form>
@@ -265,4 +295,3 @@ export const ResetPasswordPage = () => {
 };
 
 export default ResetPasswordPage;
-

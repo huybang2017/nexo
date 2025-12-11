@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Users,
   CreditCard,
@@ -11,13 +11,12 @@ import {
   DollarSign,
   Activity,
   AlertTriangle,
-} from 'lucide-react';
-import { useDashboardStats } from '@/hooks/useAdmin';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn, formatCurrency } from '@/lib/utils';
+} from "lucide-react";
+import { useDashboardStats } from "@/hooks/useAdmin";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatCurrency } from "@/lib/utils";
 import {
   PieChart,
   Pie,
@@ -30,7 +29,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 const container = {
   hidden: { opacity: 0 },
@@ -57,29 +56,44 @@ export const AdminDashboard = () => {
     >
       {/* Header */}
       <motion.div variants={item}>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Admin Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-white">
+          Admin Dashboard
+        </h1>
         <p className="text-slate-400 mt-1">Platform overview and management</p>
       </motion.div>
 
       {/* Quick Actions - Items needing attention */}
-      <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
         <Card className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-amber-500/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-amber-300 text-sm font-medium">Pending KYC</p>
+                <p className="text-amber-300 text-sm font-medium">
+                  Pending KYC
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-10 w-16 mt-1 bg-amber-500/20" />
                 ) : (
-                  <p className="text-4xl font-bold text-white">{stats?.kyc.pending || 0}</p>
+                  <p className="text-4xl font-bold text-white">
+                    {stats?.kyc.pending || 0}
+                  </p>
                 )}
-                <p className="text-amber-400/70 text-sm mt-1">Requires review</p>
+                <p className="text-amber-400/70 text-sm mt-1">
+                  Requires review
+                </p>
               </div>
               <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center">
                 <FileCheck className="w-7 h-7 text-amber-400" />
               </div>
             </div>
-            <Button asChild size="sm" className="mt-4 bg-amber-500 hover:bg-amber-600 text-black">
+            <Button
+              asChild
+              size="sm"
+              className="mt-4 bg-amber-500 hover:bg-amber-600 text-black"
+            >
               <Link to="/admin/kyc">Review Now</Link>
             </Button>
           </CardContent>
@@ -89,19 +103,29 @@ export const AdminDashboard = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-300 text-sm font-medium">Pending Loans</p>
+                <p className="text-blue-300 text-sm font-medium">
+                  Pending Loans
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-10 w-16 mt-1 bg-blue-500/20" />
                 ) : (
-                  <p className="text-4xl font-bold text-white">{stats?.loans.pending || 0}</p>
+                  <p className="text-4xl font-bold text-white">
+                    {stats?.loans.pending || 0}
+                  </p>
                 )}
-                <p className="text-blue-400/70 text-sm mt-1">Awaiting approval</p>
+                <p className="text-blue-400/70 text-sm mt-1">
+                  Awaiting approval
+                </p>
               </div>
               <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center">
                 <CreditCard className="w-7 h-7 text-blue-400" />
               </div>
             </div>
-            <Button asChild size="sm" className="mt-4 bg-blue-500 hover:bg-blue-600 text-white">
+            <Button
+              asChild
+              size="sm"
+              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white"
+            >
               <Link to="/admin/loans?status=PENDING_REVIEW">Review Now</Link>
             </Button>
           </CardContent>
@@ -111,11 +135,15 @@ export const AdminDashboard = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-300 text-sm font-medium">Open Tickets</p>
+                <p className="text-purple-300 text-sm font-medium">
+                  Open Tickets
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-10 w-16 mt-1 bg-purple-500/20" />
                 ) : (
-                  <p className="text-4xl font-bold text-white">{stats?.support.openTickets || 0}</p>
+                  <p className="text-4xl font-bold text-white">
+                    {stats?.support.openTickets || 0}
+                  </p>
                 )}
                 <p className="text-purple-400/70 text-sm mt-1">Need response</p>
               </div>
@@ -123,7 +151,11 @@ export const AdminDashboard = () => {
                 <MessageSquare className="w-7 h-7 text-purple-400" />
               </div>
             </div>
-            <Button asChild size="sm" className="mt-4 bg-purple-500 hover:bg-purple-600 text-white">
+            <Button
+              asChild
+              size="sm"
+              className="mt-4 bg-purple-500 hover:bg-purple-600 text-white"
+            >
               <Link to="/admin/tickets">View Tickets</Link>
             </Button>
           </CardContent>
@@ -131,7 +163,10 @@ export const AdminDashboard = () => {
       </motion.div>
 
       {/* Stats Overview */}
-      <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+      >
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -143,7 +178,9 @@ export const AdminDashboard = () => {
                 {isLoading ? (
                   <Skeleton className="h-6 w-16 mt-1" />
                 ) : (
-                  <p className="text-xl font-bold text-white">{stats?.users.total || 0}</p>
+                  <p className="text-xl font-bold text-white">
+                    {stats?.users.total || 0}
+                  </p>
                 )}
               </div>
             </div>
@@ -161,7 +198,9 @@ export const AdminDashboard = () => {
                 {isLoading ? (
                   <Skeleton className="h-6 w-16 mt-1" />
                 ) : (
-                  <p className="text-xl font-bold text-white">{stats?.loans.active || 0}</p>
+                  <p className="text-xl font-bold text-white">
+                    {stats?.loans.active || 0}
+                  </p>
                 )}
               </div>
             </div>
@@ -179,7 +218,9 @@ export const AdminDashboard = () => {
                 {isLoading ? (
                   <Skeleton className="h-6 w-16 mt-1" />
                 ) : (
-                  <p className="text-xl font-bold text-white">{stats?.loans.funding || 0}</p>
+                  <p className="text-xl font-bold text-white">
+                    {stats?.loans.funding || 0}
+                  </p>
                 )}
               </div>
             </div>
@@ -208,7 +249,10 @@ export const AdminDashboard = () => {
       </motion.div>
 
       {/* User & KYC Stats */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
         {/* User Breakdown */}
         <Card className="bg-slate-900/50 border-slate-800">
           <CardHeader>
@@ -236,7 +280,9 @@ export const AdminDashboard = () => {
                       <p className="text-slate-400 text-sm">Total registered</p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-white">{stats?.users.borrowers || 0}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {stats?.users.borrowers || 0}
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50">
@@ -249,7 +295,9 @@ export const AdminDashboard = () => {
                       <p className="text-slate-400 text-sm">Active investors</p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-white">{stats?.users.lenders || 0}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {stats?.users.lenders || 0}
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50">
@@ -262,7 +310,9 @@ export const AdminDashboard = () => {
                       <p className="text-slate-400 text-sm">Last 30 days</p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-white">{stats?.users.active || 0}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {stats?.users.active || 0}
+                  </p>
                 </div>
               </>
             )}
@@ -293,12 +343,19 @@ export const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="text-white font-medium">Pending Review</p>
-                      <p className="text-amber-400/70 text-sm">Needs attention</p>
+                      <p className="text-amber-400/70 text-sm">
+                        Needs attention
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-amber-400">{stats?.kyc.pending || 0}</p>
-                    <Link to="/admin/kyc?status=PENDING" className="text-amber-400 text-xs hover:underline">
+                    <p className="text-2xl font-bold text-amber-400">
+                      {stats?.kyc.pending || 0}
+                    </p>
+                    <Link
+                      to="/admin/kyc?status=PENDING"
+                      className="text-amber-400 text-xs hover:underline"
+                    >
                       Review →
                     </Link>
                   </div>
@@ -314,7 +371,9 @@ export const AdminDashboard = () => {
                       <p className="text-slate-400 text-sm">Verified users</p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-emerald-400">{stats?.kyc.approved || 0}</p>
+                  <p className="text-2xl font-bold text-emerald-400">
+                    {stats?.kyc.approved || 0}
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50">
@@ -324,10 +383,14 @@ export const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="text-white font-medium">Rejected</p>
-                      <p className="text-slate-400 text-sm">Failed verification</p>
+                      <p className="text-slate-400 text-sm">
+                        Failed verification
+                      </p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-red-400">{stats?.kyc.rejected || 0}</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    {stats?.kyc.rejected || 0}
+                  </p>
                 </div>
               </>
             )}
@@ -336,7 +399,10 @@ export const AdminDashboard = () => {
       </motion.div>
 
       {/* Charts & Graphs */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
         {/* KYC Status Distribution - Pie Chart */}
         <Card className="bg-slate-900/50 border-slate-800">
           <CardHeader>
@@ -353,14 +419,16 @@ export const AdminDashboard = () => {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Pending', value: stats?.kyc.pending || 0 },
-                      { name: 'Approved', value: stats?.kyc.approved || 0 },
-                      { name: 'Rejected', value: stats?.kyc.rejected || 0 },
+                      { name: "Pending", value: stats?.kyc.pending || 0 },
+                      { name: "Approved", value: stats?.kyc.approved || 0 },
+                      { name: "Rejected", value: stats?.kyc.rejected || 0 },
                     ]}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
@@ -371,15 +439,17 @@ export const AdminDashboard = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      color: '#fff',
+                      backgroundColor: "#1e293b",
+                      border: "1px solid #334155",
+                      borderRadius: "8px",
+                      color: "#fff",
                     }}
                   />
                   <Legend
-                    wrapperStyle={{ color: '#cbd5e1' }}
-                    formatter={(value) => <span style={{ color: '#cbd5e1' }}>{value}</span>}
+                    wrapperStyle={{ color: "#cbd5e1" }}
+                    formatter={(value) => (
+                      <span style={{ color: "#cbd5e1" }}>{value}</span>
+                    )}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -403,15 +473,17 @@ export const AdminDashboard = () => {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Pending', value: stats?.loans.pending || 0 },
-                      { name: 'Funding', value: stats?.loans.funding || 0 },
-                      { name: 'Active', value: stats?.loans.active || 0 },
-                      { name: 'Completed', value: stats?.loans.completed || 0 },
+                      { name: "Pending", value: stats?.loans.pending || 0 },
+                      { name: "Funding", value: stats?.loans.funding || 0 },
+                      { name: "Active", value: stats?.loans.active || 0 },
+                      { name: "Completed", value: stats?.loans.completed || 0 },
                     ]}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
@@ -423,15 +495,17 @@ export const AdminDashboard = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      color: '#fff',
+                      backgroundColor: "#1e293b",
+                      border: "1px solid #334155",
+                      borderRadius: "8px",
+                      color: "#fff",
                     }}
                   />
                   <Legend
-                    wrapperStyle={{ color: '#cbd5e1' }}
-                    formatter={(value) => <span style={{ color: '#cbd5e1' }}>{value}</span>}
+                    wrapperStyle={{ color: "#cbd5e1" }}
+                    formatter={(value) => (
+                      <span style={{ color: "#cbd5e1" }}>{value}</span>
+                    )}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -454,27 +528,24 @@ export const AdminDashboard = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={[
-                    { name: 'Borrowers', value: stats?.users.borrowers || 0 },
-                    { name: 'Lenders', value: stats?.users.lenders || 0 },
-                    { name: 'Total', value: stats?.users.total || 0 },
+                    { name: "Borrowers", value: stats?.users.borrowers || 0 },
+                    { name: "Lenders", value: stats?.users.lenders || 0 },
+                    { name: "Total", value: stats?.users.total || 0 },
                   ]}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis
                     dataKey="name"
                     stroke="#94a3b8"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: "12px" }}
                   />
-                  <YAxis
-                    stroke="#94a3b8"
-                    style={{ fontSize: '12px' }}
-                  />
+                  <YAxis stroke="#94a3b8" style={{ fontSize: "12px" }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      color: '#fff',
+                      backgroundColor: "#1e293b",
+                      border: "1px solid #334155",
+                      borderRadius: "8px",
+                      color: "#fff",
                     }}
                   />
                   <Bar dataKey="value" fill="#10b981" radius={[8, 8, 0, 0]} />
@@ -499,26 +570,26 @@ export const AdminDashboard = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={[
-                    { name: 'Open', value: stats?.support.openTickets || 0 },
-                    { name: 'In Progress', value: stats?.support.inProgress || 0 },
+                    { name: "Open", value: stats?.support.openTickets || 0 },
+                    {
+                      name: "In Progress",
+                      value: stats?.support.inProgress || 0,
+                    },
                   ]}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis
                     dataKey="name"
                     stroke="#94a3b8"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: "12px" }}
                   />
-                  <YAxis
-                    stroke="#94a3b8"
-                    style={{ fontSize: '12px' }}
-                  />
+                  <YAxis stroke="#94a3b8" style={{ fontSize: "12px" }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      color: '#fff',
+                      backgroundColor: "#1e293b",
+                      border: "1px solid #334155",
+                      borderRadius: "8px",
+                      color: "#fff",
                     }}
                   />
                   <Bar dataKey="value" fill="#a855f7" radius={[8, 8, 0, 0]} />
@@ -537,25 +608,41 @@ export const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button asChild variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800">
+              <Button
+                asChild
+                variant="outline"
+                className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800"
+              >
                 <Link to="/admin/users">
                   <Users className="w-6 h-6 text-emerald-400" />
                   <span>Manage Users</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800">
+              <Button
+                asChild
+                variant="outline"
+                className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800"
+              >
                 <Link to="/admin/loans">
                   <CreditCard className="w-6 h-6 text-blue-400" />
                   <span>All Loans</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800">
+              <Button
+                asChild
+                variant="outline"
+                className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800"
+              >
                 <Link to="/admin/withdrawals">
                   <DollarSign className="w-6 h-6 text-amber-400" />
                   <span>Withdrawals</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800">
+              <Button
+                asChild
+                variant="outline"
+                className="h-auto py-4 flex-col gap-2 border-slate-700 hover:bg-slate-800"
+              >
                 <Link to="/admin/reports">
                   <Activity className="w-6 h-6 text-purple-400" />
                   <span>Reports</span>
@@ -570,4 +657,3 @@ export const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

@@ -34,5 +34,10 @@ public class CreateLoanRequest {
     @Min(value = 1, message = "Minimum term is 1 month")
     @Max(value = 60, message = "Maximum term is 60 months")
     private Integer termMonths;
+
+    @NotNull(message = "Interest rate is required")
+    @DecimalMin(value = "5.00", message = "Minimum interest rate is 5%")
+    @DecimalMax(value = "20.00", message = "Maximum interest rate is 20% (according to Vietnamese law)")
+    private BigDecimal interestRate;
 }
 

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -8,28 +8,25 @@ import {
   FileCheck,
   ArrowDownUp,
   MessageSquare,
-  Bell,
   LogOut,
   Menu,
   X,
   User,
   ChevronDown,
   Shield,
-  FileText,
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useDashboardStats } from '@/hooks/useAdmin';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDashboardStats } from "@/hooks/useAdmin";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   label: string;
@@ -46,18 +43,32 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
 
   const navItems: NavItem[] = [
-    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { label: 'Users', href: '/admin/users', icon: Users },
-    { label: 'KYC Review', href: '/admin/kyc', icon: FileCheck, badge: stats?.kyc.pending },
-    { label: 'Loans', href: '/admin/loans', icon: CreditCard, badge: stats?.loans.pending },
-    { label: 'Withdrawals', href: '/admin/withdrawals', icon: ArrowDownUp },
-    { label: 'Support Tickets', href: '/admin/tickets', icon: MessageSquare, badge: stats?.support.openTickets },
-    { label: 'Audit Logs', href: '/admin/audit-logs', icon: FileText },
+    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Users", href: "/admin/users", icon: Users },
+    {
+      label: "KYC Review",
+      href: "/admin/kyc",
+      icon: FileCheck,
+      badge: stats?.kyc.pending,
+    },
+    {
+      label: "Loans",
+      href: "/admin/loans",
+      icon: CreditCard,
+      badge: stats?.loans.pending,
+    },
+    { label: "Withdrawals", href: "/admin/withdrawals", icon: ArrowDownUp },
+    {
+      label: "Support Tickets",
+      href: "/admin/tickets",
+      icon: MessageSquare,
+      badge: stats?.support.openTickets,
+    },
   ];
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -98,7 +109,7 @@ export const AdminLayout = () => {
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-72 bg-slate-900 border-r border-slate-800"
             >
               <AdminSidebarContent
@@ -157,12 +168,17 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="text-white font-semibold text-lg tracking-tight">NEXO</span>
+            <span className="text-white font-semibold text-lg tracking-tight">
+              NEXO
+            </span>
             <span className="text-violet-400 text-xs block">Admin Panel</span>
           </div>
         </Link>
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-white">
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 text-slate-400 hover:text-white"
+          >
             <X className="w-5 h-5" />
           </button>
         )}
@@ -171,8 +187,9 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href ||
-            (item.href !== '/admin' && location.pathname.startsWith(item.href));
+          const isActive =
+            location.pathname === item.href ||
+            (item.href !== "/admin" && location.pathname.startsWith(item.href));
 
           return (
             <Link
@@ -180,23 +197,25 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
               to={item.href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
+                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                 isActive
-                  ? 'bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-400 border border-violet-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  ? "bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-400 border border-violet-500/30"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
               )}
             >
               <item.icon className="w-5 h-5" />
               <span>{item.label}</span>
               {item.badge !== undefined && item.badge > 0 && (
-                <Badge variant="secondary" className="ml-auto bg-violet-500/20 text-violet-400">
-                  {item.badge > 99 ? '99+' : item.badge}
+                <Badge
+                  variant="secondary"
+                  className="ml-auto bg-violet-500/20 text-violet-400"
+                >
+                  {item.badge > 99 ? "99+" : item.badge}
                 </Badge>
               )}
             </Link>
           );
         })}
-
       </nav>
 
       {/* User Section */}
@@ -207,7 +226,7 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
               <Avatar className="w-10 h-10 border-2 border-violet-500/30">
                 <AvatarImage src={user?.avatarUrl} />
                 <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white">
-                  {user?.fullName?.charAt(0) || user?.email?.charAt(0) || 'A'}
+                  {user?.fullName?.charAt(0) || user?.email?.charAt(0) || "A"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 text-left">
@@ -219,7 +238,10 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800">
+          <DropdownMenuContent
+            align="end"
+            className="w-56 bg-slate-900 border-slate-800"
+          >
             <DropdownMenuItem asChild>
               <Link to="/admin/profile" className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
@@ -227,7 +249,10 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-slate-800" />
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-red-400 focus:text-red-400">
+            <DropdownMenuItem
+              onClick={onLogout}
+              className="cursor-pointer text-red-400 focus:text-red-400"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </DropdownMenuItem>
@@ -239,4 +264,3 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({
 };
 
 export default AdminLayout;
-

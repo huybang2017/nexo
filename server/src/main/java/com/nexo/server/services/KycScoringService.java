@@ -292,6 +292,16 @@ public class KycScoringService {
                         referenceSelfie
                 );
                 
+                log.info("AI model result for document {} (type: {}): TotalScore={}, ImageQuality={}, OCRAccuracy={}, BlurDetection={}, TamperingDetection={}, FaceQuality={}, DataConsistency={}, ExpirationCheck={}, OCRConfidence={}, FaceMatchScore={}, FaceMatchConfidence={}, Tampered={}, Blurry={}, Expired={}, DocumentHash={}, PerceptualHash={}, ExtractedName={}, ExtractedIdNumber={}, ExtractedDob={}, Explanations={}",
+                        document.getId(), document.getDocumentType(),
+                        aiResult.getTotalScore(), aiResult.getImageQualityScore(), aiResult.getOcrAccuracyScore(),
+                        aiResult.getBlurDetectionScore(), aiResult.getTamperingDetectionScore(), aiResult.getFaceQualityScore(),
+                        aiResult.getDataConsistencyScore(), aiResult.getExpirationCheckScore(), aiResult.getOcrConfidence(),
+                        aiResult.getFaceMatchScore(), aiResult.getFaceMatchConfidence(), aiResult.isTampered(),
+                        aiResult.isBlurry(), aiResult.isExpired(), aiResult.getDocumentHash(), aiResult.getPerceptualHash(),
+                        aiResult.getOcrExtractedName(), aiResult.getOcrExtractedIdNumber(), aiResult.getOcrExtractedDob(),
+                        aiResult.getAiExplanations());
+                
                 explanations.addAll(aiResult.getAiExplanations());
                 
                 // Update document with extracted data

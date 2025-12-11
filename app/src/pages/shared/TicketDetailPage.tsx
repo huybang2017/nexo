@@ -1,14 +1,15 @@
-import { useParams, Link } from 'react-router-dom';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
-import { ArrowLeft, Send } from 'lucide-react';
+import { useParams, Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { formatDate } from "@/lib/utils";
+import { toast } from "sonner";
+import { ArrowLeft, Send } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Ticket {
   id: number;
@@ -39,27 +40,35 @@ const fetchTicket = async (id: string) => {
 
 export default function TicketDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+
+  // Detect if we're in admin context
+  const isAdminContext = location.pathname.startsWith("/admin");
+  const backUrl = isAdminContext ? "/admin/tickets" : "/dashboard/support";
 
   const { data: ticket, isLoading } = useQuery<Ticket>({
-    queryKey: ['ticket', id],
+    queryKey: ["ticket", id],
     queryFn: () => fetchTicket(id!),
     enabled: !!id,
   });
 
   const addMessage = useMutation({
     mutationFn: async (msg: string) => {
-      const response = await api.post(`/tickets/${id}/messages`, { message: msg });
+      const response = await api.post(`/tickets/${id}/messages`, {
+        message: msg,
+      });
       return response.data.data;
     },
     onSuccess: () => {
-      setMessage('');
-      queryClient.invalidateQueries({ queryKey: ['ticket', id] });
-      toast.success('Message sent');
+      setMessage("");
+      queryClient.invalidateQueries({ queryKey: ["ticket", id] });
+      toast.success("Message sent");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to send message');
+      toast.error(error.response?.data?.message || "Failed to send message");
     },
   });
 
@@ -76,18 +85,32 @@ export default function TicketDetailPage() {
     return <div className="text-center py-12">Ticket not found</div>;
   }
 
-  const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-    OPEN: { label: 'Open', variant: 'default' },
-    IN_PROGRESS: { label: 'In Progress', variant: 'secondary' },
-    RESOLVED: { label: 'Resolved', variant: 'outline' },
-    CLOSED: { label: 'Closed', variant: 'outline' },
+  const statusConfig: Record<
+    string,
+    {
+      label: string;
+      variant: "default" | "secondary" | "destructive" | "outline";
+    }
+  > = {
+    OPEN: { label: "Open", variant: "default" },
+    IN_PROGRESS: { label: "In Progress", variant: "secondary" },
+    WAITING_SUPPORT: { label: "Waiting Support", variant: "secondary" },
+    WAITING_CUSTOMER: { label: "Waiting Customer", variant: "default" },
+    RESOLVED: { label: "Resolved", variant: "outline" },
+    CLOSED: { label: "Closed", variant: "outline" },
   };
 
-  const priorityConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-    LOW: { label: 'Low', variant: 'outline' },
-    MEDIUM: { label: 'Medium', variant: 'secondary' },
-    HIGH: { label: 'High', variant: 'destructive' },
-    URGENT: { label: 'Urgent', variant: 'destructive' },
+  const priorityConfig: Record<
+    string,
+    {
+      label: string;
+      variant: "default" | "secondary" | "destructive" | "outline";
+    }
+  > = {
+    LOW: { label: "Low", variant: "outline" },
+    MEDIUM: { label: "Medium", variant: "secondary" },
+    HIGH: { label: "High", variant: "destructive" },
+    URGENT: { label: "Urgent", variant: "destructive" },
   };
 
   const status = statusConfig[ticket.status] || statusConfig.OPEN;
@@ -97,7 +120,7 @@ export default function TicketDetailPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link to="/dashboard/support">
+          <Link to={backUrl}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
@@ -132,14 +155,16 @@ export default function TicketDetailPage() {
                   <div
                     key={msg.id}
                     className={`p-4 rounded-lg ${
-                      msg.isStaffReply ? 'bg-muted' : 'bg-background border'
+                      msg.isStaffReply ? "bg-muted" : "bg-background border"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-medium">{msg.createdBy.fullName}</p>
                         {msg.isStaffReply && (
-                          <Badge variant="secondary" className="mt-1">Staff</Badge>
+                          <Badge variant="secondary" className="mt-1">
+                            Staff
+                          </Badge>
                         )}
                       </div>
                       <span className="text-sm text-muted-foreground">
@@ -153,7 +178,7 @@ export default function TicketDetailPage() {
             </Card>
           )}
 
-          {ticket.status !== 'CLOSED' && (
+          {ticket.status !== "CLOSED" && (
             <Card>
               <CardHeader>
                 <CardTitle>Add Message</CardTitle>
@@ -165,9 +190,12 @@ export default function TicketDetailPage() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button onClick={handleSendMessage} disabled={addMessage.isPending || !message.trim()}>
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={addMessage.isPending || !message.trim()}
+                >
                   <Send className="mr-2 h-4 w-4" />
-                  {addMessage.isPending ? 'Sending...' : 'Send Message'}
+                  {addMessage.isPending ? "Sending..." : "Send Message"}
                 </Button>
               </CardContent>
             </Card>
@@ -199,4 +227,3 @@ export default function TicketDetailPage() {
     </div>
   );
 }
-

@@ -1,13 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { creditScoreService } from '@/services/creditScore.service';
-import type { AdminAdjustScoreRequest } from '@/types';
-import { toast } from 'sonner';
-
-// ==================== USER HOOKS ====================
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { creditScoreService } from "@/services/creditScore.service";
+import type { AdminAdjustScoreRequest } from "@/types";
+import { toast } from "sonner";
 
 export function useMyCreditScore() {
   return useQuery({
-    queryKey: ['creditScore', 'me'],
+    queryKey: ["creditScore", "me"],
     queryFn: () => creditScoreService.getMyCreditScore(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -15,7 +13,7 @@ export function useMyCreditScore() {
 
 export function useMyCreditScoreSummary() {
   return useQuery({
-    queryKey: ['creditScore', 'me', 'summary'],
+    queryKey: ["creditScore", "me", "summary"],
     queryFn: () => creditScoreService.getMyCreditScoreSummary(),
     staleTime: 5 * 60 * 1000,
   });
@@ -23,7 +21,7 @@ export function useMyCreditScoreSummary() {
 
 export function useMyCreditScoreHistory(page = 0, size = 20) {
   return useQuery({
-    queryKey: ['creditScore', 'me', 'history', page, size],
+    queryKey: ["creditScore", "me", "history", page, size],
     queryFn: () => creditScoreService.getMyCreditScoreHistory(page, size),
     staleTime: 2 * 60 * 1000,
   });
@@ -35,11 +33,11 @@ export function useRecalculateMyCreditScore() {
   return useMutation({
     mutationFn: () => creditScoreService.recalculateMyScore(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['creditScore', 'me'] });
-      toast.success('Credit score recalculated successfully');
+      queryClient.invalidateQueries({ queryKey: ["creditScore", "me"] });
+      toast.success("Credit score recalculated successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to recalculate credit score');
+      toast.error(error.message || "Failed to recalculate credit score");
     },
   });
 }
@@ -48,7 +46,7 @@ export function useRecalculateMyCreditScore() {
 
 export function useUserCreditScore(userId: number) {
   return useQuery({
-    queryKey: ['creditScore', 'admin', 'user', userId],
+    queryKey: ["creditScore", "admin", "user", userId],
     queryFn: () => creditScoreService.getUserCreditScore(userId),
     enabled: !!userId,
     staleTime: 2 * 60 * 1000,
@@ -57,8 +55,9 @@ export function useUserCreditScore(userId: number) {
 
 export function useUserCreditScoreHistory(userId: number, page = 0, size = 20) {
   return useQuery({
-    queryKey: ['creditScore', 'admin', 'user', userId, 'history', page, size],
-    queryFn: () => creditScoreService.getUserCreditScoreHistory(userId, page, size),
+    queryKey: ["creditScore", "admin", "user", userId, "history", page, size],
+    queryFn: () =>
+      creditScoreService.getUserCreditScoreHistory(userId, page, size),
     enabled: !!userId,
     staleTime: 2 * 60 * 1000,
   });
@@ -68,15 +67,22 @@ export function useAdjustUserCreditScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, request }: { userId: number; request: AdminAdjustScoreRequest }) =>
-      creditScoreService.adjustUserCreditScore(userId, request),
+    mutationFn: ({
+      userId,
+      request,
+    }: {
+      userId: number;
+      request: AdminAdjustScoreRequest;
+    }) => creditScoreService.adjustUserCreditScore(userId, request),
     onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['creditScore', 'admin', 'user', userId] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-      toast.success('Credit score adjusted successfully');
+      queryClient.invalidateQueries({
+        queryKey: ["creditScore", "admin", "user", userId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      toast.success("Credit score adjusted successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to adjust credit score');
+      toast.error(error.message || "Failed to adjust credit score");
     },
   });
 }
@@ -85,14 +91,16 @@ export function useForceRecalculateUserScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userId: number) => creditScoreService.forceRecalculateUserScore(userId),
+    mutationFn: (userId: number) =>
+      creditScoreService.forceRecalculateUserScore(userId),
     onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ['creditScore', 'admin', 'user', userId] });
-      toast.success('Credit score recalculated successfully');
+      queryClient.invalidateQueries({
+        queryKey: ["creditScore", "admin", "user", userId],
+      });
+      toast.success("Credit score recalculated successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to recalculate credit score');
+      toast.error(error.message || "Failed to recalculate credit score");
     },
   });
 }
-

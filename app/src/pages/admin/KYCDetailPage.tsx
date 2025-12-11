@@ -1,17 +1,46 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAdminKycDetail, useReviewKyc } from '@/hooks/useAdmin';
-import { useCalculateKycScore, useRecalculateKycScore, useCheckDuplicates, useResolveFraudFlag } from '@/hooks/useKycScore';
-import { kycScoreService } from '@/services/kycScore.service';
-import { formatDate } from '@/lib/utils';
-import { ArrowLeft, CheckCircle, XCircle, FileText, User, CreditCard, Building, MapPin, Shield, AlertTriangle, RefreshCw, Search } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'sonner';
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAdminKycDetail, useReviewKyc } from "@/hooks/useAdmin";
+import {
+  useCalculateKycScore,
+  useRecalculateKycScore,
+  useResolveFraudFlag,
+} from "@/hooks/useKycScore";
+import { kycScoreService } from "@/services/kycScore.service";
+import { formatDate } from "@/lib/utils";
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  FileText,
+  User,
+  CreditCard,
+  Building,
+  MapPin,
+  Shield,
+  AlertTriangle,
+  RefreshCw,
+  Search,
+} from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -19,17 +48,27 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { KycScoreCard, KycRiskBadge, FraudFlagsList } from '@/components/kyc-score';
-import type { KycScore, KycRiskLevel, DuplicateCheckResult } from '@/types';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  KycScoreCard,
+  KycRiskBadge,
+  FraudFlagsList,
+} from "@/components/kyc-score";
+import type { KycScore, KycRiskLevel, DuplicateCheckResult } from "@/types";
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  NOT_SUBMITTED: { label: 'Not Submitted', variant: 'outline' },
-  PENDING: { label: 'Pending', variant: 'secondary' },
-  APPROVED: { label: 'Approved', variant: 'default' },
-  REJECTED: { label: 'Rejected', variant: 'destructive' },
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
+  NOT_SUBMITTED: { label: "Not Submitted", variant: "outline" },
+  PENDING: { label: "Pending", variant: "secondary" },
+  APPROVED: { label: "Approved", variant: "default" },
+  REJECTED: { label: "Rejected", variant: "destructive" },
 };
 
 export default function KYCDetailPage() {
@@ -40,14 +79,15 @@ export default function KYCDetailPage() {
   const calculateKycScore = useCalculateKycScore();
   const recalculateKycScore = useRecalculateKycScore();
   const resolveFraudFlag = useResolveFraudFlag();
-  
+
   const [showApproveDialog, setShowApproveDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionReason, setRejectionReason] = useState("");
   const [kycScore, setKycScore] = useState<KycScore | null>(null);
-  const [duplicateCheck, setDuplicateCheck] = useState<DuplicateCheckResult | null>(null);
+  const [duplicateCheck, setDuplicateCheck] =
+    useState<DuplicateCheckResult | null>(null);
   const [isLoadingScore, setIsLoadingScore] = useState(false);
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState("info");
 
   const loadKycScore = useCallback(async () => {
     if (!kyc?.userId) return;
@@ -56,7 +96,7 @@ export default function KYCDetailPage() {
       const score = await kycScoreService.getKycScoreByUserId(kyc.userId);
       setKycScore(score);
     } catch (error) {
-      console.log('No KYC score available yet');
+      console.log("No KYC score available yet");
     } finally {
       setIsLoadingScore(false);
     }
@@ -99,15 +139,15 @@ export default function KYCDetailPage() {
           description: `Found ${result.matches.length} matching record(s)`,
         });
       } else {
-        toast.success('No duplicates found');
+        toast.success("No duplicates found");
       }
     } catch (error) {
-      toast.error('Failed to check for duplicates');
+      toast.error("Failed to check for duplicates");
     }
   };
 
   const handleResolveFraudFlag = async (flagId: number) => {
-    const note = window.prompt('Enter resolution note:');
+    const note = window.prompt("Enter resolution note:");
     if (!note) return;
     try {
       await resolveFraudFlag.mutateAsync({ flagId, resolutionNote: note });
@@ -121,10 +161,10 @@ export default function KYCDetailPage() {
     try {
       await reviewKyc.mutateAsync({
         id: Number(id),
-        data: { action: 'APPROVE' },
+        data: { action: "APPROVE" },
       });
       setShowApproveDialog(false);
-      navigate('/admin/kyc');
+      navigate("/admin/kyc");
     } catch (error) {
       // Error handled by mutation
     }
@@ -132,17 +172,17 @@ export default function KYCDetailPage() {
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
+      toast.error("Please provide a rejection reason");
       return;
     }
     try {
       await reviewKyc.mutateAsync({
         id: Number(id),
-        data: { action: 'REJECT', rejectionReason },
+        data: { action: "REJECT", rejectionReason },
       });
       setShowRejectDialog(false);
-      setRejectionReason('');
-      navigate('/admin/kyc');
+      setRejectionReason("");
+      navigate("/admin/kyc");
     } catch (error) {
       // Error handled by mutation
     }
@@ -177,15 +217,20 @@ export default function KYCDetailPage() {
   const status = statusConfig[kyc.status] || statusConfig.NOT_SUBMITTED;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className="space-y-6"
     >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild className="hover:bg-slate-800">
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className="hover:bg-slate-800"
+          >
             <Link to="/admin/kyc">
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -197,20 +242,26 @@ export default function KYCDetailPage() {
         </div>
         <div className="flex gap-2 items-center">
           {kycScore && (
-            <KycRiskBadge riskLevel={kycScore.riskLevel as KycRiskLevel} size="lg" />
+            <KycRiskBadge
+              riskLevel={kycScore.riskLevel as KycRiskLevel}
+              size="lg"
+            />
           )}
-          <Badge 
-            variant={status.variant} 
+          <Badge
+            variant={status.variant}
             className={`text-lg px-4 py-2 ${
-              status.variant === 'default' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-              status.variant === 'destructive' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-              status.variant === 'secondary' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-              ''
+              status.variant === "default"
+                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                : status.variant === "destructive"
+                ? "bg-red-500/20 text-red-400 border-red-500/30"
+                : status.variant === "secondary"
+                ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                : ""
             }`}
           >
             {status.label}
           </Badge>
-          {kyc.status === 'PENDING' && (
+          {kyc.status === "PENDING" && (
             <>
               <Button
                 variant="default"
@@ -249,7 +300,9 @@ export default function KYCDetailPage() {
                 </div>
                 <div>
                   <p className="text-slate-400 text-xs">Total Score</p>
-                  <p className="text-xl font-bold text-white">{kycScore.totalScore}/1000</p>
+                  <p className="text-xl font-bold text-white">
+                    {kycScore.totalScore}/1000
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -262,7 +315,9 @@ export default function KYCDetailPage() {
                 </div>
                 <div>
                   <p className="text-slate-400 text-xs">Document Score</p>
-                  <p className="text-xl font-bold text-white">{kycScore.documentScore}</p>
+                  <p className="text-xl font-bold text-white">
+                    {kycScore.documentScore}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -275,7 +330,9 @@ export default function KYCDetailPage() {
                 </div>
                 <div>
                   <p className="text-slate-400 text-xs">Profile Score</p>
-                  <p className="text-xl font-bold text-white">{kycScore.profileScore}</p>
+                  <p className="text-xl font-bold text-white">
+                    {kycScore.profileScore}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -283,18 +340,32 @@ export default function KYCDetailPage() {
           <Card className="bg-slate-900 border-slate-800">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  kycScore.fraudFlagsCount > 0 ? 'bg-red-500/20' : 'bg-emerald-500/20'
-                }`}>
-                  <AlertTriangle className={`w-5 h-5 ${
-                    kycScore.fraudFlagsCount > 0 ? 'text-red-400' : 'text-emerald-400'
-                  }`} />
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                    kycScore.fraudFlagsCount > 0
+                      ? "bg-red-500/20"
+                      : "bg-emerald-500/20"
+                  }`}
+                >
+                  <AlertTriangle
+                    className={`w-5 h-5 ${
+                      kycScore.fraudFlagsCount > 0
+                        ? "text-red-400"
+                        : "text-emerald-400"
+                    }`}
+                  />
                 </div>
                 <div>
                   <p className="text-slate-400 text-xs">Fraud Flags</p>
-                  <p className={`text-xl font-bold ${
-                    kycScore.fraudFlagsCount > 0 ? 'text-red-400' : 'text-emerald-400'
-                  }`}>{kycScore.fraudFlagsCount}</p>
+                  <p
+                    className={`text-xl font-bold ${
+                      kycScore.fraudFlagsCount > 0
+                        ? "text-red-400"
+                        : "text-emerald-400"
+                    }`}
+                  >
+                    {kycScore.fraudFlagsCount}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -305,27 +376,33 @@ export default function KYCDetailPage() {
       {/* Action Buttons */}
       <div className="flex gap-2">
         {!kycScore ? (
-          <Button 
+          <Button
             onClick={handleCalculateScore}
             disabled={calculateKycScore.isPending}
             className="bg-blue-500 hover:bg-blue-600"
           >
             <Shield className="mr-2 h-4 w-4" />
-            {calculateKycScore.isPending ? 'Calculating...' : 'Calculate KYC Score'}
+            {calculateKycScore.isPending
+              ? "Calculating..."
+              : "Calculate KYC Score"}
           </Button>
         ) : (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleRecalculateScore}
             disabled={recalculateKycScore.isPending}
             className="border-slate-700 hover:bg-slate-800"
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${recalculateKycScore.isPending ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${
+                recalculateKycScore.isPending ? "animate-spin" : ""
+              }`}
+            />
             Recalculate
           </Button>
         )}
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleCheckDuplicates}
           className="border-slate-700 hover:bg-slate-800"
         >
@@ -354,7 +431,7 @@ export default function KYCDetailPage() {
               <div className="mt-2 space-y-1">
                 {duplicateCheck.matches.map((match, idx) => (
                   <div key={idx} className="text-xs text-red-300/80">
-                    • User #{match.matchedUserId} ({match.matchedUserEmail}) - 
+                    • User #{match.matchedUserId} ({match.matchedUserEmail}) -
                     {match.matchType} ({match.similarityScore}% similarity)
                   </div>
                 ))}
@@ -368,21 +445,37 @@ export default function KYCDetailPage() {
       )}
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="info" className="data-[state=active]:bg-slate-700">
+          <TabsTrigger
+            value="info"
+            className="data-[state=active]:bg-slate-700"
+          >
             User Info
           </TabsTrigger>
-          <TabsTrigger value="documents" className="data-[state=active]:bg-slate-700">
+          <TabsTrigger
+            value="documents"
+            className="data-[state=active]:bg-slate-700"
+          >
             Documents ({kyc.documents?.length || 0})
           </TabsTrigger>
           {kycScore && (
-            <TabsTrigger value="score" className="data-[state=active]:bg-slate-700">
+            <TabsTrigger
+              value="score"
+              className="data-[state=active]:bg-slate-700"
+            >
               KYC Score
             </TabsTrigger>
           )}
           {kycScore && kycScore.fraudFlags?.length > 0 && (
-            <TabsTrigger value="fraud" className="data-[state=active]:bg-slate-700">
+            <TabsTrigger
+              value="fraud"
+              className="data-[state=active]:bg-slate-700"
+            >
               Fraud Flags ({kycScore.fraudFlags.length})
             </TabsTrigger>
           )}
@@ -390,139 +483,204 @@ export default function KYCDetailPage() {
 
         <TabsContent value="info" className="space-y-6">
           <div className="grid lg:grid-cols-2 gap-6">
-        {/* Personal Information */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <User className="h-5 w-5" />
-              Personal Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow className="border-slate-800">
-                  <TableHead className="w-40 text-slate-400">Full Name</TableHead>
-                  <TableCell className="text-white">{kyc.fullName || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Date of Birth</TableHead>
-                  <TableCell className="text-white">{kyc.dateOfBirth ? formatDate(kyc.dateOfBirth) : '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Gender</TableHead>
-                  <TableCell className="text-white">{kyc.gender || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Occupation</TableHead>
-                  <TableCell className="text-white">{kyc.occupation || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Monthly Income</TableHead>
-                  <TableCell className="text-white">
-                    {kyc.monthlyIncome ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(kyc.monthlyIncome) : '-'}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+            {/* Personal Information */}
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <User className="h-5 w-5" />
+                  Personal Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableBody>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="w-40 text-slate-400">
+                        Full Name
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.fullName || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Date of Birth
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.dateOfBirth ? formatDate(kyc.dateOfBirth) : "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">Gender</TableHead>
+                      <TableCell className="text-white">
+                        {kyc.gender || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Occupation
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.occupation || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Monthly Income
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.monthlyIncome
+                          ? new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(kyc.monthlyIncome)
+                          : "-"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
 
-        {/* ID Card Information */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <CreditCard className="h-5 w-5" />
-              ID Card Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow className="border-slate-800">
-                  <TableHead className="w-40 text-slate-400">ID Number</TableHead>
-                  <TableCell className="font-mono text-white">{kyc.idCardNumber || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Issued Date</TableHead>
-                  <TableCell className="text-white">{kyc.idCardIssuedDate ? formatDate(kyc.idCardIssuedDate) : '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Expiry Date</TableHead>
-                  <TableCell className="text-white">{kyc.idCardExpiryDate ? formatDate(kyc.idCardExpiryDate) : '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Issued Place</TableHead>
-                  <TableCell className="text-white">{kyc.idCardIssuedPlace || '-'}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+            {/* ID Card Information */}
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <CreditCard className="h-5 w-5" />
+                  ID Card Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableBody>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="w-40 text-slate-400">
+                        ID Number
+                      </TableHead>
+                      <TableCell className="font-mono text-white">
+                        {kyc.idCardNumber || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Issued Date
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.idCardIssuedDate
+                          ? formatDate(kyc.idCardIssuedDate)
+                          : "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Expiry Date
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.idCardExpiryDate
+                          ? formatDate(kyc.idCardExpiryDate)
+                          : "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Issued Place
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.idCardIssuedPlace || "-"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
 
-        {/* Address Information */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <MapPin className="h-5 w-5" />
-              Address Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow className="border-slate-800">
-                  <TableHead className="w-40 text-slate-400">Address</TableHead>
-                  <TableCell className="text-white">{kyc.address || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">City</TableHead>
-                  <TableCell className="text-white">{kyc.city || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">District</TableHead>
-                  <TableCell className="text-white">{kyc.district || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Ward</TableHead>
-                  <TableCell className="text-white">{kyc.ward || '-'}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+            {/* Address Information */}
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <MapPin className="h-5 w-5" />
+                  Address Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableBody>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="w-40 text-slate-400">
+                        Address
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.address || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">City</TableHead>
+                      <TableCell className="text-white">
+                        {kyc.city || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">District</TableHead>
+                      <TableCell className="text-white">
+                        {kyc.district || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">Ward</TableHead>
+                      <TableCell className="text-white">
+                        {kyc.ward || "-"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
 
-        {/* Bank Information */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Building className="h-5 w-5" />
-              Bank Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                <TableRow className="border-slate-800">
-                  <TableHead className="w-40 text-slate-400">Bank Name</TableHead>
-                  <TableCell className="text-white">{kyc.bankName || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Account Number</TableHead>
-                  <TableCell className="font-mono text-white">{kyc.bankAccountNumber || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Account Holder</TableHead>
-                  <TableCell className="text-white">{kyc.bankAccountHolder || '-'}</TableCell>
-                </TableRow>
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-400">Branch</TableHead>
-                  <TableCell className="text-white">{kyc.bankBranch || '-'}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+            {/* Bank Information */}
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <Building className="h-5 w-5" />
+                  Bank Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableBody>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="w-40 text-slate-400">
+                        Bank Name
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.bankName || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Account Number
+                      </TableHead>
+                      <TableCell className="font-mono text-white">
+                        {kyc.bankAccountNumber || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">
+                        Account Holder
+                      </TableHead>
+                      <TableCell className="text-white">
+                        {kyc.bankAccountHolder || "-"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="border-slate-800">
+                      <TableHead className="text-slate-400">Branch</TableHead>
+                      <TableCell className="text-white">
+                        {kyc.bankBranch || "-"}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Review Information */}
@@ -534,17 +692,29 @@ export default function KYCDetailPage() {
               <Table>
                 <TableBody>
                   <TableRow className="border-slate-800">
-                    <TableHead className="w-40 text-slate-400">Submitted At</TableHead>
-                    <TableCell className="text-white">{kyc.submittedAt ? formatDate(kyc.submittedAt) : '-'}</TableCell>
+                    <TableHead className="w-40 text-slate-400">
+                      Submitted At
+                    </TableHead>
+                    <TableCell className="text-white">
+                      {kyc.submittedAt ? formatDate(kyc.submittedAt) : "-"}
+                    </TableCell>
                   </TableRow>
                   <TableRow className="border-slate-800">
-                    <TableHead className="text-slate-400">Reviewed At</TableHead>
-                    <TableCell className="text-white">{kyc.reviewedAt ? formatDate(kyc.reviewedAt) : '-'}</TableCell>
+                    <TableHead className="text-slate-400">
+                      Reviewed At
+                    </TableHead>
+                    <TableCell className="text-white">
+                      {kyc.reviewedAt ? formatDate(kyc.reviewedAt) : "-"}
+                    </TableCell>
                   </TableRow>
                   {kyc.rejectionReason && (
                     <TableRow className="border-slate-800">
-                      <TableHead className="text-slate-400">Rejection Reason</TableHead>
-                      <TableCell className="text-red-400">{kyc.rejectionReason}</TableCell>
+                      <TableHead className="text-slate-400">
+                        Rejection Reason
+                      </TableHead>
+                      <TableCell className="text-red-400">
+                        {kyc.rejectionReason}
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -555,88 +725,104 @@ export default function KYCDetailPage() {
 
         <TabsContent value="documents">
           {/* Documents */}
-      {kyc.documents && kyc.documents.length > 0 ? (
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <FileText className="h-5 w-5" />
-              Documents
-            </CardTitle>
-            <CardDescription className="text-slate-400">{kyc.documents.length} document(s) uploaded</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid sm:grid-cols-3 gap-4">
-              {kyc.documents.map((doc: any) => {
-                const fileUrl = doc.fileUrl?.startsWith('http') 
-                  ? doc.fileUrl 
-                  : `http://localhost:8080${doc.fileUrl}`;
-                const isImage = doc.fileName?.match(/\.(jpg|jpeg|png|gif)$/i) || 
-                               doc.documentType === 'ID_CARD_FRONT' || 
-                               doc.documentType === 'ID_CARD_BACK' || 
-                               doc.documentType === 'SELFIE';
-                
-                return (
-                  <div key={doc.id} className="border border-slate-700 rounded-lg p-4 space-y-3 bg-slate-800/50">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="border-slate-600 text-slate-300">{doc.documentType?.replace(/_/g, ' ')}</Badge>
-                    </div>
-                    
-                    {isImage && fileUrl ? (
-                      <div className="space-y-2">
-                        <img
-                          src={fileUrl}
-                          alt={doc.documentType}
-                          className="w-full h-32 object-contain rounded border border-slate-700 bg-slate-900"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                        <p className="text-xs text-slate-500 truncate">{doc.fileName}</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <div className="h-32 bg-slate-900 rounded flex items-center justify-center">
-                          <FileText className="h-8 w-8 text-slate-600" />
-                        </div>
-                        <p className="text-xs text-slate-500 truncate">{doc.fileName}</p>
-                      </div>
-                    )}
-                    
-                    {fileUrl && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full border-slate-700 hover:bg-slate-700"
-                        onClick={() => window.open(fileUrl, '_blank')}
+          {kyc.documents && kyc.documents.length > 0 ? (
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <FileText className="h-5 w-5" />
+                  Documents
+                </CardTitle>
+                <CardDescription className="text-slate-400">
+                  {kyc.documents.length} document(s) uploaded
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {kyc.documents.map((doc: any) => {
+                    const fileUrl = doc.fileUrl?.startsWith("http")
+                      ? doc.fileUrl
+                      : `http://localhost:8080${doc.fileUrl}`;
+                    const isImage =
+                      doc.fileName?.match(/\.(jpg|jpeg|png|gif)$/i) ||
+                      doc.documentType === "ID_CARD_FRONT" ||
+                      doc.documentType === "ID_CARD_BACK" ||
+                      doc.documentType === "SELFIE";
+
+                    return (
+                      <div
+                        key={doc.id}
+                        className="border border-slate-700 rounded-lg p-4 space-y-3 bg-slate-800/50"
                       >
-                        {isImage ? 'View Image' : 'View Document'}
-                      </Button>
-                    )}
-                    
-                    {doc.fileSize && (
-                      <p className="text-xs text-slate-500 text-center">
-                        {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+                        <div className="flex items-center justify-between">
+                          <Badge
+                            variant="outline"
+                            className="border-slate-600 text-slate-300"
+                          >
+                            {doc.documentType?.replace(/_/g, " ")}
+                          </Badge>
+                        </div>
+
+                        {isImage && fileUrl ? (
+                          <div className="space-y-2">
+                            <img
+                              src={fileUrl}
+                              alt={doc.documentType}
+                              className="w-full h-32 object-contain rounded border border-slate-700 bg-slate-900"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display =
+                                  "none";
+                              }}
+                            />
+                            <p className="text-xs text-slate-500 truncate">
+                              {doc.fileName}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="h-32 bg-slate-900 rounded flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-slate-600" />
+                            </div>
+                            <p className="text-xs text-slate-500 truncate">
+                              {doc.fileName}
+                            </p>
+                          </div>
+                        )}
+
+                        {fileUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full border-slate-700 hover:bg-slate-700"
+                            onClick={() => window.open(fileUrl, "_blank")}
+                          >
+                            {isImage ? "View Image" : "View Document"}
+                          </Button>
+                        )}
+
+                        {doc.fileSize && (
+                          <p className="text-xs text-slate-500 text-center">
+                            {(doc.fileSize / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="text-center py-12">
+              <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">No documents uploaded</p>
             </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-400">No documents uploaded</p>
-        </div>
-      )}
+          )}
         </TabsContent>
 
         {/* KYC Score Tab */}
         {kycScore && (
           <TabsContent value="score">
-            <KycScoreCard 
-              score={kycScore} 
+            <KycScoreCard
+              score={kycScore}
               showDetails={true}
               onRecalculate={handleRecalculateScore}
             />
@@ -653,13 +839,13 @@ export default function KYCDetailPage() {
                   Fraud Flags
                 </CardTitle>
                 <CardDescription className="text-slate-400">
-                  {kycScore.fraudFlags.length} flag(s) detected - 
+                  {kycScore.fraudFlags.length} flag(s) detected -
                   {kycScore.criticalFlagsCount} critical
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FraudFlagsList 
-                  flags={kycScore.fraudFlags} 
+                <FraudFlagsList
+                  flags={kycScore.fraudFlags}
                   showActions={true}
                   onResolve={handleResolveFraudFlag}
                 />
@@ -675,11 +861,16 @@ export default function KYCDetailPage() {
           <DialogHeader>
             <DialogTitle className="text-white">Approve KYC</DialogTitle>
             <DialogDescription className="text-slate-400">
-              Are you sure you want to approve this KYC profile? This action cannot be undone.
+              Are you sure you want to approve this KYC profile? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowApproveDialog(false)} className="border-slate-700 hover:bg-slate-800">
+            <Button
+              variant="outline"
+              onClick={() => setShowApproveDialog(false)}
+              className="border-slate-700 hover:bg-slate-800"
+            >
               Cancel
             </Button>
             <Button
@@ -687,7 +878,7 @@ export default function KYCDetailPage() {
               onClick={handleApprove}
               disabled={reviewKyc.isPending}
             >
-              {reviewKyc.isPending ? 'Approving...' : 'Approve'}
+              {reviewKyc.isPending ? "Approving..." : "Approve"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -713,11 +904,19 @@ export default function KYCDetailPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRejectDialog(false)} className="border-slate-700 hover:bg-slate-800">
+            <Button
+              variant="outline"
+              onClick={() => setShowRejectDialog(false)}
+              className="border-slate-700 hover:bg-slate-800"
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleReject} disabled={reviewKyc.isPending}>
-              {reviewKyc.isPending ? 'Rejecting...' : 'Reject'}
+            <Button
+              variant="destructive"
+              onClick={handleReject}
+              disabled={reviewKyc.isPending}
+            >
+              {reviewKyc.isPending ? "Rejecting..." : "Reject"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -725,4 +924,3 @@ export default function KYCDetailPage() {
     </motion.div>
   );
 }
-

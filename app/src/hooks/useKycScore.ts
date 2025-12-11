@@ -1,15 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { kycScoreService } from '@/services/kycScore.service';
-import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { kycScoreService } from "@/services/kycScore.service";
+import { toast } from "sonner";
 
 // Query keys
 export const kycScoreKeys = {
-  all: ['kyc-score'] as const,
-  myScore: () => [...kycScoreKeys.all, 'my'] as const,
-  mySummary: () => [...kycScoreKeys.all, 'my-summary'] as const,
-  userScore: (userId: number) => [...kycScoreKeys.all, 'user', userId] as const,
-  fraudFlags: (kycProfileId: number) => [...kycScoreKeys.all, 'fraud-flags', kycProfileId] as const,
-  duplicates: (kycProfileId: number) => [...kycScoreKeys.all, 'duplicates', kycProfileId] as const,
+  all: ["kyc-score"] as const,
+  myScore: () => [...kycScoreKeys.all, "my"] as const,
+  mySummary: () => [...kycScoreKeys.all, "my-summary"] as const,
+  userScore: (userId: number) => [...kycScoreKeys.all, "user", userId] as const,
+  fraudFlags: (kycProfileId: number) =>
+    [...kycScoreKeys.all, "fraud-flags", kycProfileId] as const,
+  duplicates: (kycProfileId: number) =>
+    [...kycScoreKeys.all, "duplicates", kycProfileId] as const,
 };
 
 // User hooks
@@ -59,13 +61,16 @@ export function useCalculateKycScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (kycProfileId: number) => kycScoreService.calculateKycScore(kycProfileId),
+    mutationFn: (kycProfileId: number) =>
+      kycScoreService.calculateKycScore(kycProfileId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: kycScoreKeys.all });
-      toast.success('KYC score calculated successfully');
+      toast.success("KYC score calculated successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to calculate KYC score');
+      toast.error(
+        error.response?.data?.message || "Failed to calculate KYC score"
+      );
     },
   });
 }
@@ -74,13 +79,14 @@ export function useScoreDocument() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (documentId: number) => kycScoreService.scoreDocument(documentId),
+    mutationFn: (documentId: number) =>
+      kycScoreService.scoreDocument(documentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kycScoreKeys.all });
-      toast.success('Document scored successfully');
+      toast.success("Document scored successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to score document');
+      toast.error(error.response?.data?.message || "Failed to score document");
     },
   });
 }
@@ -89,17 +95,23 @@ export function useAdjustKycScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ kycProfileId, adjustment, reason }: { 
-      kycProfileId: number; 
-      adjustment: number; 
-      reason: string 
+    mutationFn: ({
+      kycProfileId,
+      adjustment,
+      reason,
+    }: {
+      kycProfileId: number;
+      adjustment: number;
+      reason: string;
     }) => kycScoreService.adjustScore(kycProfileId, adjustment, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kycScoreKeys.all });
-      toast.success('KYC score adjusted successfully');
+      toast.success("KYC score adjusted successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to adjust KYC score');
+      toast.error(
+        error.response?.data?.message || "Failed to adjust KYC score"
+      );
     },
   });
 }
@@ -108,14 +120,21 @@ export function useResolveFraudFlag() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ flagId, resolutionNote }: { flagId: number; resolutionNote: string }) =>
-      kycScoreService.resolveFraudFlag(flagId, resolutionNote),
+    mutationFn: ({
+      flagId,
+      resolutionNote,
+    }: {
+      flagId: number;
+      resolutionNote: string;
+    }) => kycScoreService.resolveFraudFlag(flagId, resolutionNote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kycScoreKeys.all });
-      toast.success('Fraud flag resolved');
+      toast.success("Fraud flag resolved");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to resolve fraud flag');
+      toast.error(
+        error.response?.data?.message || "Failed to resolve fraud flag"
+      );
     },
   });
 }
@@ -124,15 +143,16 @@ export function useRecalculateKycScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (kycProfileId: number) => kycScoreService.recalculateScore(kycProfileId),
+    mutationFn: (kycProfileId: number) =>
+      kycScoreService.recalculateScore(kycProfileId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kycScoreKeys.all });
-      toast.success('KYC score recalculated');
+      toast.success("KYC score recalculated");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to recalculate KYC score');
+      toast.error(
+        error.response?.data?.message || "Failed to recalculate KYC score"
+      );
     },
   });
 }
-
-

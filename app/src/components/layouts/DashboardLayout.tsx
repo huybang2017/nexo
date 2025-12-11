@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Wallet,
@@ -17,22 +17,20 @@ import {
   HelpCircle,
   ShieldCheck,
   TrendingUp,
-  FileCheck,
   Shield,
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useUnreadCount } from '@/hooks/useNotification';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUnreadCount } from "@/hooks/useNotification";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   label: string;
@@ -43,14 +41,14 @@ interface NavItem {
 
 // Combined nav items for both BORROWER and LENDER
 const userNavItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'My Loans', href: '/dashboard/loans', icon: CreditCard },
-  { label: 'Marketplace', href: '/dashboard/marketplace', icon: TrendingUp },
-  { label: 'Portfolio', href: '/dashboard/portfolio', icon: PiggyBank },
-  { label: 'Repayments', href: '/dashboard/repayments', icon: FileText },
-  { label: 'Credit Score', href: '/dashboard/credit-score', icon: Shield },
-  { label: 'KYC', href: '/dashboard/kyc', icon: ShieldCheck },
-  { label: 'Wallet', href: '/dashboard/wallet', icon: Wallet },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "My Loans", href: "/dashboard/loans", icon: CreditCard },
+  { label: "Marketplace", href: "/dashboard/marketplace", icon: TrendingUp },
+  { label: "Portfolio", href: "/dashboard/portfolio", icon: PiggyBank },
+  { label: "Repayments", href: "/dashboard/repayments", icon: FileText },
+  { label: "Credit Score", href: "/dashboard/credit-score", icon: Shield },
+  { label: "KYC", href: "/dashboard/kyc", icon: ShieldCheck },
+  { label: "Wallet", href: "/dashboard/wallet", icon: Wallet },
 ];
 
 export const DashboardLayout = () => {
@@ -62,11 +60,11 @@ export const DashboardLayout = () => {
 
   // Use combined nav items for both BORROWER and LENDER
   const navItems = userNavItems;
-  const dashboardBase = '/dashboard';
+  const dashboardBase = "/dashboard";
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -88,11 +86,14 @@ export const DashboardLayout = () => {
             <span className="text-white font-semibold">NEXO</span>
           </Link>
 
-          <Link to={`${dashboardBase}/notifications`} className="relative p-2 text-slate-400 hover:text-white">
+          <Link
+            to={`${dashboardBase}/notifications`}
+            className="relative p-2 text-slate-400 hover:text-white"
+          >
             <Bell className="w-6 h-6" />
             {unreadCount && unreadCount > 0 && (
               <span className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full text-xs text-white flex items-center justify-center">
-                {unreadCount > 9 ? '9+' : unreadCount}
+                {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
           </Link>
@@ -114,7 +115,7 @@ export const DashboardLayout = () => {
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-72 bg-slate-900 border-r border-slate-800"
             >
               <SidebarContent
@@ -176,14 +177,23 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center justify-between px-6 h-16 border-b border-slate-800">
-        <Link to={dashboardBase} className="flex items-center gap-3" onClick={onClose}>
+        <Link
+          to={dashboardBase}
+          className="flex items-center gap-3"
+          onClick={onClose}
+        >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center">
             <span className="text-slate-900 font-bold text-lg">N</span>
           </div>
-          <span className="text-white font-semibold text-xl tracking-tight">NEXO</span>
+          <span className="text-white font-semibold text-xl tracking-tight">
+            NEXO
+          </span>
         </Link>
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-white">
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 text-slate-400 hover:text-white"
+          >
             <X className="w-5 h-5" />
           </button>
         )}
@@ -192,8 +202,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href ||
-            (item.href !== dashboardBase && location.pathname.startsWith(item.href));
+          const isActive =
+            location.pathname === item.href ||
+            (item.href !== dashboardBase &&
+              location.pathname.startsWith(item.href));
 
           return (
             <Link
@@ -201,16 +213,19 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               to={item.href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
+                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                 isActive
-                  ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
               )}
             >
               <item.icon className="w-5 h-5" />
               <span>{item.label}</span>
               {item.badge && item.badge > 0 && (
-                <Badge variant="secondary" className="ml-auto bg-emerald-500/20 text-emerald-400">
+                <Badge
+                  variant="secondary"
+                  className="ml-auto bg-emerald-500/20 text-emerald-400"
+                >
                   {item.badge}
                 </Badge>
               )}
@@ -223,17 +238,20 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to={`${dashboardBase}/notifications`}
             onClick={onClose}
             className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
-              location.pathname.includes('/notifications')
-                ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+              location.pathname.includes("/notifications")
+                ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50"
             )}
           >
             <Bell className="w-5 h-5" />
             <span>Notifications</span>
             {unreadCount && unreadCount > 0 && (
-              <Badge variant="secondary" className="ml-auto bg-emerald-500/20 text-emerald-400">
-                {unreadCount > 99 ? '99+' : unreadCount}
+              <Badge
+                variant="secondary"
+                className="ml-auto bg-emerald-500/20 text-emerald-400"
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
               </Badge>
             )}
           </Link>
@@ -242,10 +260,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to={`${dashboardBase}/support`}
             onClick={onClose}
             className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
-              location.pathname.includes('/support')
-                ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+              location.pathname.includes("/support")
+                ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50"
             )}
           >
             <HelpCircle className="w-5 h-5" />
@@ -256,10 +274,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             to={`${dashboardBase}/settings`}
             onClick={onClose}
             className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
-              location.pathname.includes('/settings')
-                ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+              location.pathname.includes("/settings")
+                ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50"
             )}
           >
             <Settings className="w-5 h-5" />
@@ -276,19 +294,24 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               <Avatar className="w-10 h-10 border-2 border-emerald-500/30">
                 <AvatarImage src={user?.avatarUrl} />
                 <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white">
-                  {user?.fullName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                  {user?.fullName?.charAt(0) || user?.email?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 text-left">
                 <p className="text-sm font-medium text-white truncate">
                   {user?.fullName || user?.email}
                 </p>
-                <p className="text-xs text-slate-400 capitalize">{user?.role?.toLowerCase()}</p>
+                <p className="text-xs text-slate-400 capitalize">
+                  {user?.role?.toLowerCase()}
+                </p>
               </div>
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800">
+          <DropdownMenuContent
+            align="end"
+            className="w-56 bg-slate-900 border-slate-800"
+          >
             <DropdownMenuItem asChild>
               <Link to={`${dashboardBase}/profile`} className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
@@ -302,7 +325,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-slate-800" />
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-red-400 focus:text-red-400">
+            <DropdownMenuItem
+              onClick={onLogout}
+              className="cursor-pointer text-red-400 focus:text-red-400"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </DropdownMenuItem>
@@ -314,4 +340,3 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 };
 
 export default DashboardLayout;
-

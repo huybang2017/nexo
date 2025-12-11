@@ -1,15 +1,22 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useRepaymentSchedule, useLoanDocuments } from '@/hooks/useLoan';
-import { useReviewLoan, useAdminLoan } from '@/hooks/useAdmin';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { ArrowLeft, CheckCircle, XCircle, FileText, Eye } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useRepaymentSchedule, useLoanDocuments } from "@/hooks/useLoan";
+import { useReviewLoan, useAdminLoan } from "@/hooks/useAdmin";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { ArrowLeft, CheckCircle, XCircle, FileText, Eye } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -17,30 +24,36 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-  PENDING_REVIEW: { label: 'Pending Review', variant: 'secondary' },
-  APPROVED: { label: 'Approved', variant: 'default' },
-  REJECTED: { label: 'Rejected', variant: 'destructive' },
-  FUNDING: { label: 'Funding', variant: 'default' },
-  ACTIVE: { label: 'Active', variant: 'default' },
-  COMPLETED: { label: 'Completed', variant: 'outline' },
-  DEFAULTED: { label: 'Defaulted', variant: 'destructive' },
-  CANCELLED: { label: 'Cancelled', variant: 'outline' },
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
+  PENDING_REVIEW: { label: "Pending Review", variant: "secondary" },
+  APPROVED: { label: "Approved", variant: "default" },
+  REJECTED: { label: "Rejected", variant: "destructive" },
+  FUNDING: { label: "Funding", variant: "default" },
+  ACTIVE: { label: "Active", variant: "default" },
+  COMPLETED: { label: "Completed", variant: "outline" },
+  DEFAULTED: { label: "Defaulted", variant: "destructive" },
+  CANCELLED: { label: "Cancelled", variant: "outline" },
 };
 
 const purposeLabels: Record<string, string> = {
-  PERSONAL: '💼 Personal',
-  BUSINESS: '🏢 Business',
-  EDUCATION: '📚 Education',
-  MEDICAL: '🏥 Medical',
-  HOME_IMPROVEMENT: '🏠 Home Improvement',
-  DEBT_CONSOLIDATION: '💳 Debt Consolidation',
-  STARTUP: '🚀 Startup',
-  OTHER: '📝 Other',
+  PERSONAL: "💼 Personal",
+  BUSINESS: "🏢 Business",
+  EDUCATION: "📚 Education",
+  MEDICAL: "🏥 Medical",
+  HOME_IMPROVEMENT: "🏠 Home Improvement",
+  DEBT_CONSOLIDATION: "💳 Debt Consolidation",
+  STARTUP: "🚀 Startup",
+  OTHER: "📝 Other",
 };
 
 export default function AdminLoanDetailPage() {
@@ -48,22 +61,23 @@ export default function AdminLoanDetailPage() {
   const navigate = useNavigate();
   const { data: loan, isLoading } = useAdminLoan(Number(id));
   const { data: schedules } = useRepaymentSchedule(Number(id));
-  const { data: documents = [], isLoading: isLoadingDocuments } = useLoanDocuments(Number(id));
+  const { data: documents = [], isLoading: isLoadingDocuments } =
+    useLoanDocuments(Number(id));
   const reviewLoan = useReviewLoan();
   const [showApproveDialog, setShowApproveDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
-  const [note, setNote] = useState('');
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [note, setNote] = useState("");
 
   const handleApprove = async () => {
     try {
       await reviewLoan.mutateAsync({
         id: Number(id),
-        data: { action: 'APPROVE', note: note || undefined },
+        data: { action: "APPROVE", note: note || undefined },
       });
       setShowApproveDialog(false);
-      setNote('');
-      navigate('/admin/loans');
+      setNote("");
+      navigate("/admin/loans");
     } catch (error) {
       // Error handled by mutation
     }
@@ -71,18 +85,18 @@ export default function AdminLoanDetailPage() {
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
+      toast.error("Please provide a rejection reason");
       return;
     }
     try {
       await reviewLoan.mutateAsync({
         id: Number(id),
-        data: { action: 'REJECT', rejectionReason, note: note || undefined },
+        data: { action: "REJECT", rejectionReason, note: note || undefined },
       });
       setShowRejectDialog(false);
-      setRejectionReason('');
-      setNote('');
-      navigate('/admin/loans');
+      setRejectionReason("");
+      setNote("");
+      navigate("/admin/loans");
     } catch (error) {
       // Error handled by mutation
     }
@@ -115,9 +129,10 @@ export default function AdminLoanDetailPage() {
   }
 
   const status = statusConfig[loan.status] || statusConfig.PENDING_REVIEW;
-  const fundingProgress = loan.requestedAmount > 0
-    ? (loan.fundedAmount / loan.requestedAmount) * 100
-    : 0;
+  const fundingProgress =
+    loan.requestedAmount > 0
+      ? (loan.fundedAmount / loan.requestedAmount) * 100
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -131,12 +146,14 @@ export default function AdminLoanDetailPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{loan.title}</h1>
-            <p className="text-sm text-muted-foreground font-mono">{loan.loanCode}</p>
+            <p className="text-sm text-muted-foreground font-mono">
+              {loan.loanCode}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={status.variant}>{status.label}</Badge>
-          {loan.status === 'PENDING_REVIEW' && (
+          {loan.status === "PENDING_REVIEW" && (
             <>
               <Button
                 variant="default"
@@ -170,11 +187,17 @@ export default function AdminLoanDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Purpose</p>
-                  <p className="font-medium">{purposeLabels[loan.purpose] || loan.purpose}</p>
+                  <p className="font-medium">
+                    {purposeLabels[loan.purpose] || loan.purpose}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Requested Amount</p>
-                  <p className="font-medium">{formatCurrency(loan.requestedAmount)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Requested Amount
+                  </p>
+                  <p className="font-medium">
+                    {formatCurrency(loan.requestedAmount)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Interest Rate</p>
@@ -190,18 +213,24 @@ export default function AdminLoanDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Credit Score</p>
-                  <p className="font-medium">{loan.creditScoreAtRequest || 'N/A'}</p>
+                  <p className="font-medium">
+                    {loan.creditScoreAtRequest || "N/A"}
+                  </p>
                 </div>
               </div>
               {loan.description && (
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Description</p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Description
+                  </p>
                   <p className="text-sm">{loan.description}</p>
                 </div>
               )}
               {loan.rejectionReason && (
                 <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-sm font-medium text-destructive mb-1">Rejection Reason</p>
+                  <p className="text-sm font-medium text-destructive mb-1">
+                    Rejection Reason
+                  </p>
                   <p className="text-sm">{loan.rejectionReason}</p>
                 </div>
               )}
@@ -218,7 +247,8 @@ export default function AdminLoanDetailPage() {
                 <div className="flex justify-between text-sm">
                   <span>Funded</span>
                   <span className="font-medium">
-                    {formatCurrency(loan.fundedAmount)} / {formatCurrency(loan.requestedAmount)}
+                    {formatCurrency(loan.fundedAmount)} /{" "}
+                    {formatCurrency(loan.requestedAmount)}
                   </span>
                 </div>
                 <Progress value={fundingProgress} className="h-2" />
@@ -229,7 +259,9 @@ export default function AdminLoanDetailPage() {
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div>
                   <p className="text-sm text-muted-foreground">Remaining</p>
-                  <p className="font-medium">{formatCurrency(loan.remainingAmount)}</p>
+                  <p className="font-medium">
+                    {formatCurrency(loan.remainingAmount)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Investors</p>
@@ -262,12 +294,22 @@ export default function AdminLoanDetailPage() {
                       <TableRow key={schedule.id}>
                         <TableCell>#{schedule.installmentNumber}</TableCell>
                         <TableCell>{formatDate(schedule.dueDate)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.principalAmount)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(schedule.interestAmount)}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(schedule.totalAmount)}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(schedule.principalAmount)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(schedule.interestAmount)}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {formatCurrency(schedule.totalAmount)}
+                        </TableCell>
                         <TableCell>
-                          <Badge variant={schedule.repayment ? 'default' : 'secondary'}>
-                            {schedule.repayment ? 'Paid' : 'Pending'}
+                          <Badge
+                            variant={
+                              schedule.repayment ? "default" : "secondary"
+                            }
+                          >
+                            {schedule.repayment ? "Paid" : "Pending"}
                           </Badge>
                         </TableCell>
                       </TableRow>
@@ -296,25 +338,29 @@ export default function AdminLoanDetailPage() {
               ) : (
                 <div className="space-y-4">
                   {documents.map((doc: any) => (
-                    <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div
+                      key={doc.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
                       <div className="flex items-center gap-4">
                         <FileText className="h-8 w-8 text-muted-foreground" />
                         <div>
                           <div className="font-medium">{doc.fileName}</div>
                           <div className="text-sm text-muted-foreground">
-                            {doc.documentType} {doc.description && `• ${doc.description}`}
+                            {doc.documentType}{" "}
+                            {doc.description && `• ${doc.description}`}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {formatDate(doc.createdAt)}
                           </div>
                         </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <a href={`http://localhost:8080${doc.fileUrl}`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm" asChild>
+                        <a
+                          href={`http://localhost:8080${doc.fileUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </a>
@@ -337,11 +383,13 @@ export default function AdminLoanDetailPage() {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium">{loan.borrowerName || 'N/A'}</p>
+                <p className="font-medium">{loan.borrowerName || "N/A"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Credit Score</p>
-                <p className="font-medium">{loan.borrowerCreditScore || 'N/A'}</p>
+                <p className="font-medium">
+                  {loan.borrowerCreditScore || "N/A"}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -358,8 +406,12 @@ export default function AdminLoanDetailPage() {
               </div>
               {loan.fundingDeadline && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Funding Deadline</p>
-                  <p className="font-medium">{formatDate(loan.fundingDeadline)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Funding Deadline
+                  </p>
+                  <p className="font-medium">
+                    {formatDate(loan.fundingDeadline)}
+                  </p>
                 </div>
               )}
               {loan.disbursedAt && (
@@ -376,8 +428,12 @@ export default function AdminLoanDetailPage() {
               )}
               {loan.nextRepaymentDate && (
                 <div>
-                  <p className="text-sm text-muted-foreground">Next Repayment</p>
-                  <p className="font-medium">{formatDate(loan.nextRepaymentDate)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Next Repayment
+                  </p>
+                  <p className="font-medium">
+                    {formatDate(loan.nextRepaymentDate)}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     Amount: {formatCurrency(loan.nextRepaymentAmount || 0)}
                   </p>
@@ -395,14 +451,22 @@ export default function AdminLoanDetailPage() {
               <CardContent className="space-y-4">
                 {loan.totalRepaid && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Repaid</p>
-                    <p className="font-medium">{formatCurrency(loan.totalRepaid)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total Repaid
+                    </p>
+                    <p className="font-medium">
+                      {formatCurrency(loan.totalRepaid)}
+                    </p>
                   </div>
                 )}
                 {loan.totalInterestPaid && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Interest Paid</p>
-                    <p className="font-medium">{formatCurrency(loan.totalInterestPaid)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total Interest Paid
+                    </p>
+                    <p className="font-medium">
+                      {formatCurrency(loan.totalInterestPaid)}
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -417,7 +481,8 @@ export default function AdminLoanDetailPage() {
           <DialogHeader>
             <DialogTitle>Approve Loan</DialogTitle>
             <DialogDescription>
-              Are you sure you want to approve this loan? This will make it available for funding.
+              Are you sure you want to approve this loan? This will make it
+              available for funding.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -433,7 +498,10 @@ export default function AdminLoanDetailPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowApproveDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowApproveDialog(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -441,7 +509,7 @@ export default function AdminLoanDetailPage() {
               onClick={handleApprove}
               disabled={reviewLoan.isPending}
             >
-              {reviewLoan.isPending ? 'Approving...' : 'Approve Loan'}
+              {reviewLoan.isPending ? "Approving..." : "Approve Loan"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -453,7 +521,8 @@ export default function AdminLoanDetailPage() {
           <DialogHeader>
             <DialogTitle>Reject Loan</DialogTitle>
             <DialogDescription>
-              Please provide a reason for rejecting this loan. This action cannot be undone.
+              Please provide a reason for rejecting this loan. This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -480,7 +549,10 @@ export default function AdminLoanDetailPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRejectDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowRejectDialog(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -488,7 +560,7 @@ export default function AdminLoanDetailPage() {
               onClick={handleReject}
               disabled={reviewLoan.isPending || !rejectionReason.trim()}
             >
-              {reviewLoan.isPending ? 'Rejecting...' : 'Reject Loan'}
+              {reviewLoan.isPending ? "Rejecting..." : "Reject Loan"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -496,4 +568,3 @@ export default function AdminLoanDetailPage() {
     </div>
   );
 }
-

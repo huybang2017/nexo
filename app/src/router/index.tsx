@@ -53,8 +53,6 @@ const LoansManagementPage = lazy(() => import('@/pages/admin/LoansManagementPage
 const KYCManagementPage = lazy(() => import('@/pages/admin/KYCManagementPage'));
 const KYCDetailPage = lazy(() => import('@/pages/admin/KYCDetailPage'));
 const WithdrawalsPage = lazy(() => import('@/pages/admin/WithdrawalsPage'));
-const AuditLogsPage = lazy(() => import('@/pages/admin/AuditLogsPage'));
-const SystemSettingsPage = lazy(() => import('@/pages/admin/SystemSettingsPage'));
 
 // Shared Pages
 import { WalletPage } from '@/pages/shared/WalletPage';
@@ -212,9 +210,8 @@ export const router = createBrowserRouter([
                 { path: 'loans', element: withSuspense(LoansManagementPage) },
                 { path: 'loans/:id', element: withSuspense(lazy(() => import('@/pages/admin/AdminLoanDetailPage'))) },
               { path: 'withdrawals', element: withSuspense(WithdrawalsPage) },
-              { path: 'audit-logs', element: withSuspense(AuditLogsPage) },
-              { path: 'settings', element: withSuspense(SystemSettingsPage) },
               { path: 'tickets', element: withSuspense(lazy(() => import('@/pages/admin/AdminTicketsPage'))) },
+              { path: 'tickets/:id', element: withSuspense(lazy(() => import('@/pages/shared/TicketDetailPage'))) },
               { path: 'profile', element: withSuspense(ProfilePage) },
               { path: 'notifications', element: withSuspense(NotificationsPage) },
             ],

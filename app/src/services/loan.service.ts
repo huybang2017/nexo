@@ -1,4 +1,4 @@
-import api from '@/lib/api';
+import api from "@/lib/api";
 import type {
   ApiResponse,
   PageResponse,
@@ -9,7 +9,7 @@ import type {
   LoanStatus,
   LoanPurpose,
   RepaymentSchedule,
-} from '@/types';
+} from "@/types";
 
 export interface LoanFilters {
   status?: LoanStatus;
@@ -34,17 +34,21 @@ export interface MarketplaceFilters {
 export const loanService = {
   // Borrower endpoints
   async createLoan(data: CreateLoanRequest): Promise<Loan> {
-    const response = await api.post<ApiResponse<Loan>>('/loans', data);
+    const response = await api.post<ApiResponse<Loan>>("/loans", data);
     return response.data.data;
   },
 
   async getMyLoans(filters?: LoanFilters): Promise<PageResponse<Loan>> {
     const params = new URLSearchParams();
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.page !== undefined) params.append('page', String(filters.page));
-    if (filters?.size !== undefined) params.append('size', String(filters.size));
+    if (filters?.status) params.append("status", filters.status);
+    if (filters?.page !== undefined)
+      params.append("page", String(filters.page));
+    if (filters?.size !== undefined)
+      params.append("size", String(filters.size));
 
-    const response = await api.get<ApiResponse<PageResponse<Loan>>>(`/loans/my?${params}`);
+    const response = await api.get<ApiResponse<PageResponse<Loan>>>(
+      `/loans/my?${params}`
+    );
     return response.data.data;
   },
 
@@ -63,37 +67,56 @@ export const loanService = {
   },
 
   async getRepaymentSchedule(loanId: number): Promise<RepaymentSchedule[]> {
-    const response = await api.get<ApiResponse<RepaymentSchedule[]>>(`/repayments/loan/${loanId}/schedule`);
+    const response = await api.get<ApiResponse<RepaymentSchedule[]>>(
+      `/repayments/loan/${loanId}/schedule`
+    );
     return response.data.data;
   },
 
   // Marketplace endpoints (for lenders)
-  async getMarketplaceLoans(filters?: MarketplaceFilters): Promise<PageResponse<Loan>> {
+  async getMarketplaceLoans(
+    filters?: MarketplaceFilters
+  ): Promise<PageResponse<Loan>> {
     const params = new URLSearchParams();
-    if (filters?.search) params.append('search', filters.search);
-    if (filters?.purpose) params.append('purpose', filters.purpose);
-    if (filters?.riskGrades?.length) params.append('riskGrades', filters.riskGrades.join(','));
-    if (filters?.minRate !== undefined) params.append('minRate', String(filters.minRate));
-    if (filters?.maxRate !== undefined) params.append('maxRate', String(filters.maxRate));
-    if (filters?.minAmount !== undefined) params.append('minAmount', String(filters.minAmount));
-    if (filters?.maxAmount !== undefined) params.append('maxAmount', String(filters.maxAmount));
-    if (filters?.minTerm !== undefined) params.append('minTerm', String(filters.minTerm));
-    if (filters?.maxTerm !== undefined) params.append('maxTerm', String(filters.maxTerm));
-    if (filters?.page !== undefined) params.append('page', String(filters.page));
-    if (filters?.size !== undefined) params.append('size', String(filters.size));
+    if (filters?.search) params.append("search", filters.search);
+    if (filters?.purpose) params.append("purpose", filters.purpose);
+    if (filters?.riskGrades?.length)
+      params.append("riskGrades", filters.riskGrades.join(","));
+    if (filters?.minRate !== undefined)
+      params.append("minRate", String(filters.minRate));
+    if (filters?.maxRate !== undefined)
+      params.append("maxRate", String(filters.maxRate));
+    if (filters?.minAmount !== undefined)
+      params.append("minAmount", String(filters.minAmount));
+    if (filters?.maxAmount !== undefined)
+      params.append("maxAmount", String(filters.maxAmount));
+    if (filters?.minTerm !== undefined)
+      params.append("minTerm", String(filters.minTerm));
+    if (filters?.maxTerm !== undefined)
+      params.append("maxTerm", String(filters.maxTerm));
+    if (filters?.page !== undefined)
+      params.append("page", String(filters.page));
+    if (filters?.size !== undefined)
+      params.append("size", String(filters.size));
 
-    const response = await api.get<ApiResponse<PageResponse<Loan>>>(`/marketplace/loans?${params}`);
+    const response = await api.get<ApiResponse<PageResponse<Loan>>>(
+      `/marketplace/loans?${params}`
+    );
     return response.data.data;
   },
 
   async getMarketplaceLoanDetail(id: number): Promise<Loan> {
-    const response = await api.get<ApiResponse<Loan>>(`/marketplace/loans/${id}`);
+    const response = await api.get<ApiResponse<Loan>>(
+      `/marketplace/loans/${id}`
+    );
     return response.data.data;
   },
 
   // Loan Documents
   async getLoanDocuments(loanId: number): Promise<LoanDocument[]> {
-    const response = await api.get<ApiResponse<LoanDocument[]>>(`/loans/${loanId}/documents`);
+    const response = await api.get<ApiResponse<LoanDocument[]>>(
+      `/loans/${loanId}/documents`
+    );
     return response.data.data;
   },
 
@@ -104,16 +127,16 @@ export const loanService = {
     description?: string
   ): Promise<LoanDocument> {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('documentType', documentType);
-    if (description) formData.append('description', description);
+    formData.append("file", file);
+    formData.append("documentType", documentType);
+    if (description) formData.append("description", description);
 
     const response = await api.post<ApiResponse<LoanDocument>>(
       `/loans/${loanId}/documents`,
       formData,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -125,16 +148,20 @@ export const loanService = {
   },
 
   async getLoanInvestments(loanId: number): Promise<any[]> {
-    const response = await api.get<ApiResponse<any[]>>(`/loans/${loanId}/investments`);
+    const response = await api.get<ApiResponse<any[]>>(
+      `/loans/${loanId}/investments`
+    );
     return response.data.data;
   },
 
   // Admin endpoints
   async reviewLoan(id: number, data: LoanReviewRequest): Promise<Loan> {
-    const response = await api.post<ApiResponse<Loan>>(`/admin/loans/${id}/review`, data);
+    const response = await api.post<ApiResponse<Loan>>(
+      `/admin/loans/${id}/review`,
+      data
+    );
     return response.data.data;
   },
 };
 
 export default loanService;
-

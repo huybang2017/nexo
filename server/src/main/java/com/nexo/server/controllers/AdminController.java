@@ -1,22 +1,16 @@
 package com.nexo.server.controllers;
 
-import com.nexo.server.dto.admin.AuditLogResponse;
-import com.nexo.server.dto.admin.SystemSettingRequest;
-import com.nexo.server.dto.admin.SystemSettingResponse;
-import com.nexo.server.dto.admin.UpdateSystemSettingRequest;
 import com.nexo.server.dto.common.ApiResponse;
 import com.nexo.server.dto.common.PageResponse;
 import com.nexo.server.dto.loan.LoanResponse;
 import com.nexo.server.dto.loan.LoanReviewRequest;
 import com.nexo.server.dto.user.UserResponse;
 import com.nexo.server.dto.wallet.TransactionResponse;
-import com.nexo.server.entities.AuditLog;
 import com.nexo.server.enums.*;
 import com.nexo.server.repositories.*;
 import com.nexo.server.security.CurrentUser;
 import com.nexo.server.security.UserPrincipal;
 import com.nexo.server.services.LoanService;
-import com.nexo.server.services.SystemSettingService;
 import com.nexo.server.services.UserMapper;
 import com.nexo.server.services.WalletService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,10 +46,8 @@ public class AdminController {
     private final com.nexo.server.repositories.KycDocumentRepository kycDocumentRepository;
     private final TransactionRepository transactionRepository;
     private final TicketRepository ticketRepository;
-    private final com.nexo.server.repositories.AuditLogRepository auditLogRepository;
     private final LoanService loanService;
     private final WalletService walletService;
-    private final SystemSettingService systemSettingService;
     private final UserMapper userMapper;
 
     @GetMapping("/dashboard/stats")
@@ -267,114 +259,6 @@ public class AdminController {
             @RequestParam String reason) {
         walletService.processWithdrawal(transactionId, false, reason);
         return ResponseEntity.ok(ApiResponse.success("Withdrawal rejected"));
-    }
-
-    // ==================== AUDIT LOGS ====================
-
-    @GetMapping("/audit-logs")
-    @Operation(summary = "Get audit logs")
-    public ResponseEntity<ApiResponse<PageResponse<AuditLogResponse>>> getAuditLogs(
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) String action,
-            @RequestParam(required = false) String entityType,
-            @RequestParam(required = false) String fromDate,
-            @RequestParam(required = false) String toDate,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        
-        java.time.LocalDateTime from = null;
-        java.time.LocalDateTime to = null;
-        
-        if (fromDate != null && !fromDate.isEmpty()) {
-            from = java.time.LocalDateTime.parse(fromDate);
-        }
-        if (toDate != null && !toDate.isEmpty()) {
-            to = java.time.LocalDateTime.parse(toDate);
-        }
-        
-        Page<AuditLog> logs = auditLogRepository.searchAuditLogs(userId, action, entityType, from, to, pageable);
-        
-        PageResponse<AuditLogResponse> response = PageResponse.of(logs,
-                logs.getContent().stream()
-                        .map(this::toAuditLogResponse)
-                        .toList());
-        
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
-
-    private AuditLogResponse toAuditLogResponse(AuditLog log) {
-        return AuditLogResponse.builder()
-                .id(log.getId())
-                .userId(log.getUserId())
-                .userEmail(log.getUserEmail())
-                .action(log.getAction())
-                .entityType(log.getEntityType())
-                .entityId(log.getEntityId())
-                .oldValues(log.getOldValues())
-                .newValues(log.getNewValues())
-                .ipAddress(log.getIpAddress())
-                .userAgent(log.getUserAgent())
-                .description(log.getDescription())
-                .createdAt(log.getCreatedAt())
-                .build();
-    }
-
-    // ==================== SYSTEM SETTINGS ====================
-
-    @GetMapping("/settings")
-    @Operation(summary = "Get all system settings")
-    public ResponseEntity<ApiResponse<List<SystemSettingResponse>>> getAllSettings(
-            @RequestParam(required = false) String category) {
-        List<SystemSettingResponse> settings = category != null
-                ? systemSettingService.getSettingsByCategory(category)
-                : systemSettingService.getAllSettings();
-        return ResponseEntity.ok(ApiResponse.success(settings));
-    }
-
-    @GetMapping("/settings/{id}")
-    @Operation(summary = "Get system setting by ID")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> getSettingById(@PathVariable Long id) {
-        SystemSettingResponse setting = systemSettingService.getSettingById(id);
-        return ResponseEntity.ok(ApiResponse.success(setting));
-    }
-
-    @GetMapping("/settings/key/{key}")
-    @Operation(summary = "Get system setting by key")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> getSettingByKey(@PathVariable String key) {
-        SystemSettingResponse setting = systemSettingService.getSettingByKey(key);
-        return ResponseEntity.ok(ApiResponse.success(setting));
-    }
-
-    @PostMapping("/settings")
-    @Operation(summary = "Create new system setting")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> createSetting(
-            @Valid @RequestBody SystemSettingRequest request) {
-        SystemSettingResponse setting = systemSettingService.createSetting(request);
-        return ResponseEntity.ok(ApiResponse.success("Setting created successfully", setting));
-    }
-
-    @PutMapping("/settings/{id}")
-    @Operation(summary = "Update system setting")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> updateSetting(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateSystemSettingRequest request) {
-        SystemSettingResponse setting = systemSettingService.updateSetting(id, request);
-        return ResponseEntity.ok(ApiResponse.success("Setting updated successfully", setting));
-    }
-
-    @PutMapping("/settings/key/{key}")
-    @Operation(summary = "Update system setting by key")
-    public ResponseEntity<ApiResponse<SystemSettingResponse>> updateSettingByKey(
-            @PathVariable String key,
-            @Valid @RequestBody UpdateSystemSettingRequest request) {
-        SystemSettingResponse setting = systemSettingService.updateSettingByKey(key, request);
-        return ResponseEntity.ok(ApiResponse.success("Setting updated successfully", setting));
-    }
-
-    @DeleteMapping("/settings/{id}")
-    @Operation(summary = "Delete system setting")
-    public ResponseEntity<ApiResponse<Void>> deleteSetting(@PathVariable Long id) {
-        systemSettingService.deleteSetting(id);
-        return ResponseEntity.ok(ApiResponse.success("Setting deleted successfully"));
     }
 
     // ==================== KYC MANAGEMENT ====================

@@ -1,11 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { walletService, TransactionFilters } from '@/services/wallet.service';
-import type { DepositRequest, WithdrawRequest } from '@/types';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { walletService, TransactionFilters } from "@/services/wallet.service";
+import type { DepositRequest, WithdrawRequest } from "@/types";
+import { toast } from "sonner";
 
 export const useWallet = () => {
   return useQuery({
-    queryKey: ['wallet'],
+    queryKey: ["wallet"],
     queryFn: walletService.getWallet,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -13,7 +13,15 @@ export const useWallet = () => {
 
 export const useTransactions = (filters?: TransactionFilters) => {
   return useQuery({
-    queryKey: ['transactions', filters?.type, filters?.status, filters?.from, filters?.to, filters?.page, filters?.size],
+    queryKey: [
+      "transactions",
+      filters?.type,
+      filters?.status,
+      filters?.from,
+      filters?.to,
+      filters?.page,
+      filters?.size,
+    ],
     queryFn: () => walletService.getTransactions(filters),
     enabled: true,
   });
@@ -21,7 +29,7 @@ export const useTransactions = (filters?: TransactionFilters) => {
 
 export const useTransaction = (id: number | null) => {
   return useQuery({
-    queryKey: ['transaction', id],
+    queryKey: ["transaction", id],
     queryFn: () => walletService.getTransactionById(id!),
     enabled: !!id,
   });
@@ -34,15 +42,15 @@ export const useDeposit = () => {
     mutationFn: (data: DepositRequest) => walletService.requestDeposit(data),
     onSuccess: (response) => {
       // Invalidate queries so they refetch after payment
-      queryClient.invalidateQueries({ queryKey: ['wallet'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
       // Open payment URL in new window/tab
-      window.open(response.paymentUrl, '_blank');
-      toast.success('Redirecting to payment...');
+      window.open(response.paymentUrl, "_blank");
+      toast.success("Redirecting to payment...");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create deposit');
+      toast.error(error.message || "Failed to create deposit");
     },
   });
 };
@@ -53,13 +61,12 @@ export const useWithdraw = () => {
   return useMutation({
     mutationFn: (data: WithdrawRequest) => walletService.requestWithdraw(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wallet'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      toast.success('Withdrawal request submitted!');
+      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      toast.success("Withdrawal request submitted!");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Withdrawal request failed');
+      toast.error(error.message || "Withdrawal request failed");
     },
   });
 };
-

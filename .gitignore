@@ -1,15 +1,15 @@
-# Environment variables
+# Environment files
 .env
 .env.local
 .env.*.local
 *.env
 
 # IDE
-.idea/
-.vscode/
+.idea
+.vscode
+*.iml
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
@@ -19,10 +19,33 @@ Thumbs.db
 *.log
 logs/
 
-# Temporary files
-tmp/
-temp/
-*.tmp
+# Node modules
+node_modules
+npm-debug.log
 
-# Documentation (not needed in repo)
-COMMIT-GUIDE.md
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+*.egg-info
+
+# Java
+target/
+.mvn/
+.mvnw
+
+# Build artifacts
+dist/
+build/
+
+# Uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Database
+*.db
+*.sqlite

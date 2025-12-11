@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { authService } from '@/services/auth.service';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Eye, EyeOff, Mail, Lock, User, Phone, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { authService } from "@/services/auth.service";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -16,22 +16,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { toast } from 'sonner';
+} from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner";
 
-const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
-  firstName: z.string().min(2, 'First name must be at least 2 characters'),
-  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  phone: z.string().optional(),
-  role: z.enum(['BORROWER', 'LENDER']),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const registerSchema = z
+  .object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    phone: z.string().optional(),
+    role: z.enum(["BORROWER", "LENDER"]),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -50,26 +52,26 @@ export const RegisterPage = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: 'BORROWER',
+      role: "BORROWER",
     },
   });
 
-  const selectedRole = watch('role');
+  const selectedRole = watch("role");
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
       const response = await registerUser(data);
-      toast.success('Registration successful!');
+      toast.success("Registration successful!");
 
       // Navigate to dashboard (both BORROWER and LENDER)
-      if (response.user.role === 'ADMIN') {
-        navigate('/admin');
+      if (response.user.role === "ADMIN") {
+        navigate("/admin");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +84,9 @@ export const RegisterPage = () => {
   return (
     <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-white">Create account</CardTitle>
+        <CardTitle className="text-2xl font-bold text-white">
+          Create account
+        </CardTitle>
         <CardDescription className="text-slate-400">
           Get started with your P2P lending journey
         </CardDescription>
@@ -94,20 +98,32 @@ export const RegisterPage = () => {
           <Label className="text-slate-300">I want to</Label>
           <RadioGroup
             value={selectedRole}
-            onValueChange={(value) => setValue('role', value as 'BORROWER' | 'LENDER')}
+            onValueChange={(value) =>
+              setValue("role", value as "BORROWER" | "LENDER")
+            }
             className="grid grid-cols-2 gap-4"
           >
             <Label
               htmlFor="borrower"
               className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                selectedRole === 'BORROWER'
-                  ? 'border-emerald-500 bg-emerald-500/10'
-                  : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
+                selectedRole === "BORROWER"
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
               }`}
             >
-              <RadioGroupItem value="BORROWER" id="borrower" className="sr-only" />
+              <RadioGroupItem
+                value="BORROWER"
+                id="borrower"
+                className="sr-only"
+              />
               <span className="text-3xl mb-2">💰</span>
-              <span className={`font-medium ${selectedRole === 'BORROWER' ? 'text-emerald-400' : 'text-slate-300'}`}>
+              <span
+                className={`font-medium ${
+                  selectedRole === "BORROWER"
+                    ? "text-emerald-400"
+                    : "text-slate-300"
+                }`}
+              >
                 Borrow
               </span>
               <span className="text-xs text-slate-500 text-center mt-1">
@@ -117,14 +133,20 @@ export const RegisterPage = () => {
             <Label
               htmlFor="lender"
               className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                selectedRole === 'LENDER'
-                  ? 'border-emerald-500 bg-emerald-500/10'
-                  : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
+                selectedRole === "LENDER"
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
               }`}
             >
               <RadioGroupItem value="LENDER" id="lender" className="sr-only" />
               <span className="text-3xl mb-2">📈</span>
-              <span className={`font-medium ${selectedRole === 'LENDER' ? 'text-emerald-400' : 'text-slate-300'}`}>
+              <span
+                className={`font-medium ${
+                  selectedRole === "LENDER"
+                    ? "text-emerald-400"
+                    : "text-slate-300"
+                }`}
+              >
                 Invest
               </span>
               <span className="text-xs text-slate-500 text-center mt-1">
@@ -138,7 +160,7 @@ export const RegisterPage = () => {
         <Button
           type="button"
           variant="outline"
-          className="w-full bg-white hover:bg-gray-100 text-slate-900 border-0 h-11"
+          className="w-full bg-white hover:bg-gray-100 text-white border-0 h-11"
           onClick={handleGoogleLogin}
         >
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -182,12 +204,14 @@ export const RegisterPage = () => {
                 <Input
                   id="firstName"
                   placeholder="John"
-                  {...register('firstName')}
+                  {...register("firstName")}
                   className="pl-9 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
                 />
               </div>
               {errors.firstName && (
-                <p className="text-xs text-red-400">{errors.firstName.message}</p>
+                <p className="text-xs text-red-400">
+                  {errors.firstName.message}
+                </p>
               )}
             </div>
 
@@ -198,11 +222,13 @@ export const RegisterPage = () => {
               <Input
                 id="lastName"
                 placeholder="Doe"
-                {...register('lastName')}
+                {...register("lastName")}
                 className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
               />
               {errors.lastName && (
-                <p className="text-xs text-red-400">{errors.lastName.message}</p>
+                <p className="text-xs text-red-400">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
           </div>
@@ -217,7 +243,7 @@ export const RegisterPage = () => {
                 id="email"
                 type="email"
                 placeholder="john@example.com"
-                {...register('email')}
+                {...register("email")}
                 className="pl-9 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
               />
             </div>
@@ -236,7 +262,7 @@ export const RegisterPage = () => {
                 id="phone"
                 type="tel"
                 placeholder="+84 xxx xxx xxx"
-                {...register('phone')}
+                {...register("phone")}
                 className="pl-9 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
               />
             </div>
@@ -250,9 +276,9 @@ export const RegisterPage = () => {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Min. 8 characters"
-                {...register('password')}
+                {...register("password")}
                 className="pl-9 pr-9 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
               />
               <button
@@ -260,7 +286,11 @@ export const RegisterPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
             {errors.password && (
@@ -278,12 +308,14 @@ export const RegisterPage = () => {
                 id="confirmPassword"
                 type="password"
                 placeholder="Re-enter password"
-                {...register('confirmPassword')}
+                {...register("confirmPassword")}
                 className="pl-9 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500 h-11"
               />
             </div>
             {errors.confirmPassword && (
-              <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>
+              <p className="text-xs text-red-400">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
@@ -298,17 +330,17 @@ export const RegisterPage = () => {
                 Creating account...
               </>
             ) : (
-              'Create Account'
+              "Create Account"
             )}
           </Button>
         </form>
 
         <p className="text-xs text-slate-500 text-center">
-          By creating an account, you agree to our{' '}
+          By creating an account, you agree to our{" "}
           <Link to="/terms" className="text-emerald-400 hover:underline">
             Terms of Service
-          </Link>{' '}
-          and{' '}
+          </Link>{" "}
+          and{" "}
           <Link to="/privacy" className="text-emerald-400 hover:underline">
             Privacy Policy
           </Link>
@@ -317,8 +349,11 @@ export const RegisterPage = () => {
 
       <CardFooter>
         <p className="text-center w-full text-slate-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-emerald-400 hover:text-emerald-300 font-medium">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-emerald-400 hover:text-emerald-300 font-medium"
+          >
             Sign in
           </Link>
         </p>
@@ -328,4 +363,3 @@ export const RegisterPage = () => {
 };
 
 export default RegisterPage;
-

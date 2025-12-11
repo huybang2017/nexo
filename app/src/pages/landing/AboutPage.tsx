@@ -1,25 +1,61 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Target, Eye, Users, Award, Shield, Zap } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Target, Eye, Users, Award, Shield, Zap } from "lucide-react";
 
 const team = [
-  { name: 'Nguyễn Minh Tuấn', role: 'CEO & Co-Founder', image: '/team/ceo.jpg' },
-  { name: 'Trần Thu Hương', role: 'CTO & Co-Founder', image: '/team/cto.jpg' },
-  { name: 'Lê Hoàng Đức', role: 'CFO', image: '/team/cfo.jpg' },
-  { name: 'Phạm Thị Mai', role: 'Head of Operations', image: '/team/ops.jpg' },
+  {
+    name: "Nguyễn Minh Tuấn",
+    role: "CEO & Co-Founder",
+    image: "/team/ceo.jpg",
+  },
+  { name: "Trần Thu Hương", role: "CTO & Co-Founder", image: "/team/cto.jpg" },
+  { name: "Lê Hoàng Đức", role: "CFO", image: "/team/cfo.jpg" },
+  { name: "Phạm Thị Mai", role: "Head of Operations", image: "/team/ops.jpg" },
 ];
 
 const values = [
-  { icon: Shield, title: 'Trust & Security', desc: 'Your security is our top priority. We implement bank-level security measures.' },
-  { icon: Users, title: 'Community First', desc: 'We believe in the power of community and peer-to-peer connections.' },
-  { icon: Zap, title: 'Innovation', desc: 'Constantly improving our platform with cutting-edge technology.' },
-  { icon: Award, title: 'Excellence', desc: 'Striving for excellence in everything we do.' },
+  {
+    icon: Shield,
+    title: "Trust & Security",
+    desc: "Your security is our top priority. We implement bank-level security measures.",
+  },
+  {
+    icon: Users,
+    title: "Community First",
+    desc: "We believe in the power of community and peer-to-peer connections.",
+  },
+  {
+    icon: Zap,
+    title: "Innovation",
+    desc: "Constantly improving our platform with cutting-edge technology.",
+  },
+  {
+    icon: Award,
+    title: "Excellence",
+    desc: "Striving for excellence in everything we do.",
+  },
 ];
 
 const milestones = [
-  { year: '2023', title: 'Founded', desc: 'Nexo was founded with a mission to democratize lending.' },
-  { year: '2023', title: 'First Loan', desc: 'Successfully funded our first loan of ₫50M.' },
-  { year: '2024', title: '1000 Users', desc: 'Reached 1000 active users on the platform.' },
-  { year: '2024', title: '₫10B Volume', desc: 'Crossed ₫10 billion in total loan volume.' },
+  {
+    year: "2023",
+    title: "Founded",
+    desc: "Nexo was founded with a mission to democratize lending.",
+  },
+  {
+    year: "2023",
+    title: "First Loan",
+    desc: "Successfully funded our first loan of ₫50M.",
+  },
+  {
+    year: "2024",
+    title: "1000 Users",
+    desc: "Reached 1000 active users on the platform.",
+  },
+  {
+    year: "2024",
+    title: "₫10B Volume",
+    desc: "Crossed ₫10 billion in total loan volume.",
+  },
 ];
 
 export default function AboutPage() {
@@ -30,7 +66,8 @@ export default function AboutPage() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl font-bold mb-4">About Nexo</h1>
           <p className="text-xl text-muted-foreground">
-            We're on a mission to transform the way people borrow and invest money in Vietnam.
+            We're on a mission to transform the way people borrow and invest
+            money in Vietnam.
           </p>
         </div>
 
@@ -43,9 +80,10 @@ export default function AboutPage() {
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
               <p className="text-muted-foreground">
-                To provide accessible, transparent, and fair financial services that connect 
-                people who need funding with those who want to invest. We believe everyone 
-                deserves access to financial opportunities, regardless of their background.
+                To provide accessible, transparent, and fair financial services
+                that connect people who need funding with those who want to
+                invest. We believe everyone deserves access to financial
+                opportunities, regardless of their background.
               </p>
             </CardContent>
           </Card>
@@ -57,10 +95,11 @@ export default function AboutPage() {
               </div>
               <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
               <p className="text-muted-foreground">
-                To become Vietnam's leading peer-to-peer lending platform, fostering a 
-                community where financial goals are achieved through trust, technology, 
-                and mutual benefit. We envision a future where traditional banking barriers 
-                no longer limit financial growth.
+                To become Vietnam's leading peer-to-peer lending platform,
+                fostering a community where financial goals are achieved through
+                trust, technology, and mutual benefit. We envision a future
+                where traditional banking barriers no longer limit financial
+                growth.
               </p>
             </CardContent>
           </Card>
@@ -92,7 +131,9 @@ export default function AboutPage() {
               {milestones.map((milestone, index) => (
                 <div key={index} className="flex gap-4">
                   <div className="flex-shrink-0 w-20 text-right">
-                    <span className="text-primary font-bold">{milestone.year}</span>
+                    <span className="text-primary font-bold">
+                      {milestone.year}
+                    </span>
                   </div>
                   <div className="flex-shrink-0 relative">
                     <div className="w-3 h-3 rounded-full bg-primary" />
@@ -155,5 +196,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
-

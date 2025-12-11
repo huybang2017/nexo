@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Search,
   Filter,
@@ -8,24 +8,16 @@ import {
   TrendingUp,
   Clock,
   Users,
-  Shield,
   ChevronRight,
-  Loader2,
-} from 'lucide-react';
-import { useMarketplaceLoans, MarketplaceFilters } from '@/hooks/useLoan';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+} from "lucide-react";
+import { useMarketplaceLoans, MarketplaceFilters } from "@/hooks/useLoan";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   Sheet,
   SheetContent,
@@ -33,11 +25,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Slider } from '@/components/ui/slider';
-import { Label } from '@/components/ui/label';
-import { cn, formatCurrency } from '@/lib/utils';
-import type { Loan, LoanPurpose } from '@/types';
+} from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
+import { cn, formatCurrency } from "@/lib/utils";
+import type { Loan, LoanPurpose } from "@/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -53,23 +45,23 @@ const item = {
 };
 
 const purposeLabels: Record<LoanPurpose, string> = {
-  PERSONAL: '💼 Personal',
-  BUSINESS: '🏢 Business',
-  EDUCATION: '📚 Education',
-  MEDICAL: '🏥 Medical',
-  HOME_IMPROVEMENT: '🏠 Home',
-  DEBT_CONSOLIDATION: '💳 Debt',
-  STARTUP: '🚀 Startup',
-  OTHER: '📝 Other',
+  PERSONAL: "💼 Personal",
+  BUSINESS: "🏢 Business",
+  EDUCATION: "📚 Education",
+  MEDICAL: "🏥 Medical",
+  HOME_IMPROVEMENT: "🏠 Home",
+  DEBT_CONSOLIDATION: "💳 Debt",
+  STARTUP: "🚀 Startup",
+  OTHER: "📝 Other",
 };
 
 const riskGradeColors: Record<string, string> = {
-  A: 'text-emerald-400 bg-emerald-400/10 border-emerald-500/30',
-  B: 'text-cyan-400 bg-cyan-400/10 border-cyan-500/30',
-  C: 'text-blue-400 bg-blue-400/10 border-blue-500/30',
-  D: 'text-amber-400 bg-amber-400/10 border-amber-500/30',
-  E: 'text-orange-400 bg-orange-400/10 border-orange-500/30',
-  F: 'text-red-400 bg-red-400/10 border-red-500/30',
+  A: "text-emerald-400 bg-emerald-400/10 border-emerald-500/30",
+  B: "text-cyan-400 bg-cyan-400/10 border-cyan-500/30",
+  C: "text-blue-400 bg-blue-400/10 border-blue-500/30",
+  D: "text-amber-400 bg-amber-400/10 border-amber-500/30",
+  E: "text-orange-400 bg-orange-400/10 border-orange-500/30",
+  F: "text-red-400 bg-red-400/10 border-red-500/30",
 };
 
 export const MarketplacePage = () => {
@@ -77,9 +69,9 @@ export const MarketplacePage = () => {
     page: 0,
     size: 12,
   });
-  const [searchInput, setSearchInput] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Debounce search: chỉ gửi lên backend sau 500ms khi user ngừng gõ
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -90,7 +82,10 @@ export const MarketplacePage = () => {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const { data: loans, isLoading } = useMarketplaceLoans({ ...filters, search: searchQuery || undefined });
+  const { data: loans, isLoading } = useMarketplaceLoans({
+    ...filters,
+    search: searchQuery || undefined,
+  });
 
   const updateFilter = (key: keyof MarketplaceFilters, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: 0 }));
@@ -104,10 +99,17 @@ export const MarketplacePage = () => {
       className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={item} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <motion.div
+        variants={item}
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Loan Marketplace</h1>
-          <p className="text-slate-400 mt-1">Discover investment opportunities</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            Loan Marketplace
+          </h1>
+          <p className="text-slate-400 mt-1">
+            Discover investment opportunities
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative flex-1 md:w-64">
@@ -124,36 +126,44 @@ export const MarketplacePage = () => {
       </motion.div>
 
       {/* Quick Filters */}
-      <motion.div variants={item} className="flex items-center gap-2 overflow-x-auto pb-2">
+      <motion.div
+        variants={item}
+        className="flex items-center gap-2 overflow-x-auto pb-2"
+      >
         <Badge
           className={cn(
-            'cursor-pointer transition-colors',
+            "cursor-pointer transition-colors",
             !filters.purpose
-              ? 'bg-emerald-500 text-white'
-              : 'bg-slate-800 text-slate-400 hover:text-white'
+              ? "bg-emerald-500 text-white"
+              : "bg-slate-800 text-slate-400 hover:text-white"
           )}
-          onClick={() => updateFilter('purpose', undefined)}
+          onClick={() => updateFilter("purpose", undefined)}
         >
           All
         </Badge>
-        {(Object.entries(purposeLabels) as [LoanPurpose, string][]).map(([purpose, label]) => (
-          <Badge
-            key={purpose}
-            className={cn(
-              'cursor-pointer transition-colors whitespace-nowrap',
-              filters.purpose === purpose
-                ? 'bg-emerald-500 text-white'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
-            )}
-            onClick={() => updateFilter('purpose', purpose)}
-          >
-            {label}
-          </Badge>
-        ))}
+        {(Object.entries(purposeLabels) as [LoanPurpose, string][]).map(
+          ([purpose, label]) => (
+            <Badge
+              key={purpose}
+              className={cn(
+                "cursor-pointer transition-colors whitespace-nowrap",
+                filters.purpose === purpose
+                  ? "bg-emerald-500 text-white"
+                  : "bg-slate-800 text-slate-400 hover:text-white"
+              )}
+              onClick={() => updateFilter("purpose", purpose)}
+            >
+              {label}
+            </Badge>
+          )
+        )}
       </motion.div>
 
       {/* Stats Summary */}
-      <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <motion.div
+        variants={item}
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+      >
         <Card className="bg-slate-900/50 border-slate-800">
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
@@ -161,7 +171,9 @@ export const MarketplacePage = () => {
             </div>
             <div>
               <p className="text-slate-400 text-xs">Available Loans</p>
-              <p className="text-xl font-bold text-white">{loans?.totalElements || 0}</p>
+              <p className="text-xl font-bold text-white">
+                {loans?.totalElements || 0}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -216,7 +228,10 @@ export const MarketplacePage = () => {
           </CardContent>
         </Card>
       ) : (
-        <motion.div variants={container} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={container}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {loans?.content.map((loan) => (
             <LoanCard key={loan.id} loan={loan} />
           ))}
@@ -230,7 +245,9 @@ export const MarketplacePage = () => {
             variant="outline"
             size="sm"
             disabled={loans.first}
-            onClick={() => setFilters((prev) => ({ ...prev, page: (prev.page || 0) - 1 }))}
+            onClick={() =>
+              setFilters((prev) => ({ ...prev, page: (prev.page || 0) - 1 }))
+            }
             className="border-slate-700"
           >
             Previous
@@ -242,7 +259,9 @@ export const MarketplacePage = () => {
             variant="outline"
             size="sm"
             disabled={loans.last}
-            onClick={() => setFilters((prev) => ({ ...prev, page: (prev.page || 0) + 1 }))}
+            onClick={() =>
+              setFilters((prev) => ({ ...prev, page: (prev.page || 0) + 1 }))
+            }
             className="border-slate-700"
           >
             Next
@@ -269,7 +288,7 @@ const LoanCard: React.FC<{ loan: Loan }> = ({ loan }) => {
                 </p>
                 <p className="text-slate-500 text-sm">{loan.loanCode}</p>
               </div>
-              <Badge className={cn('border', riskClass)}>
+              <Badge className={cn("border", riskClass)}>
                 Grade {loan.riskGrade}
               </Badge>
             </div>
@@ -278,11 +297,15 @@ const LoanCard: React.FC<{ loan: Loan }> = ({ loan }) => {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="text-slate-400 text-xs">Amount</p>
-                <p className="text-xl font-bold text-white">{formatCurrency(loan.requestedAmount, true)}</p>
+                <p className="text-xl font-bold text-white">
+                  {formatCurrency(loan.requestedAmount, true)}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-slate-400 text-xs">Interest Rate</p>
-                <p className="text-xl font-bold text-emerald-400">{loan.interestRate}%</p>
+                <p className="text-xl font-bold text-emerald-400">
+                  {loan.interestRate}%
+                </p>
               </div>
             </div>
 
@@ -290,7 +313,9 @@ const LoanCard: React.FC<{ loan: Loan }> = ({ loan }) => {
             <div className="mb-4">
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-slate-400">Funded</span>
-                <span className="text-emerald-400 font-medium">{loan.fundingProgress}%</span>
+                <span className="text-emerald-400 font-medium">
+                  {loan.fundingProgress}%
+                </span>
               </div>
               <Progress value={loan.fundingProgress} className="h-2" />
               <div className="flex items-center justify-between text-xs text-slate-500 mt-1">
@@ -312,7 +337,7 @@ const LoanCard: React.FC<{ loan: Loan }> = ({ loan }) => {
                 </span>
               </div>
               <Badge className="bg-slate-800 text-slate-300">
-                {purposeLabels[loan.purpose]?.split(' ')[1] || loan.purpose}
+                {purposeLabels[loan.purpose]?.split(" ")[1] || loan.purpose}
               </Badge>
             </div>
 
@@ -335,7 +360,10 @@ interface FilterSheetProps {
   onFilterChange: (key: keyof MarketplaceFilters, value: any) => void;
 }
 
-const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) => {
+const FilterSheet: React.FC<FilterSheetProps> = ({
+  filters,
+  onFilterChange,
+}) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
   const applyFilters = () => {
@@ -347,7 +375,11 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="border-slate-700 hover:bg-slate-800">
+        <Button
+          variant="outline"
+          size="icon"
+          className="border-slate-700 hover:bg-slate-800"
+        >
           <Filter className="w-4 h-4" />
         </Button>
       </SheetTrigger>
@@ -364,21 +396,24 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
           <div className="space-y-3">
             <Label className="text-slate-300">Risk Grade</Label>
             <div className="flex flex-wrap gap-2">
-              {['A', 'B', 'C', 'D', 'E'].map((grade) => (
+              {["A", "B", "C", "D", "E"].map((grade) => (
                 <Badge
                   key={grade}
                   className={cn(
-                    'cursor-pointer transition-colors border',
+                    "cursor-pointer transition-colors border",
                     localFilters.riskGrades?.includes(grade)
                       ? riskGradeColors[grade]
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      : "bg-slate-800 text-slate-400 border-slate-700"
                   )}
                   onClick={() => {
                     const current = localFilters.riskGrades || [];
                     const updated = current.includes(grade)
                       ? current.filter((g) => g !== grade)
                       : [...current, grade];
-                    setLocalFilters((prev) => ({ ...prev, riskGrades: updated }));
+                    setLocalFilters((prev) => ({
+                      ...prev,
+                      riskGrades: updated,
+                    }));
                   }}
                 >
                   Grade {grade}
@@ -390,7 +425,8 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
           {/* Interest Rate Range */}
           <div className="space-y-3">
             <Label className="text-slate-300">
-              Interest Rate: {localFilters.minRate || 5}% - {localFilters.maxRate || 25}%
+              Interest Rate: {localFilters.minRate || 5}% -{" "}
+              {localFilters.maxRate || 25}%
             </Label>
             <Slider
               min={5}
@@ -398,7 +434,11 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
               step={1}
               value={[localFilters.minRate || 5, localFilters.maxRate || 25]}
               onValueChange={([min, max]) =>
-                setLocalFilters((prev) => ({ ...prev, minRate: min, maxRate: max }))
+                setLocalFilters((prev) => ({
+                  ...prev,
+                  minRate: min,
+                  maxRate: max,
+                }))
               }
               className="py-4"
             />
@@ -407,15 +447,23 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
           {/* Amount Range */}
           <div className="space-y-3">
             <Label className="text-slate-300">
-              Amount: {formatCurrency(localFilters.minAmount || 0)} - {formatCurrency(localFilters.maxAmount || 100000000)}
+              Amount: {formatCurrency(localFilters.minAmount || 0)} -{" "}
+              {formatCurrency(localFilters.maxAmount || 100000000)}
             </Label>
             <Slider
               min={0}
               max={100000000}
               step={1000000}
-              value={[localFilters.minAmount || 0, localFilters.maxAmount || 100000000]}
+              value={[
+                localFilters.minAmount || 0,
+                localFilters.maxAmount || 100000000,
+              ]}
               onValueChange={([min, max]) =>
-                setLocalFilters((prev) => ({ ...prev, minAmount: min, maxAmount: max }))
+                setLocalFilters((prev) => ({
+                  ...prev,
+                  minAmount: min,
+                  maxAmount: max,
+                }))
               }
               className="py-4"
             />
@@ -424,7 +472,8 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
           {/* Term Range */}
           <div className="space-y-3">
             <Label className="text-slate-300">
-              Term: {localFilters.minTerm || 1} - {localFilters.maxTerm || 36} months
+              Term: {localFilters.minTerm || 1} - {localFilters.maxTerm || 36}{" "}
+              months
             </Label>
             <Slider
               min={1}
@@ -432,7 +481,11 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
               step={1}
               value={[localFilters.minTerm || 1, localFilters.maxTerm || 36]}
               onValueChange={([min, max]) =>
-                setLocalFilters((prev) => ({ ...prev, minTerm: min, maxTerm: max }))
+                setLocalFilters((prev) => ({
+                  ...prev,
+                  minTerm: min,
+                  maxTerm: max,
+                }))
               }
               className="py-4"
             />
@@ -444,12 +497,15 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
               className="flex-1 border-slate-700"
               onClick={() => {
                 setLocalFilters({ page: 0, size: 12 });
-                onFilterChange('purpose', undefined);
+                onFilterChange("purpose", undefined);
               }}
             >
               Reset
             </Button>
-            <Button className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={applyFilters}>
+            <Button
+              className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+              onClick={applyFilters}
+            >
               Apply Filters
             </Button>
           </div>
@@ -460,4 +516,3 @@ const FilterSheet: React.FC<FilterSheetProps> = ({ filters, onFilterChange }) =>
 };
 
 export default MarketplacePage;
-

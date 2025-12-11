@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Home, ArrowLeft, ShieldX } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Home, ArrowLeft, ShieldX } from "lucide-react";
 
 export default function ForbiddenPage() {
   return (
@@ -9,7 +9,8 @@ export default function ForbiddenPage() {
         <ShieldX className="h-24 w-24 text-destructive/50 mx-auto mb-4" />
         <h1 className="text-3xl font-bold mb-2">Access Denied</h1>
         <p className="text-muted-foreground mb-8 max-w-md">
-          You don't have permission to access this page. Please contact support if you believe this is an error.
+          You don't have permission to access this page. Please contact support
+          if you believe this is an error.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild>
@@ -27,5 +28,3 @@ export default function ForbiddenPage() {
     </div>
   );
 }
-
-

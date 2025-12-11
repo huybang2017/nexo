@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authService } from '@/services/auth.service';
-import { setAuthTokens, clearAuthTokens } from '@/lib/api';
-import type { LoginRequest, RegisterRequest } from '@/types';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authService } from "@/services/auth.service";
+import { setAuthTokens, clearAuthTokens } from "@/lib/api";
+import type { LoginRequest, RegisterRequest } from "@/types";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export const useCurrentUser = () => {
   return useQuery({
-    queryKey: ['currentUser'],
+    queryKey: ["currentUser"],
     queryFn: authService.getCurrentUser,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
@@ -22,18 +22,18 @@ export const useLogin = () => {
     mutationFn: (data: LoginRequest) => authService.login(data),
     onSuccess: (response) => {
       setAuthTokens(response.accessToken, response.refreshToken);
-      queryClient.setQueryData(['currentUser'], response.user);
-      toast.success('Login successful!');
-      
+      queryClient.setQueryData(["currentUser"], response.user);
+      toast.success("Login successful!");
+
       // Redirect based on role
-      if (response.user.role === 'ADMIN') {
-        navigate('/admin');
+      if (response.user.role === "ADMIN") {
+        navigate("/admin");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || "Login failed");
     },
   });
 };
@@ -46,18 +46,18 @@ export const useRegister = () => {
     mutationFn: (data: RegisterRequest) => authService.register(data),
     onSuccess: (response) => {
       setAuthTokens(response.accessToken, response.refreshToken);
-      queryClient.setQueryData(['currentUser'], response.user);
-      toast.success('Registration successful!');
-      
+      queryClient.setQueryData(["currentUser"], response.user);
+      toast.success("Registration successful!");
+
       // Redirect to dashboard (both BORROWER and LENDER)
-      if (response.user.role === 'ADMIN') {
-        navigate('/admin');
+      if (response.user.role === "ADMIN") {
+        navigate("/admin");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Registration failed');
+      toast.error(error.message || "Registration failed");
     },
   });
 };
@@ -68,14 +68,14 @@ export const useLogout = () => {
 
   return useMutation({
     mutationFn: () => {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = localStorage.getItem("refreshToken");
       return authService.logout(refreshToken || undefined);
     },
     onSuccess: () => {
       clearAuthTokens();
       queryClient.clear();
-      toast.success('Logged out successfully');
-      navigate('/login');
+      toast.success("Logged out successfully");
+      navigate("/login");
     },
     onSettled: () => {
       clearAuthTokens();
@@ -86,14 +86,20 @@ export const useLogout = () => {
 
 export const useChangePassword = () => {
   return useMutation({
-    mutationFn: (data: { currentPassword: string; newPassword: string; confirmPassword: string }) =>
-      authService.changePassword(data),
+    mutationFn: (data: {
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    }) => authService.changePassword(data),
     onSuccess: () => {
-      toast.success('Password changed successfully');
+      toast.success("Password changed successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || error.message || 'Failed to change password');
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to change password"
+      );
     },
   });
 };
-

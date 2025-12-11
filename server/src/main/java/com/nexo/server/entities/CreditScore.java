@@ -69,11 +69,11 @@ public class CreditScore extends BaseEntity {
 
     @Column(name = "max_interest_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal maxInterestRate = new BigDecimal("30.00");
+    private BigDecimal maxInterestRate = new BigDecimal("20.00");
 
     @Column(name = "min_interest_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal minInterestRate = new BigDecimal("20.00");
+    private BigDecimal minInterestRate = new BigDecimal("12.00");
 
     @Column(name = "is_eligible_for_loan")
     @Builder.Default
@@ -134,38 +134,38 @@ public class CreditScore extends BaseEntity {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Limited loan eligibility due to low credit score";
             this.maxLoanAmount = new BigDecimal("5000000"); // 5M VND
-            this.minInterestRate = new BigDecimal("25.00");
-            this.maxInterestRate = new BigDecimal("35.00");
+            this.minInterestRate = new BigDecimal("18.00");
+            this.maxInterestRate = new BigDecimal("20.00"); // Tuân thủ pháp luật VN (tối đa 20%/năm)
         } else if (this.totalScore < 500) {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Standard loan eligibility";
             this.maxLoanAmount = new BigDecimal("20000000"); // 20M VND
-            this.minInterestRate = new BigDecimal("20.00");
-            this.maxInterestRate = new BigDecimal("30.00");
+            this.minInterestRate = new BigDecimal("16.00");
+            this.maxInterestRate = new BigDecimal("20.00");
         } else if (this.totalScore < 600) {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Good loan eligibility";
             this.maxLoanAmount = new BigDecimal("50000000"); // 50M VND
-            this.minInterestRate = new BigDecimal("15.00");
-            this.maxInterestRate = new BigDecimal("25.00");
+            this.minInterestRate = new BigDecimal("14.00");
+            this.maxInterestRate = new BigDecimal("18.00");
         } else if (this.totalScore < 700) {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Very good loan eligibility";
             this.maxLoanAmount = new BigDecimal("100000000"); // 100M VND
             this.minInterestRate = new BigDecimal("12.00");
-            this.maxInterestRate = new BigDecimal("20.00");
+            this.maxInterestRate = new BigDecimal("16.00");
         } else if (this.totalScore < 800) {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Excellent loan eligibility";
             this.maxLoanAmount = new BigDecimal("200000000"); // 200M VND
             this.minInterestRate = new BigDecimal("10.00");
-            this.maxInterestRate = new BigDecimal("16.00");
+            this.maxInterestRate = new BigDecimal("14.00");
         } else {
             this.isEligibleForLoan = true;
             this.eligibilityReason = "Premium loan eligibility - Best rates available";
             this.maxLoanAmount = new BigDecimal("500000000"); // 500M VND
             this.minInterestRate = new BigDecimal("8.00");
-            this.maxInterestRate = new BigDecimal("14.00");
+            this.maxInterestRate = new BigDecimal("12.00");
         }
     }
 }

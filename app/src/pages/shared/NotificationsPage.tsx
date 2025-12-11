@@ -1,19 +1,24 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNotifications, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '@/hooks/useNotification';
-import { formatDate } from '@/lib/utils';
-import { 
-  Bell, 
-  BellOff, 
-  CheckCircle, 
-  CreditCard, 
-  FileText, 
-  Shield, 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  useNotifications,
+  useMarkAsRead,
+  useMarkAllAsRead,
+  useDeleteNotification,
+} from "@/hooks/useNotification";
+import { formatDate } from "@/lib/utils";
+import {
+  Bell,
+  BellOff,
+  CheckCircle,
+  CreditCard,
+  FileText,
+  Shield,
   Wallet,
   Settings,
-  Trash2
-} from 'lucide-react';
+  Trash2,
+} from "lucide-react";
 
 const typeIcons: Record<string, React.ElementType> = {
   SYSTEM: Settings,
@@ -42,7 +47,7 @@ export default function NotificationsPage() {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this notification?')) {
+    if (confirm("Are you sure you want to delete this notification?")) {
       deleteNotification.mutate(id);
     }
   };
@@ -130,27 +135,47 @@ export default function NotificationsPage() {
   );
 }
 
-function NotificationCard({ notification, onMarkAsRead, onDelete }: { 
-  notification: any; 
+function NotificationCard({
+  notification,
+  onMarkAsRead,
+  onDelete,
+}: {
+  notification: any;
   onMarkAsRead: (id: number) => void;
   onDelete: (id: number) => void;
 }) {
   const Icon = typeIcons[notification.type] || Bell;
 
   return (
-    <Card className={`card-hover ${!notification.isRead ? 'border-primary/50 bg-primary/5' : ''}`}>
+    <Card
+      className={`card-hover ${
+        !notification.isRead ? "border-primary/50 bg-primary/5" : ""
+      }`}
+    >
       <CardContent className="py-4">
         <div className="flex gap-4">
-          <div className={`h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-            !notification.isRead ? 'bg-primary/10' : 'bg-muted'
-          }`}>
-            <Icon className={`h-5 w-5 ${!notification.isRead ? 'text-primary' : 'text-muted-foreground'}`} />
+          <div
+            className={`h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              !notification.isRead ? "bg-primary/10" : "bg-muted"
+            }`}
+          >
+            <Icon
+              className={`h-5 w-5 ${
+                !notification.isRead ? "text-primary" : "text-muted-foreground"
+              }`}
+            />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className={`font-medium ${!notification.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <h3
+                  className={`font-medium ${
+                    !notification.isRead
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
                   {notification.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -192,5 +217,3 @@ function NotificationCard({ notification, onMarkAsRead, onDelete }: {
     </Card>
   );
 }
-
-

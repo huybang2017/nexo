@@ -1,27 +1,40 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePortfolio, useMyInvestments } from '@/hooks/useInvestment';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { TrendingUp, PiggyBank, Wallet, ArrowUpRight, Calendar } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { usePortfolio, useMyInvestments } from "@/hooks/useInvestment";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import {
+  TrendingUp,
+  PiggyBank,
+  Wallet,
+  ArrowUpRight,
+  Calendar,
+} from "lucide-react";
 
 export default function PortfolioPage() {
   const { data: portfolio, isLoading: portfolioLoading } = usePortfolio();
-  const { data: investmentsData, isLoading: investmentsLoading } = useMyInvestments();
+  const { data: investmentsData, isLoading: investmentsLoading } =
+    useMyInvestments();
 
   const investments = investmentsData?.content || [];
 
-  const activeInvestments = investments.filter((i: any) => i.status === 'ACTIVE');
-  const completedInvestments = investments.filter((i: any) => i.status === 'COMPLETED');
+  const activeInvestments = investments.filter(
+    (i: any) => i.status === "ACTIVE"
+  );
+  const completedInvestments = investments.filter(
+    (i: any) => i.status === "COMPLETED"
+  );
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">My Portfolio</h1>
-        <p className="text-muted-foreground">Track your investments and returns</p>
+        <p className="text-muted-foreground">
+          Track your investments and returns
+        </p>
       </div>
 
       {/* Portfolio Stats */}
@@ -123,9 +136,10 @@ export default function PortfolioPage() {
 }
 
 function InvestmentCard({ investment }: { investment: any }) {
-  const returnProgress = investment.expectedReturn > 0
-    ? (investment.actualReturn / investment.expectedReturn) * 100
-    : 0;
+  const returnProgress =
+    investment.expectedReturn > 0
+      ? (investment.actualReturn / investment.expectedReturn) * 100
+      : 0;
 
   return (
     <Card className="card-hover">
@@ -133,13 +147,21 @@ function InvestmentCard({ investment }: { investment: any }) {
         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant={investment.status === 'ACTIVE' ? 'default' : 'secondary'}>
+              <Badge
+                variant={
+                  investment.status === "ACTIVE" ? "default" : "secondary"
+                }
+              >
                 {investment.status}
               </Badge>
-              <span className="text-sm text-muted-foreground">{investment.investmentCode}</span>
+              <span className="text-sm text-muted-foreground">
+                {investment.investmentCode}
+              </span>
             </div>
             <h3 className="font-semibold truncate mb-1">
-              {investment.loanTitle || investment.loan?.title || 'Loan Investment'}
+              {investment.loanTitle ||
+                investment.loan?.title ||
+                "Loan Investment"}
             </h3>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span>Invested: {formatCurrency(investment.amount)}</span>
@@ -158,18 +180,20 @@ function InvestmentCard({ investment }: { investment: any }) {
             </div>
             <Progress value={returnProgress} className="h-2" />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span className="text-green-500">{formatCurrency(investment.actualReturn)}</span>
+              <span className="text-green-500">
+                {formatCurrency(investment.actualReturn)}
+              </span>
               <span>{formatCurrency(investment.expectedReturn)}</span>
             </div>
           </div>
 
           <Button variant="outline" asChild>
-            <Link to={`/dashboard/marketplace/${investment.loanId}`}>Details</Link>
+            <Link to={`/dashboard/marketplace/${investment.loanId}`}>
+              Details
+            </Link>
           </Button>
         </div>
       </CardContent>
     </Card>
   );
 }
-
-

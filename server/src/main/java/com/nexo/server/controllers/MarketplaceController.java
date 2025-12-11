@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ public class MarketplaceController {
             @RequestParam(required = false) Integer minTerm,
             @RequestParam(required = false) Integer maxTerm,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        
+
         PageResponse<LoanResponse> response = loanService.getMarketplaceLoans(
                 search, purpose, riskGrades, minRate, maxRate, minAmount, maxAmount, minTerm, maxTerm, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -52,4 +52,3 @@ public class MarketplaceController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
-

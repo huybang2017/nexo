@@ -22,7 +22,7 @@
   --color-border: oklch(0.25 0.02 260);
   --color-input: oklch(0.25 0.02 260);
   --color-ring: oklch(0.7 0.2 160);
-  
+
   /* Radius */
   --radius-lg: 0.75rem;
   --radius-md: 0.5rem;
@@ -34,7 +34,7 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -97,7 +97,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
   }
   50% {

@@ -1,10 +1,11 @@
 package com.nexo.server.controllers;
 
 import com.nexo.server.dto.common.ApiResponse;
+import com.nexo.server.dto.common.PageResponse;
 import com.nexo.server.entities.Ticket;
 import com.nexo.server.enums.TicketPriority;
 import com.nexo.server.enums.TicketStatus;
-import com.nexo.server.enums.UserRole;
+
 import com.nexo.server.security.CurrentUser;
 import com.nexo.server.security.UserPrincipal;
 import com.nexo.server.services.TicketService;
@@ -42,29 +43,29 @@ public class TicketController {
                 request.getSubject(),
                 request.getCategory(),
                 request.getDescription(),
-                request.getRelatedLoanId()
-        );
+                request.getRelatedLoanId());
         return ResponseEntity.ok(ApiResponse.success("Ticket created successfully", ticket));
     }
 
     @GetMapping("/my")
     @Operation(summary = "Get current user's tickets")
-    public ResponseEntity<ApiResponse<Page<Ticket>>> getMyTickets(
+    public ResponseEntity<ApiResponse<PageResponse<Ticket>>> getMyTickets(
             @CurrentUser UserPrincipal currentUser,
             @RequestParam(required = false) TicketStatus status,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Ticket> tickets = ticketService.getUserTickets(currentUser.getId(), status, pageable);
-        return ResponseEntity.ok(ApiResponse.success(tickets));
+        PageResponse<Ticket> response = PageResponse.of(tickets);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/{ticketId}")
     @Operation(summary = "Get ticket detail")
-    public ResponseEntity<ApiResponse<Ticket>> getTicket(
+    public ResponseEntity<ApiResponse<com.nexo.server.dto.ticket.TicketResponse>> getTicket(
             @PathVariable Long ticketId,
             @CurrentUser UserPrincipal currentUser) {
         boolean isAdmin = currentUser.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        Ticket ticket = ticketService.getTicket(ticketId, currentUser.getId(), isAdmin);
+        com.nexo.server.dto.ticket.TicketResponse ticket = ticketService.getTicketResponse(ticketId, currentUser.getId(), isAdmin);
         return ResponseEntity.ok(ApiResponse.success(ticket));
     }
 
@@ -85,43 +86,45 @@ public class TicketController {
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all tickets (Admin)")
-    public ResponseEntity<ApiResponse<Page<Ticket>>> getAllTickets(
+    public ResponseEntity<ApiResponse<PageResponse<Ticket>>> getAllTickets(
             @RequestParam(required = false) TicketStatus status,
             @RequestParam(required = false) TicketPriority priority,
+            @RequestParam(required = false) String search,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Ticket> tickets = ticketService.getAllTickets(status, priority, pageable);
-        return ResponseEntity.ok(ApiResponse.success(tickets));
+        Page<Ticket> tickets = ticketService.getAllTickets(status, priority, search, pageable);
+        PageResponse<Ticket> response = PageResponse.of(tickets);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PutMapping("/admin/{ticketId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update ticket status (Admin)")
-    public ResponseEntity<ApiResponse<Ticket>> updateStatus(
+    public ResponseEntity<ApiResponse<Void>> updateStatus(
             @PathVariable Long ticketId,
             @CurrentUser UserPrincipal currentUser,
             @RequestParam TicketStatus status) {
-        Ticket ticket = ticketService.updateStatus(ticketId, status, currentUser.getId());
-        return ResponseEntity.ok(ApiResponse.success("Status updated", ticket));
+        ticketService.updateStatus(ticketId, status, currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("Status updated successfully"));
     }
 
     @PutMapping("/admin/{ticketId}/priority")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update ticket priority (Admin)")
-    public ResponseEntity<ApiResponse<Ticket>> updatePriority(
+    public ResponseEntity<ApiResponse<Void>> updatePriority(
             @PathVariable Long ticketId,
             @RequestParam TicketPriority priority) {
-        Ticket ticket = ticketService.updatePriority(ticketId, priority);
-        return ResponseEntity.ok(ApiResponse.success("Priority updated", ticket));
+        ticketService.updatePriority(ticketId, priority);
+        return ResponseEntity.ok(ApiResponse.success("Priority updated successfully"));
     }
 
     @PutMapping("/admin/{ticketId}/assign")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Assign ticket to staff (Admin)")
-    public ResponseEntity<ApiResponse<Ticket>> assignTicket(
+    public ResponseEntity<ApiResponse<Void>> assignTicket(
             @PathVariable Long ticketId,
             @RequestParam Long staffId) {
-        Ticket ticket = ticketService.assignTicket(ticketId, staffId);
-        return ResponseEntity.ok(ApiResponse.success("Ticket assigned", ticket));
+        ticketService.assignTicket(ticketId, staffId);
+        return ResponseEntity.ok(ApiResponse.success("Ticket assigned successfully"));
     }
 
     @GetMapping("/admin/stats")
@@ -154,5 +157,3 @@ public class TicketController {
         private String message;
     }
 }
-
-

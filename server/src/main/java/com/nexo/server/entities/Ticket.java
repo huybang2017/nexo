@@ -1,5 +1,7 @@
 package com.nexo.server.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nexo.server.enums.TicketPriority;
 import com.nexo.server.enums.TicketStatus;
 import jakarta.persistence.*;
@@ -21,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ticket extends BaseEntity {
 
     @Column(name = "ticket_code", nullable = false, unique = true, length = 20)
@@ -28,10 +31,12 @@ public class Ticket extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User assignedTo;
 
     @Column(nullable = false)

@@ -1,6 +1,5 @@
 package com.nexo.server.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -15,11 +14,6 @@ public class RestTemplateConfig {
         factory.setConnectTimeout(30000); // 30 seconds
         factory.setReadTimeout(60000); // 60 seconds
         return new RestTemplate(factory);
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 }
 

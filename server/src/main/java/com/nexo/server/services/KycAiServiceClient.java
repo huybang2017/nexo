@@ -68,7 +68,17 @@ public class KycAiServiceClient {
             );
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return mapToDocumentScoreResult(response.getBody());
+                log.info("AI service scoreDocument response: {}", response.getBody());
+                DocumentScoreResult result = mapToDocumentScoreResult(response.getBody());
+                log.info("AI service scoreDocument result - TotalScore: {}, ImageQuality: {}, OCRAccuracy: {}, BlurDetection: {}, TamperingDetection: {}, FaceQuality: {}, DataConsistency: {}, ExpirationCheck: {}, OCRConfidence: {}, FaceMatchScore: {}, FaceMatchConfidence: {}, Tampered: {}, Blurry: {}, Expired: {}, DocumentHash: {}, PerceptualHash: {}, ExtractedName: {}, ExtractedIdNumber: {}, ExtractedDob: {}, Explanations: {}",
+                        result.getTotalScore(), result.getImageQualityScore(), result.getOcrAccuracyScore(),
+                        result.getBlurDetectionScore(), result.getTamperingDetectionScore(), result.getFaceQualityScore(),
+                        result.getDataConsistencyScore(), result.getExpirationCheckScore(), result.getOcrConfidence(),
+                        result.getFaceMatchScore(), result.getFaceMatchConfidence(), result.isTampered(),
+                        result.isBlurry(), result.isExpired(), result.getDocumentHash(), result.getPerceptualHash(),
+                        result.getOcrExtractedName(), result.getOcrExtractedIdNumber(), result.getOcrExtractedDob(),
+                        result.getAiExplanations());
+                return result;
             } else {
                 log.error("AI service returned error: {}", response.getStatusCode());
                 return getDefaultScoreResult();
@@ -131,11 +141,15 @@ public class KycAiServiceClient {
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
-                return new DuplicateCheckResult(
+                DuplicateCheckResult result = new DuplicateCheckResult(
                         (Boolean) body.getOrDefault("is_duplicate", false),
                         ((Number) body.getOrDefault("similarity_score", 0.0)).doubleValue(),
                         (List<String>) body.getOrDefault("matched_hashes", List.of())
                 );
+                log.info("AI service checkDuplicate response: {}", body);
+                log.info("AI service checkDuplicate result - IsDuplicate: {}, SimilarityScore: {}, MatchedHashes: {}",
+                        result.isDuplicate(), result.getSimilarityScore(), result.getMatchedHashes());
+                return result;
             }
 
         } catch (Exception e) {

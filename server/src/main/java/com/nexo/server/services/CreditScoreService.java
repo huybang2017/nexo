@@ -577,6 +577,8 @@ public class CreditScoreService {
         int newScore = Math.max(0, creditScore.getTotalScore() - 200);
         creditScore.setTotalScore(newScore);
         creditScore.updateRiskLevel();
+        creditScore.updateLoanEligibility();
+        creditScore.updateRiskLevel();
         
         recordScoreChange(creditScore, CreditScoreEventType.FRAUD_DETECTED, 
                 oldScore, newScore, "Fraudulent activity detected: " + reason, null, null);
@@ -596,6 +598,8 @@ public class CreditScoreService {
         int newScore = Math.max(MIN_SCORE, Math.min(MAX_SCORE, oldScore + request.getAdjustment()));
         
         creditScore.setTotalScore(newScore);
+        creditScore.updateRiskLevel();
+        creditScore.updateLoanEligibility();
         creditScore.updateRiskLevel();
         creditScore.updateLoanEligibility();
         

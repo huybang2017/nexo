@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, XCircle, Loader2, Wallet } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useWallet } from '@/hooks/useWallet';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { CheckCircle, XCircle, Loader2, Wallet } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWallet } from "@/hooks/useWallet";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { toast } from 'sonner';
+} from "@/components/ui/card";
+import { toast } from "sonner";
 
 export const PaymentResultPage = () => {
   const [searchParams] = useSearchParams();
@@ -20,9 +20,9 @@ export const PaymentResultPage = () => {
   const { user } = useAuth();
   const { refetch: refetchWallet } = useWallet();
   const [isProcessing, setIsProcessing] = useState(true);
-  
-  const code = searchParams.get('code');
-  const status = searchParams.get('status');
+
+  const code = searchParams.get("code");
+  const status = searchParams.get("status");
 
   useEffect(() => {
     const processResult = async () => {
@@ -32,32 +32,33 @@ export const PaymentResultPage = () => {
       }
 
       // Wait a bit for backend to process payment
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Refresh wallet data
       try {
         await refetchWallet();
-        toast.success('Wallet updated!');
+        toast.success("Wallet updated!");
       } catch (error) {
-        console.error('Failed to refresh wallet:', error);
+        console.error("Failed to refresh wallet:", error);
       }
 
       setIsProcessing(false);
 
       // Auto redirect to wallet after 3 seconds
       setTimeout(() => {
-        navigate('/dashboard/wallet');
+        navigate("/dashboard/wallet");
       }, 3000);
     };
 
     processResult();
   }, [code, status, refetchWallet, navigate, user]);
 
-  const isSuccess = status === 'success';
-  const isFailed = status === 'failed' || status === 'cancel' || status === 'error';
+  const isSuccess = status === "success";
+  const isFailed =
+    status === "failed" || status === "cancel" || status === "error";
 
   const handleGoToWallet = () => {
-    navigate('/dashboard/wallet');
+    navigate("/dashboard/wallet");
   };
 
   if (!code || !status) {
@@ -89,7 +90,9 @@ export const PaymentResultPage = () => {
               <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center">
                 <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
               </div>
-              <CardTitle className="text-white">Processing Payment...</CardTitle>
+              <CardTitle className="text-white">
+                Processing Payment...
+              </CardTitle>
               <CardDescription className="text-slate-400">
                 Please wait while we update your wallet
               </CardDescription>
@@ -128,7 +131,8 @@ export const PaymentResultPage = () => {
           {isSuccess && (
             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
               <p className="text-sm text-emerald-400">
-                Your wallet balance has been updated. Redirecting to wallet page...
+                Your wallet balance has been updated. Redirecting to wallet
+                page...
               </p>
             </div>
           )}
@@ -163,4 +167,3 @@ export const PaymentResultPage = () => {
 };
 
 export default PaymentResultPage;
-
